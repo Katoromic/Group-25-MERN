@@ -17,6 +17,19 @@ app.use(bodyParser.json());
 
 var cardList = []; 
 
+app.use((req, res, next) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader(
+        'Access-Control-Allow-Headers',
+        'Origin, X-Requested-With, Content-Type, Accept, Authorization'
+    );
+    res.setHeader(
+        'Access-Control-Allow-Methods',
+        'GET, POST, PATCH, DELETE, OPTIONS'
+    );
+    next();
+});
+
 app.post('/api/addcard', (req, res, next) => {
     // incoming: userId, color
     // outgoing: error
@@ -103,21 +116,6 @@ if (process.env.NODE_ENV === 'production')
     res.sendFile(path.resolve(__dirname, 'frontend', 'build', 'index.html'));
   });
 }
-
-
-app.use((req, res, next) => {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader(
-        'Access-Control-Allow-Headers',
-        'Origin, X-Requested-With, Content-Type, Accept, Authorization'
-    );
-    res.setHeader(
-        'Access-Control-Allow-Methods',
-        'GET, POST, PATCH, DELETE, OPTIONS'
-    );
-    next();
-});
-
 
 app.listen(PORT, () => 
 {
