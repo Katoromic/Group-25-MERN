@@ -8,10 +8,10 @@ const url = process.env.MONGODB_URI;
 const MongoClient = require('mongodb').MongoClient;
 const client = new MongoClient(url);
 client.connect(console.log("mongodb connected"));
-app.use(cors());
-   
-const PORT = process.env.PORT || 5000;  
+ 
 const app = express();
+app.use(cors());
+const PORT = process.env.PORT || 5000; 
 app.set('port', (process.env.PORT || 5000));
 app.use(bodyParser.json());
 
