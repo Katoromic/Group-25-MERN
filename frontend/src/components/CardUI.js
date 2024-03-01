@@ -15,7 +15,7 @@ function CardUI() {
     let firstName = ud.firstName;
     let lastName = ud.lastName;
 
-    const app_name = 'syntax-sensei'
+    const app_name = 'syntax-sensei-a349ca4c0ed0'
     function buildPath(route)
     {
         if (process.env.NODE_ENV === 'production') 

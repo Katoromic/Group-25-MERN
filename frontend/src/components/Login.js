@@ -7,7 +7,7 @@ function Login() {
 
     const [message, setMessage] = useState('');
 
-    const app_name = 'syntax-sensei'
+    const app_name = 'syntax-sensei-a349ca4c0ed0'
 
     function buildPath(route)
     {
