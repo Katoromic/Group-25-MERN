@@ -91,7 +91,7 @@ exports.setApp = function (app, client) {
     const db = client.db();
     const results = await db
       .collection("Cards")
-      .find({ Card: { $regex: _search + ".*", $options: "r" } })
+      .find({ Card: { $regex: _search + ".*", $options: "i" } })
       .toArray();
     var _ret = [];
     for (var i = 0; i < results.length; i++) {
