@@ -33,43 +33,49 @@ exports.setApp = function (app, client) {
     res.status(200).json(ret);
   });
 
+  // Login
+  //
+  // incoming: login, password
+  // outgoing: token, error
+  //
   app.post("/api/login", async (req, res, next) => {
-    // incoming: login, password
-    // outgoing: id, firstName, lastName, error
-
-    var error = "";
 
     const { login, password } = req.body;
 
-    const db = client.db("COP4331Cards");
+    const db = client.db("MainDatabase");
     const results = await db
       .collection("Users")
-      .find({ Login: login, Password: password })
+      .find({ Username: login, Password: password })
       .toArray();
+    
+    let token = null;
+    let error = "";
 
-    var id = -1;
-    var fn = "";
-    var ln = "";
-
-    var ret;
-
-    if (results.length > 0) {
-      id = results[0].UserID;
-      fn = results[0].FirstName;
-      ln = results[0].LastName;
-
+    if (results.length > 0)
+    {
+      let id = results[0]._id;
+      let fn = results[0].FirstName;
+      let ln = results[0].LastName;
+      let verified = results[0].Verified;
+      
       // Create the token
-      try {
-        const token = require("./createJWT.js");
-        ret = token.createToken(fn, ln, id);
-      } catch (e) {
-        ret = { error: e.message };
+      try
+      {
+        const JWT = require("./createJWT.js");
+        token = JWT.createToken(fn, ln, verified, id).accessToken;
       }
-    } else {
-      ret = { error: "Login/Password incorrect" };
+      catch (e)
+      {
+        error = e.message;
+      }
+    }
+    else
+    {
+      error = "Login/Password incorrect";
     }
 
-    //var ret = { id: id, firstName: fn, lastName: ln, error: "" };
+    let ret = { token: token, error: error };
+    
     res.status(200).json(ret);
   });
 
