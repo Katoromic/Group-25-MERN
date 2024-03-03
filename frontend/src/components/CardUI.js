@@ -17,36 +17,43 @@ function CardUI() {
 
   var bp = require("./Path.js");
 
-  const addCard = async (event) => {
-    event.preventDefault();
-
-    var storage = require("../tokenStorage.js");
-    let obj = {
-      userId: userId,
-      card: card.value,
-      jwtToken: storage.retrieveToken(),
-    };
-    let js = JSON.stringify(obj);
-
-    try {
-      const response = await fetch(bp.buildPath("api/addcard"), {
-        method: "POST",
-        body: js,
-        headers: { "Content-Type": "application/json" },
-      });
-
-      var txt = await response.text();
-      var res = JSON.parse(txt);
-
-      if (res.error.length > 0) {
-        setMessage("API Error:" + res.error);
-      } else {
-        setMessage("Card has been added");
-        storage.storeToken(res.jwtToken);
-      }
-    } catch (e) {
-      setMessage(e.toString());
+    const app_name = 'syntax-sensei-a349ca4c0ed0'
+    function buildPath(route)
+    {
+        if (process.env.NODE_ENV === 'production') 
+        {
+            return 'https://' + app_name +  '.herokuapp.com/' + route;
+        }
+        else
+        {        
+            return 'http://localhost:5000/' + route;
+        }
     }
+
+
+    const addCard = async event => {
+        event.preventDefault();
+
+        let obj = { userId: userId, card: card.value };
+        let js = JSON.stringify(obj);
+
+        try {
+            const response = await fetch(buildPath('api/addcard'),
+                { method: 'POST', body: js, headers: { 'Content-Type': 'application/json' } });
+
+            let txt = await response.text();
+            let res = JSON.parse(txt);
+
+            if (res.error.length > 0) {
+                setMessage("API Error:" + res.error);
+            }
+            else {
+                setMessage('Card has been added');
+            }
+        }
+        catch (e) {
+            setMessage(e.toString());
+        }
   };
 
   const searchCard = async (event) => {
