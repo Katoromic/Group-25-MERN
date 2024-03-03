@@ -1,14 +1,14 @@
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
-exports.createToken = function (fn, ln, id) {
-  return _createToken(fn, ln, id);
+exports.createToken = function (fn, ln, ver, id) {
+  return _createToken(fn, ln, ver, id);
 };
 
-_createToken = function (fn, ln, id) {
+_createToken = function (fn, ln, ver, id) {
   try {
     const expiration = new Date();
-    const user = { userId: id, firstName: fn, lastName: ln };
+    const user = { userId: id, firstName: fn, lastName: ln, verified: ver };
 
     const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET); // default timeout is 20 minutes
 
