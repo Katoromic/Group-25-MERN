@@ -60,7 +60,6 @@ exports.setApp = function (app, client, bcrypt) {
 
     if (users != null)
     {
-      const db = client.db("MainDatabase");
       const result = await users.findOne({ Username: login });
       
       if (result != null)
@@ -138,7 +137,7 @@ exports.setApp = function (app, client, bcrypt) {
 
         // Add user to database
 
-        const newUser = users.insertOne({ FirstName: FirstName, LastName: LastName, Email: Email, Username: Username, Password: hashedPassword, Verified: false });
+        const newUser = await users.insertOne({ FirstName: FirstName, LastName: LastName, Email: Email, Username: Username, Password: hashedPassword, Verified: false });
 
         // Create the token
         try
