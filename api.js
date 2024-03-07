@@ -196,4 +196,34 @@ exports.setApp = function (app, client, bcrypt) {
     var ret = { results: _ret, error: error, jwtToken: refreshedToken };
     res.status(200).json(ret);
   });
+
+  // Process email verification link
+  //
+  app.get('/verify/:token', (req, res) => {
+
+    const { token } = req.params;
+
+    try
+    {
+      const JWT = require("./createJWT.js");
+
+      if (JWT.isExpired(token))
+      {
+        res.status(200).send('The verification link has expired :(');
+      }
+      else if (JWT.isVerified(token))
+      {
+        res.status(200).send('This account is already verified :(');
+      }
+      else
+      {
+        // Actually change the verification status in the database
+        res.status(200).send('Yay! Your account is now verified :)');
+      }
+    }
+    catch (e)
+    {
+      res.status(500).send(e.message);
+    }
+  });
 };
