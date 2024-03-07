@@ -134,6 +134,52 @@ exports.setApp = function (app, client, bcrypt) {
   });
 
 
+  // Send Verification Link
+  //
+  // Incoming: token
+  // Outgoing: error
+  //
+  app.post('/api/sendVerificationLink', async (req, res, next) => {
+
+    const { token } = req.body;
+
+    let error = "";
+
+    const { userId, verified } = require("./createJWT.js").getPayload(token);
+
+    if (verified)
+    {
+      error = "Account already verified";
+    }
+    else
+    {
+      // Connect to database
+      let users = null;
+      try
+      {
+        users = client.db("MainDatabase").collection("Users");
+      }
+      catch (e)
+      {
+        error = e.message;
+      }
+
+      if (users != null)
+      {
+        const ObjectId = require('mongodb').ObjectId;
+        const user = await users.findOne({"_id": new ObjectId(userId)});
+
+        if (user)
+        {
+          console.log(user.Email);
+        }
+      }
+    }
+
+    res.status(200).json({error: error});
+  });
+
+
   // Process email verification link
   //
   app.get('/verify/:token', (req, res) => {
@@ -155,6 +201,25 @@ exports.setApp = function (app, client, bcrypt) {
       else
       {
         // Actually change the verification status in the database
+
+        const { userId, firstName, lastName, verified } = JWT.getPayload(token);
+
+        // Connect to database
+        let users = null;
+        try
+        {
+          users = client.db("MainDatabase").collection("Users");
+        }
+        catch (e)
+        {
+          error = e.message;
+        }
+
+        if (users != null)
+        {
+
+        }
+
         res.status(200).send('Yay! Your account is now verified :)');
       }
     }

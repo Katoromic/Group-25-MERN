@@ -40,6 +40,11 @@ exports.isVerified = function (token) {
   return ud.payload.verified;
 }
 
+exports.getPayload = function (token) {
+
+  return jwt.decode(token, { complete: true }).payload;
+}
+
 exports.refresh = function (token) {
   var ud = jwt.decode(token, { complete: true });
 
