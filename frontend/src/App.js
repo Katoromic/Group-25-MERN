@@ -5,6 +5,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import LoginPage from './pages/LoginPage';
 import CardPage from './pages/CardPage';
+import LoginForm from './pages/LoginForm';
 
 function App() {
   return (
