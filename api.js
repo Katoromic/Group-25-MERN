@@ -4,6 +4,9 @@ require("bcrypt");
 
 exports.setApp = function (app, client, bcrypt) {
 
+  const JWT = require("./createJWT.js");
+  const ObjectId = require('mongodb').ObjectId;
+
   // Login
   //
   // incoming: login, password
@@ -46,7 +49,6 @@ exports.setApp = function (app, client, bcrypt) {
           // Create the token
           try
           {
-            const JWT = require("./createJWT.js");
             token = JWT.createToken(fn, ln, verified, id).accessToken;
           }
           catch (e)
@@ -112,7 +114,6 @@ exports.setApp = function (app, client, bcrypt) {
         // Create the token
         try
         {
-          const JWT = require("./createJWT.js");
           token = JWT.createToken(FirstName, LastName, false, newUser.insertedId).accessToken;
         } 
         catch (e)
@@ -145,7 +146,7 @@ exports.setApp = function (app, client, bcrypt) {
 
     let error = "";
 
-    const { userId, verified } = require("./createJWT.js").getPayload(token);
+    const { userId, verified } = JWT.getPayload(token);
 
     if (verified)
     {
@@ -166,12 +167,15 @@ exports.setApp = function (app, client, bcrypt) {
 
       if (users != null)
       {
-        const ObjectId = require('mongodb').ObjectId;
-        const user = await users.findOne({"_id": new ObjectId(userId)});
+        const user = await users.findOne({"_id": ObjectId.createFromHexString(userId)});
 
         if (user)
         {
           console.log(user.Email);
+        }
+        else
+        {
+          error = "User not found";
         }
       }
     }
@@ -188,39 +192,35 @@ exports.setApp = function (app, client, bcrypt) {
 
     try
     {
-      const JWT = require("./createJWT.js");
-
       if (JWT.isExpired(token))
       {
-        res.status(200).send('The verification link has expired :(');
+        res.status(200).send('The verification link has expired ):');
       }
       else if (JWT.isVerified(token))
       {
-        res.status(200).send('This account is already verified :(');
+        res.status(200).send('This account is already verified |:');
       }
       else
       {
         // Actually change the verification status in the database
 
-        const { userId, firstName, lastName, verified } = JWT.getPayload(token);
+        const { userId } = JWT.getPayload(token);
 
         // Connect to database
         let users = null;
-        try
-        {
-          users = client.db("MainDatabase").collection("Users");
-        }
-        catch (e)
-        {
-          error = e.message;
-        }
-
+        
+        users = client.db("MainDatabase").collection("Users");
+        
         if (users != null)
         {
+          users.updateOne({"_id": ObjectId.createFromHexString(userId)}, {$set: {Verified: true}});
 
+          res.status(200).send('Yay! Your account is now verified (:');
         }
-
-        res.status(200).send('Yay! Your account is now verified :)');
+        else
+        {
+          res.status(500).send("There was an error connecting to our database. Please try again later... );");
+        }
       }
     }
     catch (e)

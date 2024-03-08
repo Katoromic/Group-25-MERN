@@ -16,7 +16,6 @@ const PORT = process.env.PORT || 5000;
 app.set("port", process.env.PORT || 5000);
 app.use(bodyParser.json());
 
-var cardList = [];
 
 var api = require("./api.js");
 api.setApp(app, client, bcrypt); // setup express app, mondoDB Client, and bcrypt
