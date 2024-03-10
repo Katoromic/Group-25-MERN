@@ -15,9 +15,10 @@
 }
 
 @font-face {
-    font-family: 'Bebas';
-    src: url(../fonts/BebasNeue-Regular.ttf) format('truetype');
+    font-family: 'LexendExa';
+    src: url(../fonts/LexendExa-VariableFont_wght.ttf) format('truetype');
 }
+
 
 * {
     margin: 0;
@@ -26,7 +27,7 @@
 }
 
 body {
-    font-family: 'Bebas', sans-serif;
+    font-family: 'LexendExa', sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     display: flex;
@@ -50,7 +51,7 @@ body {
 }
 
 .wrapper h1 {
-    font-family: 'Bebas';
+    font-family: 'LexendExa';
     letter-spacing: 3px;
     font-size: 40px;
     text-align: center;
