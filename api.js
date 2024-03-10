@@ -10,8 +10,8 @@ exports.setApp = function (app, client) {
 
   // Login
   //
-  // incoming: login, password
-  // outgoing: token, error
+  // Incoming: login, password
+  // Outgoing: token, error
   //
   app.post("/api/login", async (req, res, next) => {
 
@@ -19,21 +19,12 @@ exports.setApp = function (app, client) {
 
     let token = null;
     let error = "";
+    let status = 200;
 
-
-    // Connect to database
-    let users = null;
     try
     {
-      users = client.db("MainDatabase").collection("Users");
-    }
-    catch (e)
-    {
-      error = e.message;
-    }
+      let users = client.db("MainDatabase").collection("Users");
 
-    if (users != null)
-    {
       const result = await users.findOne({ Username: login });
       
       if (result != null)
@@ -42,35 +33,32 @@ exports.setApp = function (app, client) {
 
         if (auth)
         {
-          let id = result._id;
-          let fn = result.FirstName;
-          let ln = result.LastName;
-          let verified = result.Verified;
+          let { _id, FirstName, LastName, Verified } = result;
           
           // Create the token
-          try
-          {
-            token = JWT.createToken(fn, ln, verified, id).accessToken;
-          }
-          catch (e)
-          {
-            error = e.message;
-          }
+          token = JWT.createToken(FirstName, LastName, Verified, _id).accessToken;
         }
         else
         {
           error = "Login/Password incorrect";
+          status = 400;
         }
       }
       else
       {
         error = "Login/Password incorrect";
+        status = 400;
       }
+    }
+    catch (e)
+    {
+      error = e.message;
+      status = 500;
     }
 
     let ret = { token: token, error: error };
     
-    res.status(200).json(ret);
+    res.status(status).json(ret);
   });
 
   // Signup
