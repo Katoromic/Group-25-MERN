@@ -72,55 +72,50 @@ exports.setApp = function (app, client) {
 
     let token = null;
     let error = "";
+    let status = 200;
 
-    // Connect to database
-    let users = null;
-    try
+    if (Username)
     {
-      users = client.db("MainDatabase").collection("Users");
-    }
-    catch (e)
-    {
-      error = e.message;
-    }
-
-    if (users != null)
-    {
-      // Check if Username is available
-
-      const existingUser = await users.findOne({ Username: Username });
-      
-      if (existingUser == null)
+      try
       {
-        // Hash the password before storing it
-        const salt = await bcrypt.genSalt();
-        const hashedPassword = await bcrypt.hash(Password, salt);
+        let users = client.db("MainDatabase").collection("Users");
 
-        // Add user to database
-
-        const newUser = await users.insertOne({ FirstName: FirstName, LastName: LastName, Email: Email, Username: Username, Password: hashedPassword, Verified: false });
-
-        // Create the token
-        try
+        // Check if Username is available
+        const existingUser = await users.findOne({ Username: Username });
+        
+        if (existingUser == null)
         {
+          // Hash the password before storing it
+          const salt = await bcrypt.genSalt();
+          const hashedPassword = await bcrypt.hash(Password, salt);
+
+          // Add user to database
+          const newUser = await users.insertOne({ FirstName: FirstName, LastName: LastName, Email: Email, Username: Username, Password: hashedPassword, Verified: false });
+
+          // Create the token
           token = JWT.createToken(FirstName, LastName, false, newUser.insertedId).accessToken;
-        } 
-        catch (e)
+        }
+        else
         {
-          error = e.message;
+          error = "Username already exists";
+          status = 400;
         }
       }
-      else
+      catch (e)
       {
-        error = "Username already exists";
+        error = e.message;
+        status = 500;
       }
     }
-
-    // Return results
+    else
+    {
+      error = "Username field missing";
+      status = 400;
+    }
 
     let ret = { token: token, error: error };
     
-    res.status(200).json(ret);
+    res.status(status).json(ret);
   });
 
 
