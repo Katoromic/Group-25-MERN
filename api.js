@@ -1,11 +1,12 @@
 require("express");
 require("mongodb");
-require("bcrypt");
 
-exports.setApp = function (app, client, bcrypt) {
+
+exports.setApp = function (app, client) {
 
   const JWT = require("./createJWT.js");
   const ObjectId = require('mongodb').ObjectId;
+  const bcrypt = require("bcrypt");
 
   // Login
   //
