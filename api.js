@@ -1,43 +1,17 @@
 require("express");
 require("mongodb");
-require("bcrypt");
 
-exports.setApp = function (app, client, bcrypt) {
-  app.post("/api/addcard", async (req, res, next) => {
-    // incoming: userId, color
-    // outgoing: error
-    const { userId, card, jwtToken } = req.body;
-    try {
-      if (token.isExpired(jwtToken)) {
-        var r = { error: "The JWT is no longer valid", jwtToken: "" };
-        res.status(200).json(r);
-        return;
-      }
-    } catch (e) {
-      console.log(e.message);
-    }
-    const newCard = { Card: card, UserId: userId };
-    var error = "";
-    try {
-      const db = client.db();
-      const result = db.collection("Cards").insertOne(newCard);
-    } catch (e) {
-      error = e.toString();
-    }
-    var refreshedToken = null;
-    try {
-      refreshedToken = token.refresh(jwtToken);
-    } catch (e) {
-      console.log(e.message);
-    }
-    var ret = { error: error, jwtToken: refreshedToken };
-    res.status(200).json(ret);
-  });
+
+exports.setApp = function (app, client) {
+
+  const JWT = require("./createJWT.js");
+  const ObjectId = require('mongodb').ObjectId;
+  const bcrypt = require("bcrypt");
 
   // Login
   //
-  // incoming: login, password
-  // outgoing: token, error
+  // Incoming: login, password
+  // Outgoing: token, error
   //
   app.post("/api/login", async (req, res, next) => {
 
@@ -45,21 +19,12 @@ exports.setApp = function (app, client, bcrypt) {
 
     let token = null;
     let error = "";
+    let status = 200;
 
-
-    // Connect to database
-    let users = null;
     try
     {
-      users = client.db("MainDatabase").collection("Users");
-    }
-    catch (e)
-    {
-      error = e.message;
-    }
+      let users = client.db("MainDatabase").collection("Users");
 
-    if (users != null)
-    {
       const result = await users.findOne({ Username: login });
       
       if (result != null)
@@ -68,36 +33,32 @@ exports.setApp = function (app, client, bcrypt) {
 
         if (auth)
         {
-          let id = result._id;
-          let fn = result.FirstName;
-          let ln = result.LastName;
-          let verified = result.Verified;
+          let { _id, FirstName, LastName, Verified } = result;
           
           // Create the token
-          try
-          {
-            const JWT = require("./createJWT.js");
-            token = JWT.createToken(fn, ln, verified, id).accessToken;
-          }
-          catch (e)
-          {
-            error = e.message;
-          }
+          token = JWT.createToken(FirstName, LastName, Verified, _id).accessToken;
         }
         else
         {
           error = "Login/Password incorrect";
+          status = 400;
         }
       }
       else
       {
         error = "Login/Password incorrect";
+        status = 400;
       }
+    }
+    catch (e)
+    {
+      error = e.message;
+      status = 500;
     }
 
     let ret = { token: token, error: error };
     
-    res.status(200).json(ret);
+    res.status(status).json(ret);
   });
 
   // Signup
@@ -111,89 +72,144 @@ exports.setApp = function (app, client, bcrypt) {
 
     let token = null;
     let error = "";
+    let status = 200;
 
-    // Connect to database
-    let users = null;
-    try
+    if (Username)
     {
-      users = client.db("MainDatabase").collection("Users");
-    }
-    catch (e)
-    {
-      error = e.message;
-    }
-
-    if (users != null)
-    {
-      // Check if Username is available
-
-      const existingUser = await users.findOne({ Username: Username });
-      
-      if (existingUser == null)
+      try
       {
-        // Hash the password before storing it
-        const salt = await bcrypt.genSalt();
-        const hashedPassword = await bcrypt.hash(Password, salt);
+        let users = client.db("MainDatabase").collection("Users");
 
-        // Add user to database
-
-        const newUser = await users.insertOne({ FirstName: FirstName, LastName: LastName, Email: Email, Username: Username, Password: hashedPassword, Verified: false });
-
-        // Create the token
-        try
+        // Check if Username is available
+        const existingUser = await users.findOne({ Username: Username });
+        
+        if (existingUser == null)
         {
-          const JWT = require("./createJWT.js");
+          // Hash the password before storing it
+          const salt = await bcrypt.genSalt();
+          const hashedPassword = await bcrypt.hash(Password, salt);
+
+          // Add user to database
+          const newUser = await users.insertOne({ FirstName: FirstName, LastName: LastName, Email: Email, Username: Username, Password: hashedPassword, Verified: false });
+
+          // Create the token
           token = JWT.createToken(FirstName, LastName, false, newUser.insertedId).accessToken;
-        } 
-        catch (e)
+        }
+        else
         {
-          error = e.message;
+          error = "Username already exists";
+          status = 400;
         }
       }
-      else
+      catch (e)
       {
-        error = "Username already exists";
+        error = e.message;
+        status = 500;
       }
     }
-
-    // Return results
+    else
+    {
+      error = "Username field missing";
+      status = 400;
+    }
 
     let ret = { token: token, error: error };
     
-    res.status(200).json(ret);
+    res.status(status).json(ret);
   });
 
-  app.post("/api/searchcards", async (req, res, next) => {
-    // incoming: userId, search
-    // outgoing: results[], error
-    var error = "";
-    const { userId, search, jwtToken } = req.body;
-    try {
-      if (token.isExpired(jwtToken)) {
-        var r = { error: "The JWT is no longer valid", jwtToken: "" };
-        res.status(200).json(r);
-        return;
+
+  // Send Verification Link
+  //
+  // Incoming: token
+  // Outgoing: error
+  //
+  app.post('/api/sendVerificationLink', async (req, res, next) => {
+
+    const { token } = req.body;
+
+    let error = "";
+
+    const { userId, verified } = JWT.getPayload(token);
+
+    if (verified)
+    {
+      error = "Account already verified";
+    }
+    else
+    {
+      // Connect to database
+      let users = null;
+      try
+      {
+        users = client.db("MainDatabase").collection("Users");
       }
-    } catch (e) {
-      console.log(e.message);
+      catch (e)
+      {
+        error = e.message;
+      }
+
+      if (users != null)
+      {
+        const user = await users.findOne({"_id": ObjectId.createFromHexString(userId)});
+
+        if (user)
+        {
+          console.log(user.Email);
+        }
+        else
+        {
+          error = "User not found";
+        }
+      }
     }
-    var _search = search.trim();
-    const db = client.db();
-    const results = await db
-      .collection("Cards")
-      .find({ Card: { $regex: _search + ".*", $options: "i" } })
-      .toArray();
-    var _ret = [];
-    for (var i = 0; i < results.length; i++) {
-      _ret.push(results[i].Card);
+
+    res.status(200).json({error: error});
+  });
+
+
+  // Process email verification link
+  //
+  app.get('/verify/:token', (req, res) => {
+
+    const { token } = req.params;
+
+    try
+    {
+      if (JWT.isExpired(token))
+      {
+        res.status(200).send('The verification link has expired ):');
+      }
+      else if (JWT.isVerified(token))
+      {
+        res.status(200).send('This account is already verified |:');
+      }
+      else
+      {
+        // Actually change the verification status in the database
+
+        const { userId } = JWT.getPayload(token);
+
+        // Connect to database
+        let users = null;
+        
+        users = client.db("MainDatabase").collection("Users");
+        
+        if (users != null)
+        {
+          users.updateOne({"_id": ObjectId.createFromHexString(userId)}, {$set: {Verified: true}});
+
+          res.status(200).send('Yay! Your account is now verified (:');
+        }
+        else
+        {
+          res.status(500).send("There was an error connecting to our database. Please try again later... );");
+        }
+      }
     }
-    var refreshedToken = null;
-    try {
-      refreshedToken = token.refresh(jwtToken);
-    } catch (e) {
-      console.log(e.message);
+    catch (e)
+    {
+      res.status(500).send(e.message);
     }
-    var ret = { results: _ret, error: error, jwtToken: refreshedToken };
-    res.status(200).json(ret);
   });
 };
