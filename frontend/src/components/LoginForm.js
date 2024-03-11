@@ -18,7 +18,7 @@ var bp = require("./Path.js");
     event.preventDefault();
     console.log(loginName);
     console.log(loginPassword);
-    var obj = { login: loginName.value, password: loginPassword.value };
+    var obj = { login: loginName, password: loginPassword };
     var js = JSON.stringify(obj);
     var config = {
       method: "post",
@@ -34,7 +34,7 @@ var bp = require("./Path.js");
         if (res.error) {
           setMessage("User/Password combination incorrect");
         } else {
-          storage.storeToken(res);
+          storage.storeToken(res.token);
           var uddecoded = decode(storage.retrieveToken(), { complete: true });
 
           try {
