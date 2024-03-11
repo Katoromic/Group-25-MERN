@@ -1,0 +1,19 @@
+@font-face {
+    font-family: 'LexendExa';
+    src: url(../fonts/LexendExa-VariableFont_wght.ttf) format('truetype');
+}
+
+#GetStartedButtonElement {
+    background-color: red;
+    color: white;
+    border-color: red;
+    border-radius: 1%;
+    margin-right: 16%;
+    margin-top: 45px;
+    margin-bottom: 15px;
+    font-size: 21px;
+    font-family: 'LexendExa';
+    width: 400px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+}

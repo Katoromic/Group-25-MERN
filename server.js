@@ -3,7 +3,6 @@ const bodyParser = require("body-parser");
 const path = require("path");
 const app = express();
 const cors = require("cors");
-const bcrypt = require("bcrypt");
 
 require("dotenv").config();
 const url = process.env.MONGODB_URI;
@@ -16,10 +15,9 @@ const PORT = process.env.PORT || 5000;
 app.set("port", process.env.PORT || 5000);
 app.use(bodyParser.json());
 
-var cardList = [];
 
 var api = require("./api.js");
-api.setApp(app, client, bcrypt); // setup express app, mondoDB Client, and bcrypt
+api.setApp(app, client); // setup express app, mondoDB Client
 ///////////////////////////////////////////////////
 // For Heroku deployment
 

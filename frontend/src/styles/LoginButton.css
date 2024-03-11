@@ -1,0 +1,18 @@
+@font-face {
+    font-family: 'LexendExa';
+    src: url(../fonts/LexendExa-VariableFont_wght.ttf) format('truetype');
+}
+
+#LoginButtonElement {
+    background-color: white;
+    color: red;
+    border-color: red;
+    border-radius: 1%;
+    margin-right: 16%;
+    /* margin-top: -50%; */
+    font-size: 19px;
+    font-family: 'LexendExa';
+    width: 400px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+}

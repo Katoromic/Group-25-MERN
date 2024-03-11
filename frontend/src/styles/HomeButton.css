@@ -1,0 +1,12 @@
+@font-face {
+    font-family: 'LexendExa';
+    src: url(../fonts/LexendExa-VariableFont_wght.ttf) format('truetype');
+}
+
+#HomeButton {
+    font-family: 'LexendExa';
+    font-size: 24px;
+    margin-right: 60px;
+    text-decoration: none; 
+    color: black; 
+}

@@ -1,0 +1,27 @@
+@font-face {
+    font-family: 'GothicA1';
+    src: url(../fonts/GothicA1-Black.ttf) format('truetype');
+}
+
+#SyntaxTitleElement {
+    font-family: 'GothicA1';
+    color: black;
+    font-size: 120px;
+    margin-top: 165px;
+    margin-right: 5%;
+    letter-spacing: 25px;
+}
+
+#SyntaxSubTitleElement {
+    font-family: 'GothicA1';
+    color: black;
+    font-size: 50px;
+    margin-right: 5%;
+    letter-spacing: 25px;
+}
+
+#ShurikenImage {
+    width: 1em;
+    height: auto;
+    margin-bottom: 3%;
+}
