@@ -124,6 +124,8 @@ exports.setApp = function (app, client) {
   // Incoming: token
   // Outgoing: error
   //
+
+  const sendVerificationEmail = require('./authenticationHandler');
   app.post('/api/sendVerificationLink', async (req, res, next) => {
 
     const { token } = req.body;
@@ -156,6 +158,7 @@ exports.setApp = function (app, client) {
         if (user)
         {
           console.log(user.Email);
+          sendVerificationEmail(user);
         }
         else
         {
