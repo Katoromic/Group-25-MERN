@@ -65,11 +65,17 @@ exports.setApp = function (app, client) {
 
     let token = null;
     let error = "";
+    let progressArray = [
+      { CurrentQuestion: 0, NumCorrect: 0 },
+      { CurrentQuestion: 0, NumCorrect: 0 },
+      { CurrentQuestion: 0, NumCorrect: 0 },
+    ];
     let status = 200;
 
     if (Username) {
       try {
         let users = client.db("MainDatabase").collection("Users");
+        let userCourses = client.db("MainDatabase").collection("UserCourses");
 
         // Check if Username is available
         const existingUser = await users.findOne({ Username: Username });
@@ -91,6 +97,18 @@ exports.setApp = function (app, client) {
             Password: hashedPassword,
             Verified: false,
           });
+
+          const userCoursesDocuments = courseArray.map((courseId) => ({
+            CourseID: courseId.trim(),
+            UserID: newUser.insertedId.toString(),
+            DateLastWorked: new Date(),
+            TimeSpent: 0,
+            Progress: progressArray,
+          }));
+
+          if (userCoursesDocuments.length > 0) {
+            await userCourses.insertMany(userCoursesDocuments);
+          }
 
           // Create the token
           token = JWT.createToken(
