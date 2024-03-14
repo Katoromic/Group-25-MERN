@@ -13,23 +13,20 @@ const emailSender = nodemailer.createTransport({
     }
 });
 
-const token = jwt.sign({
-    data: ''
-}, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '10m' }
-);
-function createMailOptions(toEmail) {
+function createMailOptions(toEmail, token) {
     return {
         from: "senseijake24@gmail.com",
         to: toEmail,
         subject: 'Verify Your Email Address',
         html: `Hello! You recently signed up for an account with our website. Please follow the link below to verify your email
-    <a href="http://localhost:5005/verify/${token}">http://localhost:5005/verify/${token}</a>`
+        <a href="http://localhost:5005/verify/${token}">http://localhost:5005/verify/${token}</a>`
     }
 }
 
 function sendVerificationEmail(user) {
     const toEmail = user.Email;
-    emailSender.sendMail(createMailOptions(toEmail), function (error, info) {
+    const token = createVerificationToken(userID);
+    emailSender.sendMail(createMailOptions(toEmail, token), function (error, info) {
         if (error) throw Error(error);
         console.log('Email Sent');
         console.log(info);
