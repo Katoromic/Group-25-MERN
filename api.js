@@ -36,7 +36,7 @@ exports.setApp = function (app, client) {
           let { _id, FirstName, LastName, Verified } = result;
           
           // Create the token
-          token = JWT.createToken(FirstName, LastName, Verified, _id).accessToken;
+          token = JWT.createAccessToken(FirstName, LastName, Verified, _id).accessToken;
         }
         else
         {
@@ -93,7 +93,7 @@ exports.setApp = function (app, client) {
           const newUser = await users.insertOne({ FirstName: FirstName, LastName: LastName, Email: Email, Username: Username, Password: hashedPassword, Verified: false });
 
           // Create the token
-          token = JWT.createToken(FirstName, LastName, false, newUser.insertedId).accessToken;
+          token = JWT.createAccessToken(FirstName, LastName, false, newUser.insertedId).accessToken;
         }
         else
         {
@@ -179,13 +179,9 @@ exports.setApp = function (app, client) {
 
     try
     {
-      if (JWT.isExpired(token))
+      if (JWT.isValidAccessToken(token))
       {
-        res.status(200).send('The verification link has expired ):');
-      }
-      else if (JWT.isVerified(token))
-      {
-        res.status(200).send('This account is already verified |:');
+        res.status(400).send('The verification link has expired ):');
       }
       else
       {

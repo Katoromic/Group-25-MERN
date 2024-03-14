@@ -1,11 +1,20 @@
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
-exports.createToken = function (fn, ln, ver, id) {
-  return _createToken(fn, ln, ver, id);
+exports.createAccessToken = function (fn, ln, ver, id) {
+  return _createAccessToken(fn, ln, ver, id);
 };
 
-_createToken = function (fn, ln, ver, id) {
+exports.createVerificationToken = function (id) {
+
+  const user = { userId: id };
+
+  const verificationToken = jwt.sign(user, process.env.VERIFICATION_TOKEN_SECRET, { expiresIn: '20m' });
+
+  return verificationToken;
+};
+
+_createAccessToken = function (fn, ln, ver, id) {
   try {
     const user = { userId: id, firstName: fn, lastName: ln, verified: ver };
 
@@ -18,7 +27,8 @@ _createToken = function (fn, ln, ver, id) {
   return ret;
 };
 
-exports.isExpired = function (token) {
+
+exports.isValidAccessToken = function (token) {
   var isError = jwt.verify(
     token,
     process.env.ACCESS_TOKEN_SECRET,
@@ -33,12 +43,21 @@ exports.isExpired = function (token) {
   return isError;
 };
 
-exports.isVerified = function (token) {
-  
-  let ud = jwt.decode(token, { complete: true });
+exports.isValidVerificationToken = function (token) {
+  var isError = jwt.verify(
+    token,
+    process.env.VERIFICATION_TOKEN_SECRET,
+    (err, verifiedJWT) => {
+      if (err) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+  );
+  return isError;
+};
 
-  return ud.payload.verified;
-}
 
 exports.getPayload = function (token) {
 
