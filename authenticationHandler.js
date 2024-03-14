@@ -25,7 +25,7 @@ function createMailOptions(toEmail, token) {
 
 function sendVerificationEmail(user) {
     const toEmail = user.Email;
-    const token = createVerificationToken(userID);
+    const token = createVerificationToken(user.Id);
     emailSender.sendMail(createMailOptions(toEmail, token), function (error, info) {
         if (error) throw Error(error);
         console.log('Email Sent');
