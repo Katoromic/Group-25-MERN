@@ -29,10 +29,11 @@ _createAccessToken = function (fn, ln, ver, id) {
 
 
 exports.isValidAccessToken = function (token) {
-  var isError = jwt.verify(
+  var isValid = jwt.verify(
     token,
     process.env.ACCESS_TOKEN_SECRET,
     (err, verifiedJWT) => {
+      console.log(err);
       if (err) {
         return false;
       } else {
@@ -40,11 +41,11 @@ exports.isValidAccessToken = function (token) {
       }
     }
   );
-  return !isError;
+  return isValid;
 };
 
 exports.isValidVerificationToken = function (token) {
-  var isError = jwt.verify(
+  var isValid = jwt.verify(
     token,
     process.env.VERIFICATION_TOKEN_SECRET,
     (err, verifiedJWT) => {
@@ -55,7 +56,7 @@ exports.isValidVerificationToken = function (token) {
       }
     }
   );
-  return !isError;
+  return isValid;
 };
 
 
