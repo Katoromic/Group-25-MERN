@@ -49,13 +49,13 @@ exports.isValidVerificationToken = function (token) {
     process.env.VERIFICATION_TOKEN_SECRET,
     (err, verifiedJWT) => {
       if (err) {
-        return true;
-      } else {
         return false;
+      } else {
+        return true;
       }
     }
   );
-  return isError;
+  return !isError;
 };
 
 

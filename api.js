@@ -179,7 +179,7 @@ exports.setApp = function (app, client) {
 
     try
     {
-      if (JWT.isValidAccessToken(token))
+      if (!JWT.isValidAccessToken(token))
       {
         res.status(400).send('The verification link has expired ):');
       }
