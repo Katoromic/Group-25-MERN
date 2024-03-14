@@ -34,13 +34,13 @@ exports.isValidAccessToken = function (token) {
     process.env.ACCESS_TOKEN_SECRET,
     (err, verifiedJWT) => {
       if (err) {
-        return true;
-      } else {
         return false;
+      } else {
+        return true;
       }
     }
   );
-  return isError;
+  return !isError;
 };
 
 exports.isValidVerificationToken = function (token) {

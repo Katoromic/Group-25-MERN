@@ -131,43 +131,68 @@ exports.setApp = function (app, client) {
     const { token } = req.body;
 
     let error = "";
+    let status = 200;
 
-    const { userId, verified } = JWT.getPayload(token);
-
-    if (verified)
+    try
     {
-      error = "Account already verified";
-    }
-    else
-    {
-      // Connect to database
-      let users = null;
-      try
+      if (JWT.isValidAccessToken(token))
       {
-        users = client.db("MainDatabase").collection("Users");
-      }
-      catch (e)
-      {
-        error = e.message;
-      }
+        const { userId, verified } = JWT.getPayload(token);
 
-      if (users != null)
-      {
-        const user = await users.findOne({"_id": ObjectId.createFromHexString(userId)});
-
-        if (user)
+        if (verified)
         {
-          console.log(user.Email);
-          sendVerificationEmail(user);
+          error = "Account already verified";
+          status = 400;
         }
         else
         {
-          error = "User not found";
+          // Connect to database
+          
+          let users = client.db("MainDatabase").collection("Users");
+
+          if (users != null)
+          {
+            const user = await users.findOne({"_id": ObjectId.createFromHexString(userId)});
+
+            if (user)
+            {
+              if (!(user.Verified))
+              {
+                console.log(user.Email);
+                sendVerificationEmail(user);
+              }
+              else
+              {
+                error = "Account already verified";
+                status = 400;
+              }
+            }
+            else
+            {
+              error = "User not found";
+              status = 400;
+            }
+          }
+          else
+          {
+            error = "There was an error connecting to our database. Please try again later... );";
+            status = 500;
+          }
         }
       }
+      else
+      {
+        error = "Access token is not valid";
+        status = 400;
+      }
+    }
+    catch (e)
+    {
+      error = e.message;
+      status = 500;
     }
 
-    res.status(200).json({error: error});
+    res.status(status).json({error: error});
   });
 
 
@@ -179,7 +204,7 @@ exports.setApp = function (app, client) {
 
     try
     {
-      if (!JWT.isValidAccessToken(token))
+      if (!JWT.isValidVerificationToken(token))
       {
         res.status(400).send('The verification link has expired ):');
       }
