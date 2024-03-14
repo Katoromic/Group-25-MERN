@@ -29,7 +29,7 @@ function createMailOptions(toEmail, token) {
 
 function sendVerificationEmail(user) {
     const toEmail = user.Email;
-    const token = jwt.createVerificationToken(user.Id);
+    const token = jwt.createVerificationToken(user._id);
     emailSender.sendMail(createMailOptions(toEmail, token), function (error, info) {
         if (error) throw Error(error);
         console.log('Email Sent');
