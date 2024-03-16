@@ -33,7 +33,6 @@ exports.isValidAccessToken = function (token) {
     token,
     process.env.ACCESS_TOKEN_SECRET,
     (err, verifiedJWT) => {
-      console.log(err);
       if (err) {
         return false;
       } else {
