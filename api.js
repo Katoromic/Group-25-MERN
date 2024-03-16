@@ -7,6 +7,7 @@ exports.setApp = function (app, client) {
   const JWT = require("./createJWT.js");
   const ObjectId = require('mongodb').ObjectId;
   const bcrypt = require("bcrypt");
+  const sendVerificationEmail = require('./authenticationHandler');
 
   // Login
   //
@@ -124,8 +125,6 @@ exports.setApp = function (app, client) {
   // Incoming: token
   // Outgoing: error
   //
-
-  const sendVerificationEmail = require('./authenticationHandler');
   app.post('/api/sendVerificationLink', async (req, res, next) => {
 
     const { token } = req.body;
@@ -158,7 +157,6 @@ exports.setApp = function (app, client) {
             {
               if (!(user.Verified))
               {
-                console.log(user.Email);
                 sendVerificationEmail(user);
               }
               else
@@ -175,7 +173,7 @@ exports.setApp = function (app, client) {
           }
           else
           {
-            error = "There was an error connecting to our database. Please try again later... );";
+            error = "Unable to connect to database";
             status = 500;
           }
         }
@@ -198,42 +196,56 @@ exports.setApp = function (app, client) {
 
   // Process email verification link
   //
-  app.get('/verify/:token', (req, res) => {
+  app.get('/verify/:token', async (req, res) => {
 
     const { token } = req.params;
+
+    let status;
+    let message;
 
     try
     {
       if (!JWT.isValidVerificationToken(token))
       {
-        res.status(400).send('The verification link has expired ):');
+        status = 400;
+        message = 'The verification link has expired ):';
       }
       else
       {
-        // Actually change the verification status in the database
-
         const { userId } = JWT.getPayload(token);
 
-        // Connect to database
-        let users = null;
-        
-        users = client.db("MainDatabase").collection("Users");
+        let users = client.db("MainDatabase").collection("Users");
         
         if (users != null)
         {
-          users.updateOne({"_id": ObjectId.createFromHexString(userId)}, {$set: {Verified: true}});
+          const user = await users.findOne({"_id": ObjectId.createFromHexString(userId)});
 
-          res.status(200).send('Yay! Your account is now verified (:');
+          if (user.Verified)
+          {
+            status = 400;
+            message = 'This account is already verified |:';
+          }
+          else
+          {
+            users.updateOne({"_id": ObjectId.createFromHexString(userId)}, {$set: {Verified: true}});
+
+            status = 200;
+            message = 'Yay! Your account is now verified (:';
+          }
         }
         else
         {
-          res.status(500).send("There was an error connecting to our database. Please try again later... );");
+          status = 500;
+          message = 'There was an error connecting to our database. Please try again later... );';
         }
       }
     }
     catch (e)
     {
-      res.status(500).send(e.message);
+      status = 500;
+      message = e.message;
     }
+
+    res.status(status).send(message);
   });
 };
