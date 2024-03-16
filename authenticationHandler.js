@@ -10,8 +10,8 @@ const jwt = require('./createJWT.js');
 const emailSender = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-        user: "senseijake24@gmail.com",
-        pass: "khje resk vqfn zrze"
+        user: process.env.EMAIL_ADDRESS,
+        pass: process.env.EMAIL_PASSWORD
     }
 });
 
@@ -19,7 +19,7 @@ function createMailOptions(toEmail, token) {
     const PORT = process.env.PORT || 5015;
     const HOST = process.env.HOST || 'localhost';
     return {
-        from: "senseijake24@gmail.com",
+        from: process.env.EMAIL_ADDRESS,
         to: toEmail,
         subject: 'Verify Your Email Address',
         html: `Hello! You recently signed up for an account with our website. Please follow the link below to verify your email
