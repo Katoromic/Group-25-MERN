@@ -10,7 +10,7 @@ const MongoClient = require("mongodb").MongoClient;
 const client = new MongoClient(url);
 client.connect(console.log("mongodb connected"));
 
-app.use(cors({ origin: "http://localhost:3000" }));
+app.use(cors({ origin: ["http://localhost:3000", "http://localhost:8081"] }));
 const PORT = process.env.PORT || 5000;
 app.set("port", process.env.PORT || 5000);
 app.use(bodyParser.json());
