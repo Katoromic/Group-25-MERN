@@ -3,7 +3,8 @@ import '../styles/NavBar.css'
 import HomeButton from './HomeButton';
 import GitHubButton from './GitHubButton';
 import AboutUsButton from './AboutUsButton';
-
+import { FaUserAlt } from "react-icons/fa";
+import ShurikenX from '../images/FancyX.png'
 
 function NavBar() {
     return (
@@ -11,9 +12,17 @@ function NavBar() {
             <nav className='navbar navbar-default bg-customNavBar'>
                 <div className='container-fluid'>
                     <div className='d-flex align-items-center justify-content-end w-100'>
-                        <HomeButton />
-                        <GitHubButton />
-                        <AboutUsButton />
+                        <img className= 'shuriken' src={ShurikenX}/>
+                        <div class= 'home-underline-animation'>
+                             <HomeButton />
+                        </div>
+                        <div class= 'github-underline-animation'>
+                            <GitHubButton />
+                        </div>
+                        <div class= 'aboutus-underline-animation'>
+                            <AboutUsButton />
+                        </div>
+                        <FaUserAlt className='profileIcon' />
                     </div>
                 </div>
             </nav>
