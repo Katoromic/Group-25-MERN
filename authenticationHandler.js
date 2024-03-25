@@ -1,4 +1,4 @@
-// Vefify
+// Verify Email
 
 require('dotenv').config();
 module.exports = sendVerificationEmail;
@@ -15,15 +15,17 @@ const emailSender = nodemailer.createTransport({
     }
 });
 
+
+const Path = require('./frontend/src/components/Path');
+
 function createMailOptions(toEmail, token) {
-    const PORT = process.env.PORT || 5015;
-    const HOST = process.env.HOST || 'localhost';
+    const path = Path.buildPath(`verify/${token}`);
     return {
         from: process.env.EMAIL_ADDRESS,
         to: toEmail,
         subject: 'Verify Your Email Address',
         html: `Hello! You recently signed up for an account with our website. Please follow the link below to verify your email
-        <a href="http://${HOST}:${PORT}/verify/${token}">http://${HOST}:${PORT}/verify/${token}</a>`
+        <a href="${path}">${path}</a>`
     }
 }
 
@@ -33,7 +35,7 @@ function sendVerificationEmail(user) {
     emailSender.sendMail(createMailOptions(toEmail, token), function (error, info) {
         if (error) throw Error(error);
         console.log('Email Sent');
-        console.log(info);
+        //console.log(info);
     });
 }
 

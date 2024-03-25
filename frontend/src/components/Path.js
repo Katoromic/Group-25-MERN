@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const app_name = "syntax-sensei-a349ca4c0ed0";
 
 exports.buildPath = function (route) {
@@ -7,6 +9,9 @@ exports.buildPath = function (route) {
   }
   else
   {
-    return `http://localhost:5000/${route}`;
+    const PORT = (process.env.PORT || 5000);
+    const HOST = (process.env.HOST || 'localhost');
+
+    return `http://${HOST}:${PORT}/${route}`;
   }
 }
