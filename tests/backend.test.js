@@ -95,7 +95,16 @@ describe('Login', () => {
 
         expect(response.statusCode).toBe(400);
         expect(response.body.token).toBe(null);
-        expect(response.body.error.length).not.toBe(0);
+        expect(response.body.error).not.toBe("");
+    });
+
+    test('Undefined credentials', async() => {
+
+        const response = await superPost('/login', {});
+
+        expect(response.statusCode).toBe(400);
+        expect(response.body.token).toBe(null);
+        expect(response.body.error).not.toBe("");
     });
 
     test('Invalid credentials', async() => {
@@ -105,7 +114,7 @@ describe('Login', () => {
 
         expect(response.statusCode).toBe(400);
         expect(response.body.token).toBe(null);
-        expect(response.body.error.length).not.toBe(0);
+        expect(response.body.error).not.toBe("");
     });
 });
 
