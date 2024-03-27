@@ -44,6 +44,9 @@ app.use((req, res, next) => {
   next();
 });
 
-app.listen(PORT, () => {
+let listener = app.listen(PORT, () => {
   console.log("Server listening on port " + PORT);
 });
+
+exports.listener = listener;
+exports.mongo = client;
