@@ -15,10 +15,9 @@
 }
 
 @font-face {
-    font-family: 'LexendExa';
-    src: url(../fonts/LexendExa-VariableFont_wght.ttf) format('truetype');
+    font-family: 'Bebas';
+    src: url(../fonts/BebasNeue-Regular.ttf) format('opentype');
 }
-
 
 * {
     margin: 0;
@@ -27,14 +26,9 @@
 }
 
 body {
-    font-family: 'LexendExa', sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+    margin: 0;
     display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    background: white;
+    flex-direction: column;
 }
 
 .wrapper {
@@ -48,11 +42,13 @@ body {
     box-shadow: 0 0 10px lightgrey; 
     display: flex;
     justify-content: center;
+    align-items: center;
+    margin: 9.5% auto;
 }
 
 .wrapper h1 {
-    font-family: 'LexendExa';
-    letter-spacing: 3px;
+    font-family: 'Bebas';
+    letter-spacing: 7px;
     font-size: 40px;
     text-align: center;
 }
@@ -144,4 +140,12 @@ body {
 
 .register-link p a:hover {
     text-decoration: underline;
+}
+
+.navigationContainer {
+    width: 100%;
+    background-color: green;
+    margin-top: 0%;
+    padding-top: 0%;
+    position:relative;
 }
