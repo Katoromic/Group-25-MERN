@@ -57,10 +57,10 @@
 }
 
 .course:focus {
-    background-color: black;
+    background-color: #fa304c;
     color: white;
     width: 4%;
-    height: 59%;
+    height: 57%;
 }
 
 .course h1{
@@ -80,7 +80,7 @@
     border-radius: 5px;
     padding: 1px;
     margin: 10px;
-    width: 80%;
+    width: 60%;
     background-color: black;
     border-color: white;
     border-style: inset;
@@ -90,7 +90,7 @@
 .progressBar-inner{
     height: 15px;
     border-radius: 3px;
-    background-color: #4caf50;
+    background-color: #fa304c;
     display: flex;
     align-items: center;
     align-items: center;
