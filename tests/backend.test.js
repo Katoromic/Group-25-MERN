@@ -110,6 +110,67 @@ describe('Login', () => {
 });
 
 
+// Signup endpoint tests
+//
+describe('Signup', () => {
+
+    test('Blank username', async() => {
+
+        let blankUsername = {"FirstName": "Delete", "LastName": "if in database", "Email": "", "Username": "", "Password": "password"};
+
+        const response = await superPost('/signup', blankUsername);
+
+        expect(response.statusCode).toBe(400);
+        expect(response.body.token).toBe(null);
+        expect(response.body.error).not.toBe("");
+    });
+
+    test('Undefined username', async() => {
+
+        let undefinedUsername = {"FirstName": "Guest", "LastName": "User", "Email": "", "Password": ""};
+
+        const response = await superPost('/signup', undefinedUsername);
+
+        expect(response.statusCode).toBe(400);
+        expect(response.body.token).toBe(null);
+        expect(response.body.error).not.toBe("");
+    });
+
+    test('Existing username', async() => {
+
+        let existUsername = {"FirstName": "Guest", "LastName": "User", "Email": "", "Username": "guest", "Password": ""};
+
+        const response = await superPost('/signup', existUsername);
+
+        expect(response.statusCode).toBe(400);
+        expect(response.body.token).toBe(null);
+        expect(response.body.error).not.toBe("");
+    });
+
+    test('Unique username', async() => {
+
+        let newUsername = {"FirstName": "Delete", "LastName": "if in database", "Email": "", "Username": "_prltgnwkcedbsyertt", "Password": ""};
+
+        const response = await superPost('/signup', newUsername);
+
+        expect(response.statusCode).toBe(200);
+        expect(response.body.token).not.toBe(null);
+        expect(response.body.error).toBe("");
+
+        // Delete the new user so this test works more than once!
+        //
+        try
+        {
+            const users = server.mongo.db("MainDatabase").collection("Users");
+            await users.deleteOne({ Username: "_prltgnwkcedbsyertt" });
+        }
+        catch (e)
+        {
+            console.warn("Signup -> Unique username: Newly created user not removed.");
+        }
+    });
+});
+
 
 //
 // Wrapper functions for GET and POST
