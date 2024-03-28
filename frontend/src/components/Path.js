@@ -1,5 +1,3 @@
-require('dotenv').config();
-
 const app_name = "syntax-sensei-a349ca4c0ed0";
 
 exports.buildPath = function (route) {
