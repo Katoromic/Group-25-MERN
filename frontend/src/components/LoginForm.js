@@ -42,9 +42,18 @@ var bp = require("./Path.js");
             var userId = ud.userId;
             var firstName = ud.firstName;
             var lastName = ud.lastName;
-            var user = { firstName: firstName, lastName: lastName, id: userId };
+            var verified = ud.verified;
+            var user = { firstName: firstName, lastName: lastName, id: userId, verified: verified};
             localStorage.setItem("user_data", JSON.stringify(user));
-            window.location.href = "/landing";
+            if (!verified)
+            {
+              window.location.href = "/unverified";
+            }
+            else
+            {
+              window.location.href = "/landing";
+            }
+            
           } catch (e) {
             console.log(e.toString());
             return "";
