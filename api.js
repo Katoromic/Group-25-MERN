@@ -194,6 +194,45 @@ exports.setApp = function (app, client) {
   });
 
 
+  // Request Password Reset
+  //
+  // Incoming: username, email
+  // Outgoing: error
+  //
+  app.post('/api/requestPasswordReset', async (req, res, next) => {
+
+    const { username, email } = req.body;
+
+    let status = 200;
+    let error = "";
+
+    try
+    {
+      let Users = client.db("MainDatabase").collection("Users");
+
+      if (Users != null)
+      {
+        const user = await Users.findOne({"Username": username});
+
+        if (user)
+        {
+          if (user.Email === email)
+          {
+            // Send Email
+          }
+        }
+      }
+    }
+    catch (e)
+    {
+      status = 500;
+      error = e.message;
+    }
+
+    res.status(status).json({error: error});
+  });
+
+
   // Process email verification link
   //
   app.get('/verify/:token', async (req, res) => {
@@ -237,6 +276,58 @@ exports.setApp = function (app, client) {
         {
           status = 500;
           message = 'There was an error connecting to our database. Please try again later... );';
+        }
+      }
+    }
+    catch (e)
+    {
+      status = 500;
+      message = e.message;
+    }
+
+    res.status(status).send(message);
+  });
+
+
+  // Process password reset link
+  //
+  app.get('/reset/:token', async (req, res) => {
+
+    const { token } = req.params;
+
+    let status;
+    let message;
+
+    try
+    {
+      if (!JWT.isValidVerificationToken(token))
+      {
+        status = 400;
+        message = 'The password reset link has expired';
+      }
+      else
+      {
+        const { userId } = JWT.getPayload(token);
+
+        let Users = client.db("MainDatabase").collection("Users");
+
+        if (Users != null)
+        {
+          let randPassword = "This_needs_to_be_a_random_string";
+
+          // Hash the password before storing it
+          const salt = await bcrypt.genSalt();
+          const hashedPassword = await bcrypt.hash(randPassword, salt);
+
+          Users.updateOne({"_id": ObjectId.createFromHexString(userId)}, {$set: {Password: hashedPassword}});
+
+          status = 200;
+          message = `Password successfully reset\n\nNew password: ${randPassword}`;
+        }
+        else
+        {
+          status = 500;
+          message = 'There was an error connecting to our database. Please try again later...';
         }
       }
     }
