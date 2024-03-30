@@ -8,6 +8,7 @@ exports.setApp = function (app, client) {
   const ObjectId = require('mongodb').ObjectId;
   const bcrypt = require("bcrypt");
   const sendVerificationEmail = require('./authenticationHandler');
+  const randomstring = require('randomstring');
 
   // Login
   //
@@ -313,7 +314,7 @@ exports.setApp = function (app, client) {
 
         if (Users != null)
         {
-          let randPassword = "This_needs_to_be_a_random_string";
+          let randPassword = randomstring.generate(15);
 
           // Hash the password before storing it
           const salt = await bcrypt.genSalt();
