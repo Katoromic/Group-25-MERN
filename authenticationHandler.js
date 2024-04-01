@@ -50,7 +50,7 @@ function sendVerificationEmail(user) {
 function psEmail(toEmail, token) {
     const PORT = process.env.PORT || 5015;
     const HOST = process.env.HOST || 'localhost';
-    const path = Path.buildPath(`verify/${token}`);
+    const path = Path.buildPath(`reset/${token}`);
     return {
         from: "senseijake24@gmail.com",
         to: toEmail,

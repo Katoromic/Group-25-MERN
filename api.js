@@ -3,36 +3,36 @@ require("mongodb");
 
 
 exports.setApp = function (app, client) {
-
+  
   const JWT = require("./createJWT.js");
   const ObjectId = require('mongodb').ObjectId;
   const bcrypt = require("bcrypt");
   const { sendVerificationEmail, sendPassRec, sendPassConfirmation } = require('./authenticationHandler');
   const randomstring = require('randomstring');
-
+  
   // Login
   //
   // Incoming: login, password
   // Outgoing: token, error
   //
   app.post("/api/login", async (req, res, next) => {
-
+    
     const { login, password } = req.body;
-
+    
     let token = null;
     let error = "";
     let status = 200;
-
+    
     try
     {
       let users = client.db("MainDatabase").collection("Users");
-
+      
       const result = await users.findOne({ Username: login });
       
       if (result != null)
       {
         const auth = await bcrypt.compare(password, result.Password);
-
+        
         if (auth)
         {
           let { _id, FirstName, LastName, Verified } = result;
@@ -57,12 +57,12 @@ exports.setApp = function (app, client) {
       error = e.message;
       status = 500;
     }
-
+    
     let ret = { token: token, error: error };
     
     res.status(status).json(ret);
   });
-
+  
   // Signup
   //
   // Incoming: FirstName, LastName, Email, Username, Password
@@ -71,17 +71,17 @@ exports.setApp = function (app, client) {
   app.post("/api/signup", async (req, res, next) => {
     
     const { FirstName, LastName, Email, Username, Password } = req.body;
-
+    
     let token = null;
     let error = "";
     let status = 200;
-
+    
     if (Username)
     {
       try
       {
         let users = client.db("MainDatabase").collection("Users");
-
+        
         // Check if Username is available
         const existingUser = await users.findOne({ Username: Username });
         
@@ -90,10 +90,10 @@ exports.setApp = function (app, client) {
           // Hash the password before storing it
           const salt = await bcrypt.genSalt();
           const hashedPassword = await bcrypt.hash(Password, salt);
-
+          
           // Add user to database
           const newUser = await users.insertOne({ FirstName: FirstName, LastName: LastName, Email: Email, Username: Username, Password: hashedPassword, Verified: false });
-
+          
           // Create the token
           token = JWT.createAccessToken(FirstName, LastName, false, newUser.insertedId).accessToken;
         }
@@ -114,31 +114,31 @@ exports.setApp = function (app, client) {
       error = "Username field missing";
       status = 400;
     }
-
+    
     let ret = { token: token, error: error };
     
     res.status(status).json(ret);
   });
-
-
+  
+  
   // Send Verification Link
   //
   // Incoming: token
   // Outgoing: error
   //
   app.post('/api/sendVerificationLink', async (req, res, next) => {
-
+    
     const { token } = req.body;
-
+    
     let error = "";
     let status = 200;
-
+    
     try
     {
       if (JWT.isValidAccessToken(token))
       {
         const { userId, verified } = JWT.getPayload(token);
-
+        
         if (verified)
         {
           error = "Account already verified";
@@ -149,11 +149,11 @@ exports.setApp = function (app, client) {
           // Connect to database
           
           let users = client.db("MainDatabase").collection("Users");
-
+          
           if (users != null)
           {
             const user = await users.findOne({"_id": ObjectId.createFromHexString(userId)});
-
+            
             if (user)
             {
               if (!(user.Verified))
@@ -192,36 +192,38 @@ exports.setApp = function (app, client) {
       error = e.message;
       status = 500;
     }
-
+    
     res.status(status).json({error: error});
   });
-
-
+  
+  
   // Request Password Reset
   //
   // Incoming: username, email
   // Outgoing: error
   //
   app.post('/api/requestPasswordReset', async (req, res, next) => {
-
+    
     const { username, email } = req.body;
-
+    
     let status = 200;
     let error = "";
-
+    
     try
     {
       let Users = client.db("MainDatabase").collection("Users");
-
+      
       if (Users != null)
       {
         const user = await Users.findOne({"Username": username});
-
+        
         if (user)
         {
           if (user.Email === email)
           {
             // Send Email
+            sendPassRec(user);
+            
           }
         }
       }
@@ -231,20 +233,20 @@ exports.setApp = function (app, client) {
       status = 500;
       error = e.message;
     }
-
+    
     res.status(status).json({error: error});
   });
-
-
+  
+  
   // Process email verification link
   //
   app.get('/verify/:token', async (req, res) => {
-
+    
     const { token } = req.params;
-
+    
     let status;
     let message;
-
+    
     try
     {
       if (!JWT.isValidVerificationToken(token))
@@ -255,13 +257,13 @@ exports.setApp = function (app, client) {
       else
       {
         const { userId } = JWT.getPayload(token);
-
+        
         let users = client.db("MainDatabase").collection("Users");
         
         if (users != null)
         {
           const user = await users.findOne({"_id": ObjectId.createFromHexString(userId)});
-
+          
           if (user.Verified)
           {
             status = 400;
@@ -270,7 +272,7 @@ exports.setApp = function (app, client) {
           else
           {
             users.updateOne({"_id": ObjectId.createFromHexString(userId)}, {$set: {Verified: true}});
-
+            
             status = 200;
             message = 'Yay! Your account is now verified (:';
           }
@@ -287,20 +289,20 @@ exports.setApp = function (app, client) {
       status = 500;
       message = e.message;
     }
-
+    
     res.status(status).send(message);
   });
-
-
+  
+  
   // Process password reset link
   //
   app.get('/reset/:token', async (req, res) => {
-
+    
     const { token } = req.params;
-
+    
     let status;
     let message;
-
+    
     try
     {
       if (!JWT.isValidVerificationToken(token))
@@ -311,21 +313,23 @@ exports.setApp = function (app, client) {
       else
       {
         const { userId } = JWT.getPayload(token);
-
+        
         let Users = client.db("MainDatabase").collection("Users");
-
-        if (Users != null)
-        {
-          let randPassword = randomstring.generate(15);
-
-          // Hash the password before storing it
-          const salt = await bcrypt.genSalt();
-          const hashedPassword = await bcrypt.hash(randPassword, salt);
-
-          Users.updateOne({"_id": ObjectId.createFromHexString(userId)}, {$set: {Password: hashedPassword}});
-
-          status = 200;
-          message = `Password successfully reset\n\nNew password: ${randPassword}`;
+        
+        if (Users != null) {
+          let user = await Users.findOne({ "_id": ObjectId.createFromHexString(userId) });
+          if (user) {
+            let randPassword = randomstring.generate(15);
+            const salt = await bcrypt.genSalt();
+            const hashedPassword = await bcrypt.hash(randPassword, salt);
+            await Users.updateOne({ "_id": ObjectId.createFromHexString(userId) }, { $set: { Password: hashedPassword } });
+            status = 200;
+            message = `Password successfully reset\n\nNew password: ${randPassword}`;
+            sendPassConfirmation(user);
+          } else {
+            status = 404;
+            message = 'User not found';
+          }
         }
         else
         {
@@ -339,7 +343,7 @@ exports.setApp = function (app, client) {
       status = 500;
       message = e.message;
     }
-
+    
     res.status(status).send(message);
   });
 };
