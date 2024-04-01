@@ -7,7 +7,7 @@ exports.setApp = function (app, client) {
   const JWT = require("./createJWT.js");
   const ObjectId = require('mongodb').ObjectId;
   const bcrypt = require("bcrypt");
-  const sendVerificationEmail = require('./authenticationHandler');
+  const { sendVerificationEmail, sendPassRec, sendPassConfirmation } = require('./authenticationHandler');
   const randomstring = require('randomstring');
 
   // Login
@@ -159,6 +159,8 @@ exports.setApp = function (app, client) {
               if (!(user.Verified))
               {
                 sendVerificationEmail(user);
+                //sendPassRec(user);
+                //sendPassConfirmation(user);
               }
               else
               {
