@@ -249,6 +249,51 @@ describe('SendVerificationLink', () => {
     });
 });
 
+
+// Request Password Reset tests
+//
+describe('requestPasswordReset', () => {
+
+    test('Correct username & email', async() => {
+
+        let validReq = {username: 'guest', email: 'heather.leffler@ethereal.email'};
+
+        const response = await superPost('/requestPasswordReset', validReq);
+
+        expect(response.statusCode).toBe(200);
+        expect(response.body.error).toBe("");
+    });
+
+    test('Invalid username', async() => {
+
+        let invalidReq = {username: '_vairhbgtlndfbfsfgsgabgdoih', email: 'fake@fakemail.com'};
+
+        const response = await superPost('/requestPasswordReset', invalidReq);
+
+        expect(response.statusCode).toBe(200);
+        expect(response.body.error).toBe("");
+    });
+
+    test("Email does not match user's", async() => {
+
+        let validReq = {username: 'guest', email: 'fake@fakemail.com'};
+
+        const response = await superPost('/requestPasswordReset', validReq);
+
+        expect(response.statusCode).toBe(200);
+        expect(response.body.error).toBe("");
+    });
+
+    test('Undefined username & email', async() => {
+
+        const response = await superPost('/requestPasswordReset', {});
+
+        expect(response.statusCode).toBe(400);
+        expect(response.body.error).not.toBe("");
+    });
+});
+
+
 //
 // Wrapper functions for GET and POST
 //

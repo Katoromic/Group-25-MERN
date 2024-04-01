@@ -211,21 +211,26 @@ exports.setApp = function (app, client) {
     
     try
     {
-      let Users = client.db("MainDatabase").collection("Users");
-      
-      if (Users != null)
+      if (username && email)
       {
-        const user = await Users.findOne({"Username": username});
-        
-        if (user)
+        let Users = client.db("MainDatabase").collection("Users");
+
+        if (Users != null)
         {
-          if (user.Email === email)
+          const user = await Users.findOne({"Username": username});
+
+          if (user)
           {
             // Send Email
             sendPassRec(user);
             
           }
         }
+      }
+      else
+      {
+        status = 400;
+        error = 'username or email is not defined';
       }
     }
     catch (e)
