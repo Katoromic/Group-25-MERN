@@ -241,6 +241,97 @@ exports.setApp = function (app, client) {
     
     res.status(status).json({error: error});
   });
+
+
+  // Change Password
+  //
+  // Incoming: token, oldPassword, newPassword
+  // Outgoing: token, error
+  //
+  app.post('/api/changePassword', async (req, res, next) => {
+
+    const { token, oldPassword, newPassword } = req.body;
+
+    let refreshedToken = null;
+
+    let status = 200;
+    let error = "";
+
+    try
+    {
+      if (JWT.isValidAccessToken(token))
+      {
+        let { userId, verified } = JWT.getPayload(token);
+
+        if (verified)
+        {
+          if (oldPassword && newPassword)
+          {
+            const Users = client.db("MainDatabase").collection("Users");
+
+            if (Users)
+            {
+              const result = await Users.findOne({"_id": ObjectId.createFromHexString(userId)});
+
+              if (result)
+              {
+                const auth = await bcrypt.compare(oldPassword, result.Password);
+
+                if (auth)
+                {
+                  // Hash the password before storing it
+                  const salt = await bcrypt.genSalt();
+                  const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+                  Users.updateOne({"_id": ObjectId.createFromHexString(userId)}, {$set: {Password: hashedPassword}});
+
+                  // Refresh the token
+                  refreshedToken = JWT.refresh(token).accessToken;
+                }
+                else
+                {
+                  status = 400;
+                  error = "Password incorrect";
+                }
+              }
+              else
+              {
+                status = 400;
+                error = "User not found";
+              }
+            }
+            else
+            {
+              status = 500;
+              error = "Unable to connect to database";
+            }
+          }
+          else
+          {
+            status = 400;
+            error = "Password missing";
+          }
+        }
+        else
+        {
+          status = 403;
+          error = "User not verified";
+        }
+      }
+      else
+      {
+        status = 401;
+        error = "Access token not valid";
+      }
+    }
+    catch (e)
+    {
+      status = 500;
+      error = e.message;
+    }
+
+    res.status(status).json({token: refreshedToken, error: error});
+  });
   
   
   // Process email verification link
