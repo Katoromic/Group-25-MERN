@@ -184,7 +184,7 @@ exports.setApp = function (app, client) {
       else
       {
         error = "Access token is not valid";
-        status = 400;
+        status = 401;
       }
     }
     catch (e)

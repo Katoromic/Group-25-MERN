@@ -224,7 +224,7 @@ describe('SendVerificationLink', () => {
 
         const response = await superPost('/sendVerificationLink', blankToken);
 
-        expect(response.statusCode).toBe(400);
+        expect(response.statusCode).toBe(401);
         expect(response.body.error).not.toBe("");
     });
 
@@ -234,7 +234,7 @@ describe('SendVerificationLink', () => {
 
         const response = await superPost('/sendVerificationLink', noToken);
 
-        expect(response.statusCode).toBe(400);
+        expect(response.statusCode).toBe(401);
         expect(response.body.error).not.toBe("");
     });
 
@@ -244,7 +244,7 @@ describe('SendVerificationLink', () => {
 
         const response = await superPost('/sendVerificationLink', expToken);
 
-        expect(response.statusCode).toBe(400);
+        expect(response.statusCode).toBe(401);
         expect(response.body.error).not.toBe("");
     });
 });
