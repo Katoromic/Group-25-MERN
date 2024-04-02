@@ -514,5 +514,40 @@ exports.setApp = function (app, client) {
 
     res.status(status).json({ courses: userCoursesData, error: error });
 });
+
+  // Return Course Question Bank
+//
+// Incoming: CourseID
+// Outgoing: Array of questions for the specific course, error
+//
+
+  app.get("/api/course-question-bank/:courseId", async (req, res, next) => {
+    const courseId = req.params.courseId;
+    let questions = [];
+    let error = "";
+    let status = 200;
+
+    try {
+      // Check if the CourseID is valid
+      if (!ObjectId.isValid(courseId)) {
+        throw new Error("Invalid CourseID");
+      }
+
+      let questionBankCollection = client.db("MainDatabase").collection("QuestionBank");
+
+      // Fetch questions from QuestionBank collection for the given CourseID
+      questions = await questionBankCollection.find({ CourseID: courseId }).toArray();
+      if (questions.length === 0) {
+        error = "No questions found for this course";
+        status = 404;
+      }
+    } catch (e) {
+      error = e.message;
+      status = 500;
+    }
+
+    res.status(status).json({ questions: questions, error: error });
+  });
+
   
 };
