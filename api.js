@@ -467,4 +467,52 @@ exports.setApp = function (app, client) {
     
     res.status(status).send(message);
   });
+
+// Return User Courses
+//
+// Incoming: Authorization token
+// Outgoing: Array of user-specific course objects, error
+//
+
+  app.get("/api/user-courses", async (req, res, next) => {
+    let status = 200;
+    let userCoursesData = [];
+    let error = "";
+  
+    try {
+        // Check if the Authorization header exists
+        if (!req.headers.authorization) {
+            throw new Error("Authorization header is missing");
+        }
+
+        const token = req.headers.authorization.split(" ")[1];
+        if (!token) {
+            throw new Error("Bearer token is missing");
+        }
+
+        const payload = JWT.getPayload(token);
+        if (!payload || !payload.userId) {
+            throw new Error("Invalid token or token does not contain userId");
+        }
+
+        const { userId } = payload;
+        let userCoursesCollection = client.db("MainDatabase").collection("UserCourses");
+
+        // Fetch user course IDs from UserCourses collection
+        const userCourses = await userCoursesCollection.find({ UserID: userId.toString() }).toArray();
+        if (userCourses.length === 0) {
+            error = "No courses found for this user";
+            status = 404;
+        } else {
+            // Extract course IDs to send them in the response
+            userCoursesData = userCourses.map(uc => uc.CourseID);
+        }
+    } catch (e) {
+        error = e.message;
+        status = 500;
+    }
+
+    res.status(status).json({ courses: userCoursesData, error: error });
+});
+  
 };
