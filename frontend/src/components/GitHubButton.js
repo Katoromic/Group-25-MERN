@@ -6,10 +6,7 @@ function GitHubButton() {
     return (
 
         <div>
-            <a id="GitHubButton" href="#">GIT HUB</a>
-
-
-
+            <a id="GitHubButton" href="https://github.com/Katoromic/Group-25-MERN/tree/develop">GIT HUB</a>
         </div>
 
 

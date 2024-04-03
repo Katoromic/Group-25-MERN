@@ -1,0 +1,22 @@
+#QuestionPageNavElement {
+    position: absolute;
+    margin-left: -11px;
+    background-color: rgb(245, 245, 245, 0.6);
+    box-shadow: 15px 0px 20px #000000;
+    border-style: none solid none none;
+    border-width: 5px;
+    border-color: black;
+    height: 100vh;
+}
+
+#FirstName {
+    display: inline;
+    margin-right: 5%;
+    padding-top: 5%;
+}
+
+#LastName {
+    display: inline;
+    padding-top: 5%;
+}
+

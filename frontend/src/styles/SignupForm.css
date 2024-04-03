@@ -1,0 +1,32 @@
+.wrapper {
+    width: 420px;
+    background-color: transparent;
+    border: 2px solid lightgrey;
+    color: black;
+    border-radius: 10px;
+    padding: 30px 40px;
+    backdrop-filter: blur(30px);
+    box-shadow: 0 0 10px lightgrey; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: auto;
+    overflow: hidden;
+}
+
+#SignupParentElement {
+    width: 420px;
+    background-color: transparent;
+    border: 2px solid lightgrey;
+    color: black;
+    border-radius: 10px;
+    padding: 30px 40px;
+    backdrop-filter: blur(30px);
+    box-shadow: 0 0 10px lightgrey; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: auto;
+    overflow: hidden;
+
+}

@@ -5,7 +5,7 @@ import '../fonts/LexendExa-VariableFont_wght.ttf'
 function HomeButton() {
     return (
         <div>
-            <a id="HomeButton" href="#">HOME</a>
+            <a id="HomeButton" href="/">HOME</a>
         </div>
     );
 };

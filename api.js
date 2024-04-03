@@ -1,7 +1,10 @@
 require("express");
 require("mongodb");
 
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
 exports.setApp = function (app, client) {
   
   const JWT = require("./createJWT.js");
@@ -63,87 +66,77 @@ exports.setApp = function (app, client) {
     res.status(status).json(ret);
   });
   
+<<<<<<< Updated upstream
     // Signup
+=======
+  // Signup
+>>>>>>> Stashed changes
   //
-  // Incoming: FirstName, LastName, Email, Username, Password, Course
-  // Course takes in ID,ID,ID. (As many ID's needed but with commas to seperate)
+  // Incoming: FirstName, LastName, Email, Username, Password
   // Outgoing: token, error
   //
   app.post("/api/signup", async (req, res, next) => {
-    const { FirstName, LastName, Email, Username, Password, Course } = req.body;
-
+    
+    const { FirstName, LastName, Email, Username, Password } = req.body;
+    
     let token = null;
     let error = "";
-    let progressArray = [
-      { CurrentQuestion: 0, NumCorrect: 0 },
-      { CurrentQuestion: 0, NumCorrect: 0 },
-      { CurrentQuestion: 0, NumCorrect: 0 },
-    ];
     let status = 200;
-
-    if (Username) {
-      try {
+    
+    if (Username)
+    {
+      try
+      {
         let users = client.db("MainDatabase").collection("Users");
-        let userCourses = client.db("MainDatabase").collection("UserCourses");
-
+        
         // Check if Username is available
         const existingUser = await users.findOne({ Username: Username });
-
-        if (existingUser == null) {
+        
+        if (existingUser == null)
+        {
           // Hash the password before storing it
           const salt = await bcrypt.genSalt();
           const hashedPassword = await bcrypt.hash(Password, salt);
+<<<<<<< Updated upstream
 
           // Convert Course from comma-separated string to an array
           const courseArray = typeof Course === 'string' ? Course.split(",") : Course;
 
+=======
+          
+>>>>>>> Stashed changes
           // Add user to database
-          const newUser = await users.insertOne({
-            FirstName: FirstName,
-            LastName: LastName,
-            Email: Email,
-            Username: Username,
-            Password: hashedPassword,
-            Verified: false,
-          });
-
-          const userCoursesDocuments = courseArray.map((courseId) => ({
-            CourseID: courseId.trim(),
-            UserID: newUser.insertedId.toString(),
-            DateLastWorked: new Date(),
-            TimeSpent: 0,
-            Progress: progressArray,
-          }));
-
-          if (userCoursesDocuments.length > 0) {
-            await userCourses.insertMany(userCoursesDocuments);
-          }
-
+          const newUser = await users.insertOne({ FirstName: FirstName, LastName: LastName, Email: Email, Username: Username, Password: hashedPassword, Verified: false });
+          
           // Create the token
-          token = JWT.createToken(
-            FirstName,
-            LastName,
-            false,
-            newUser.insertedId
-          ).accessToken;
-        } else {
+          token = JWT.createAccessToken(FirstName, LastName, false, newUser.insertedId).accessToken;
+        }
+        else
+        {
           error = "Username already exists";
           status = 400;
         }
-      } catch (e) {
+      }
+      catch (e)
+      {
         error = e.message;
         status = 500;
       }
-    } else {
+    }
+    else
+    {
       error = "Username field missing";
       status = 400;
     }
-
+    
     let ret = { token: token, error: error };
-
+    
     res.status(status).json(ret);
   });
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
   
   
   // Send Verification Link
@@ -412,6 +405,63 @@ exports.setApp = function (app, client) {
     }
     
     res.status(status).send(message);
+<<<<<<< Updated upstream
+=======
+  });
+  
+  
+  // Process password reset link
+  //
+  app.get('/reset/:token', async (req, res) => {
+    
+    const { token } = req.params;
+    
+    let status;
+    let message;
+    
+    try
+    {
+      if (!JWT.isValidVerificationToken(token))
+      {
+        status = 400;
+        message = 'The password reset link has expired';
+      }
+      else
+      {
+        const { userId } = JWT.getPayload(token);
+        
+        let Users = client.db("MainDatabase").collection("Users");
+        
+        if (Users != null) {
+          let user = await Users.findOne({ "_id": ObjectId.createFromHexString(userId) });
+          if (user) {
+            let randPassword = randomstring.generate(15);
+            const salt = await bcrypt.genSalt();
+            const hashedPassword = await bcrypt.hash(randPassword, salt);
+            await Users.updateOne({ "_id": ObjectId.createFromHexString(userId) }, { $set: { Password: hashedPassword } });
+            status = 200;
+            message = `Password successfully reset\n\nNew password: ${randPassword}`;
+            sendPassConfirmation(user);
+          } else {
+            status = 404;
+            message = 'User not found';
+          }
+        }
+        else
+        {
+          status = 500;
+          message = 'There was an error connecting to our database. Please try again later...';
+        }
+      }
+    }
+    catch (e)
+    {
+      status = 500;
+      message = e.message;
+    }
+    
+    res.status(status).send(message);
+>>>>>>> Stashed changes
   });
   
   
