@@ -579,5 +579,52 @@ exports.setApp = function (app, client) {
     res.status(status).json({ questions: questions, error: error });
   });
 
+  //Update Progress API
+  app.post('/api/updateProgress', async (req, res, next) => {
+
+    const { token, userCourses, currentQuestion, numCorrect } = req.body;
+
+    let error = "";
+    let status = 200;
+
+    try {
+      if (JWT.isValidAccessToken(token)) {
+        const { userId, verified } = JWT.getPayload(token);
+
+        if (!verified) {
+          error = "Account not verified";
+          status = 403;
+        }
+
+        else {
+          // Connect to database
+
+          let usersCourses = client.db("MainDatabase").collection("UserCourses");
+
+          if (usersCourses != null) {
+            const result = await usersCourses.findOne({ UserID: userId, Language: userCourses });
+            //console.log(result);
+            console.log(result._id);
+            usersCourses.updateOne({ "_id": (result._id) }, { $set: { "CurrentQuestion": currentQuestion, "NumCorrect": numCorrect, "DateLastWorked": new Date() } });
+
+          }
+          else {
+            error = "Unable to connect to database";
+            status = 500;
+          }
+        }
+      }
+      else {
+        error = "Access token is not valid";
+        status = 401;
+      }
+    }
+    catch (e) {
+      error = e.message;
+      status = 500;
+    }
+
+    res.status(status).json({ error: error });
+  });
   
 };
