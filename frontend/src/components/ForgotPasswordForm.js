@@ -22,32 +22,19 @@ const ForgotPasswordForm = () => {
 
         try {
 
-            // DO I NEED THE ENTIRE FILE PATH HERE?
-            const response = await fetch(bp.buildPath("api/requestPasswordReset"), {
-
-                method: 'POST',
-
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-
-                body: JSON.stringify(RecoveryData)
-            });
+            const response = await axios.post(bp.buildPath('api/requestPasswordReset'), RecoveryData);
             
             // error catch
-            if(!response.ok) {
+            if(!response.data) {
                 throw new Error('Recovery Failure');
             }
 
-            // idk if we need this for password recovery...
-            const data = await response.json();
 
         } catch (error) {
-            console.log('it broke :(')
-            console.log(error);
+            console.log('it broke', error)
         }
     };
-
+    
     return (
 
         <div className='container-fluid'>
