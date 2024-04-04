@@ -5,7 +5,7 @@ import '../fonts/LexendExa-VariableFont_wght.ttf'
 function AboutUsButton() {
     return (
         <div>
-            <a id="AboutUsButton" href="#">ABOUT USsssssss</a>
+            <a id="AboutUsButton" href="#">ABOUT US</a>
         </div>
     );
 };
