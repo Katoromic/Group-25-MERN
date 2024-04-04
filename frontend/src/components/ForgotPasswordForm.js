@@ -44,6 +44,7 @@ const ForgotPasswordForm = () => {
 
         } catch (error) {
             console.log('it broke :(')
+            console.log(error);
         }
     };
 
