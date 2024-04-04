@@ -1,10 +1,6 @@
 require("express");
 require("mongodb");
 
-<<<<<<< Updated upstream
-
-=======
->>>>>>> Stashed changes
 exports.setApp = function (app, client) {
   
   const JWT = require("./createJWT.js");
@@ -66,11 +62,7 @@ exports.setApp = function (app, client) {
     res.status(status).json(ret);
   });
   
-<<<<<<< Updated upstream
-    // Signup
-=======
   // Signup
->>>>>>> Stashed changes
   //
   // Incoming: FirstName, LastName, Email, Username, Password
   // Outgoing: token, error
@@ -97,14 +89,7 @@ exports.setApp = function (app, client) {
           // Hash the password before storing it
           const salt = await bcrypt.genSalt();
           const hashedPassword = await bcrypt.hash(Password, salt);
-<<<<<<< Updated upstream
-
-          // Convert Course from comma-separated string to an array
-          const courseArray = typeof Course === 'string' ? Course.split(",") : Course;
-
-=======
           
->>>>>>> Stashed changes
           // Add user to database
           const newUser = await users.insertOne({ FirstName: FirstName, LastName: LastName, Email: Email, Username: Username, Password: hashedPassword, Verified: false });
           
@@ -133,10 +118,6 @@ exports.setApp = function (app, client) {
     
     res.status(status).json(ret);
   });
-<<<<<<< Updated upstream
-
-=======
->>>>>>> Stashed changes
   
   
   // Send Verification Link
@@ -405,8 +386,6 @@ exports.setApp = function (app, client) {
     }
     
     res.status(status).send(message);
-<<<<<<< Updated upstream
-=======
   });
   
   
@@ -461,7 +440,6 @@ exports.setApp = function (app, client) {
     }
     
     res.status(status).send(message);
->>>>>>> Stashed changes
   });
   
   
@@ -490,7 +468,9 @@ exports.setApp = function (app, client) {
         if (Users != null) {
           let user = await Users.findOne({ "_id": ObjectId.createFromHexString(userId) });
           if (user) {
+            // new password 
             let randPassword = randomstring.generate(15);
+
             const salt = await bcrypt.genSalt();
             const hashedPassword = await bcrypt.hash(randPassword, salt);
             await Users.updateOne({ "_id": ObjectId.createFromHexString(userId) }, { $set: { Password: hashedPassword } });

@@ -54,15 +54,8 @@ function SignupForm() {
             var lastName = ud.lastName;
             var user = { firstName: firstName, lastName: lastName, id: userId };
             localStorage.setItem("user_data", JSON.stringify(user));
-<<<<<<< Updated upstream
             //window.location.href = "/login";
             sendLink(storage.retrieveToken());
-=======
-
-            //window.location.href = "/login";
-            sendLink(storage.retrieveToken());
-            
->>>>>>> Stashed changes
           } catch (e) {
             console.error(e.response.data);
             return "";
@@ -75,7 +68,6 @@ function SignupForm() {
   };
 
   function sendLink(storedToken) {
-<<<<<<< Updated upstream
     // Incoming: Token
     var obj1 = { token: storedToken};
     var js1 = JSON.stringify(obj1);
@@ -102,38 +94,6 @@ function SignupForm() {
       });
   }
 
-    return (
-        <div className='wrapper'>
-                    <form onSubmit={doSignup}>
-                        <h1>Sign Up</h1>
-=======
->>>>>>> Stashed changes
-
-    // Incoming: Token
-    var obj1 = { token: storedToken};
-    var js1 = JSON.stringify(obj1);
-    var config1 = {
-      method: "post",
-      url: bp.buildPath("api/sendVerificationLink"),
-      headers: {
-        "Content-Type": "application/json",
-      },
-      data: js1,
-    };
-    axios(config1)
-      .then(function (response) {
-        var res = response.data;
-        if (res.error) {
-          setMessage("Something went wrong");
-        } else {
-          setMessage("Verification email sent. Please check your email to verify your account.");
-          alert("Verification email sent. Please check your email to verify your account.");
-        }
-      })
-      .catch(function (error) {
-        console.error(error.response.data);
-      });
-  }
 
   return (
 
@@ -179,6 +139,6 @@ function SignupForm() {
       </form>
     </div>
   );
-};
+}
 
 export default SignupForm;

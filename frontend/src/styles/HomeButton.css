@@ -1,4 +1,3 @@
-<<<<<<< Updated upstream
 @font-face {
     font-family: 'sweet-sans-pro';
     src: url(../fonts/SweetSansProThin.otf) format('opentype');
@@ -34,40 +33,3 @@
     transform: scaleX(1);
     transform-origin: bottom left;
   }
-=======
-@font-face {
-    font-family: 'sweet-sans-pro';
-    src: url(../fonts/SweetSansProThin.otf) format('opentype');
-}
-#HomeButton {
-    font-family: 'sweet-sans-pro';
-    font-size: 20px;
-    margin-right: 60px;
-    text-decoration: none; 
-    color: black; 
-}
-
-.home-underline-animation {
-    display: inline-block;
-    position: relative;
-    color: black;
-  }
-  
-  .home-underline-animation::after {
-    content: '';
-    position: absolute;
-    width: 55%;
-    transform: scaleX(0);
-    height: 1px;
-    bottom: 0;
-    left: 0;
-    background-color: black;
-    transform-origin: bottom right;
-    transition: transform 0.25s ease-out;
-  }
-  
-  .home-underline-animation:hover::after {
-    transform: scaleX(1);
-    transform-origin: bottom left;
-  }
->>>>>>> Stashed changes

@@ -9,6 +9,9 @@ const ForgotPasswordForm = () => {
     // Stores the email and username?
     const [RecoveryData, SetRecoveryData] = useState ({username: '', email: ''});
 
+    // Path builder
+    var bp = require("./Path.js");
+
     // Handles changes in the input boxes.
     const HandleInputChange = (e) => {
         SetRecoveryData({...RecoveryData, [e.target.name]: e.target.value});
@@ -20,7 +23,7 @@ const ForgotPasswordForm = () => {
         try {
 
             // DO I NEED THE ENTIRE FILE PATH HERE?
-            const response = await fetch('../../../api/requestPasswordReset', {
+            const response = await fetch(bp.buildPath("api/requestPasswordReset"), {
 
                 method: 'POST',
 

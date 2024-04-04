@@ -12,11 +12,7 @@ function NavBar() {
             <nav className='navbar navbar-default bg-customNavBar'>
                 <div className='container-fluid'>
                     <div className='d-flex align-items-center justify-content-end w-100'>
-<<<<<<< Updated upstream
-                        <img className= 'shuriken' src={ShurikenX}/>
-=======
                         <img className='shuriken' src={ShurikenX}/>
->>>>>>> Stashed changes
                         <div class= 'home-underline-animation'>
                              <HomeButton />
                         </div>

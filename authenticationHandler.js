@@ -12,7 +12,7 @@ const nodemailer = require('nodemailer');
 
 const jwt = require('./createJWT.js');
 const emailSender = nodemailer.createTransport({
-    service: 'gmail',
+    service: "gmail",
     auth: {
         user: process.env.EMAIL_ADDRESS,
         pass: process.env.EMAIL_PASSWORD
@@ -20,7 +20,7 @@ const emailSender = nodemailer.createTransport({
 });
 
 
-const Path = require('./frontend/src/components/Path');
+const Path = require("./frontend/src/components/Path");
 
 function verifyEmail(toEmail, token) {
     const PORT = process.env.PORT || 5015;
