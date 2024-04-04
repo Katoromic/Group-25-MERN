@@ -20,31 +20,18 @@ const ForgotPasswordForm = () => {
     // This handles the subit for the recovery. Contacts the backend?
     const HandleRecoveryRequest = async () => {
 
-        try {
+            try {
 
-            // DO I NEED THE ENTIRE FILE PATH HERE?
-            const response = await fetch(bp.buildPath("api/requestPasswordReset"), {
+                const response = await axios.post(bp.buildPath('api/requestPasswordReset'), RecoveryData);
+                
+                // error catch
+                if(!response.data) {
+                    throw new Error('Recovery Failure');
+                }
 
-                method: 'POST',
-
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-
-                body: JSON.stringify(RecoveryData)
-            });
-            
-            // error catch
-            if(!response.ok) {
-                throw new Error('Recovery Failure');
+            } catch (error) {
+                console.log('it broke :(', error)
             }
-
-            // idk if we need this for password recovery...
-            const data = await response.json();
-
-        } catch (error) {
-            console.log('it broke :(')
-        }
     };
 
     return (
