@@ -1,6 +1,12 @@
+@font-face {
+    font-family: 'sweet-sans';
+    src: url(../fonts/SweetSansProThin.otf) format('opentype');
+}
+
 #LoginSubTitleElement {
     color: black;
     font-size: 23px;
-    margin-right: 7%;
-    font-family: 'LexendExa';
+    margin-right: 10%;
+    margin-top: 2%;
+    font-family: 'sweet-sans';
 }

@@ -1,11 +1,20 @@
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
-exports.createToken = function (fn, ln, ver, id) {
-  return _createToken(fn, ln, ver, id);
+exports.createAccessToken = function (fn, ln, ver, id) {
+  return _createAccessToken(fn, ln, ver, id);
 };
 
-_createToken = function (fn, ln, ver, id) {
+exports.createVerificationToken = function (id) {
+
+  const user = { userId: id };
+
+  const verificationToken = jwt.sign(user, process.env.VERIFICATION_TOKEN_SECRET, { expiresIn: '20m' });
+
+  return verificationToken;
+};
+
+_createAccessToken = function (fn, ln, ver, id) {
   try {
     const user = { userId: id, firstName: fn, lastName: ln, verified: ver };
 
@@ -18,27 +27,37 @@ _createToken = function (fn, ln, ver, id) {
   return ret;
 };
 
-exports.isExpired = function (token) {
-  var isError = jwt.verify(
+
+exports.isValidAccessToken = function (token) {
+  var isValid = jwt.verify(
     token,
     process.env.ACCESS_TOKEN_SECRET,
     (err, verifiedJWT) => {
       if (err) {
-        return true;
-      } else {
         return false;
+      } else {
+        return true;
       }
     }
   );
-  return isError;
+  return isValid;
 };
 
-exports.isVerified = function (token) {
-  
-  let ud = jwt.decode(token, { complete: true });
+exports.isValidVerificationToken = function (token) {
+  var isValid = jwt.verify(
+    token,
+    process.env.VERIFICATION_TOKEN_SECRET,
+    (err, verifiedJWT) => {
+      if (err) {
+        return false;
+      } else {
+        return true;
+      }
+    }
+  );
+  return isValid;
+};
 
-  return ud.payload.verified;
-}
 
 exports.getPayload = function (token) {
 
@@ -48,10 +67,10 @@ exports.getPayload = function (token) {
 exports.refresh = function (token) {
   var ud = jwt.decode(token, { complete: true });
 
-  var userId = ud.payload.id;
+  var userId = ud.payload.userId;
   var firstName = ud.payload.firstName;
   var lastName = ud.payload.lastName;
   var verified = ud.payload.verified;
 
-  return _createToken(firstName, lastName, verified, userId);
+  return _createAccessToken(firstName, lastName, verified, userId);
 };

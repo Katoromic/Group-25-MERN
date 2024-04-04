@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { jwtDecode as decode } from "jwt-decode";
 import axios from "axios";
-import '../styles/Login.css'
+import '../styles/LoginForm.css'
 import { FaUserAlt } from "react-icons/fa";
 import { FaUnlockAlt } from "react-icons/fa";
 import BackgroundVideo from '../images/background.mp4'
@@ -42,9 +42,18 @@ var bp = require("./Path.js");
             var userId = ud.userId;
             var firstName = ud.firstName;
             var lastName = ud.lastName;
-            var user = { firstName: firstName, lastName: lastName, id: userId };
+            var verified = ud.verified;
+            var user = { firstName: firstName, lastName: lastName, id: userId, verified: verified};
             localStorage.setItem("user_data", JSON.stringify(user));
-            window.location.href = "/landing";
+            if (!verified)
+            {
+              window.location.href = "/unverified";
+            }
+            else
+            {
+              window.location.href = "/landing";
+            }
+            
           } catch (e) {
             console.log(e.toString());
             return "";
@@ -58,32 +67,44 @@ var bp = require("./Path.js");
 
     return (
         <div>
-             <video autoPlay muted loop className='BackgroundVideo'>
-                <source src={BackgroundVideo} type='video/mp4' />
-             </video>
+            <video autoPlay muted loop className='BackgroundVideo'>
+              <source src={BackgroundVideo} type='video/mp4' />
+            </video>
+
             <div className='wrapper'>
                 <form onSubmit={doLogin}>
+
                     <h1>Login</h1>
+
                     <div className='input-box'>
-                        <input type="text" id="loginName" placeholder='Username' required value={loginName} onChange={(e) => setLoginName(e.target.value)}/>
-                        <FaUserAlt className='icon' />
+
+                      <input type="text" id="loginName" placeholder='Username' required value={loginName} onChange={(e) => setLoginName(e.target.value)}/>
+                      <FaUserAlt className='icon' />
+
                     </div>
+
                     <div className='input-box'>
-                        <input type="password" id='loginPassword' placeholder='Password' required value={loginPassword}
-              onChange={(e) => setLoginPassword(e.target.value)}/>
-                        <FaUnlockAlt className='icon'/>                
+
+                      <input type="password" id='loginPassword' placeholder='Password' required value={loginPassword} onChange={(e) => setLoginPassword(e.target.value)}/>
+                      <FaUnlockAlt className='icon'/>                
+
                     </div>
 
                     <div className='remember-forgot'>
-                        <label><input type="checkbox"/>Remember me</label>
-                        <a href="#">Forgot password?</a>
+
+                      <label><input type="checkbox"/>Remember me</label>
+                      <a href="/PassRecover">Forgot password?</a>
+
                     </div>
 
                     <button type= "submit" onClick={doLogin}>Login</button>
 
                     <div className='register-link'>
-                        <p>Don't have an account? <a href= "#">Register</a></p>
+
+                      <p>Don't have an account? <a href= "/signup">Register</a></p>
+
                     </div>
+
                 </form>
             </div>
         </div>

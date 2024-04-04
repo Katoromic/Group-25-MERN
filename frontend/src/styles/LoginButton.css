@@ -1,18 +1,23 @@
 @font-face {
-    font-family: 'LexendExa';
-    src: url(../fonts/LexendExa-VariableFont_wght.ttf) format('truetype');
+    font-family: 'sweet-sans';
+    src: url(../fonts/SweetSansProThin.otf) format('opentype');
 }
 
 #LoginButtonElement {
     background-color: white;
-    color: red;
-    border-color: red;
+    color: #fa304c;
+    border-color: #fa304c   ;
     border-radius: 1%;
-    margin-right: 16%;
-    /* margin-top: -50%; */
+    margin-right: 22.5vh;
     font-size: 19px;
-    font-family: 'LexendExa';
+    font-family: 'sweet-sans';
     width: 400px;
+    height: 30px;
     padding-top: 2px;
     padding-bottom: 2px;
+    transition: height .5s ease;
+}
+
+#LoginButtonElement:hover{
+    height: 40px;
 }

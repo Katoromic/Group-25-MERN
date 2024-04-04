@@ -1,0 +1,156 @@
+@font-face {
+    font-family: 'LexendExa';
+    src: url(../fonts/LexendExa-VariableFont_wght.ttf) format('truetype');
+}
+
+#QuestionPageElement {
+    height: 100vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.BackGroundVideo {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    right: 0;
+    bottom: 0;
+    top: 0;
+    z-index: -1;
+}
+
+#ResultMessageCorrect {
+    font-family: 'LexendExa';
+}
+
+#ResultMessageIncorrect {
+    font-family: 'LexendExa';
+}
+
+#ResultMessageTryAgain {
+    font-family: 'LexendExa';
+}
+
+.btn-custom {
+    border-radius: 15px;
+    border-color: red;
+    border-width: 3px;
+
+    height: 60px;
+    background-color: white;
+    color: red;
+    font-family: 'LexendExa';
+}
+
+.btn-custom-alt {
+    border-radius: 15px;
+    border-color: red;
+    border-width: 3px;
+
+    height: 60px;
+    background-color: white;
+    color: red;
+    font-family: 'LexendExa';
+}
+
+/*Button animation.*/
+@keyframes ButtonFill {
+
+    0% {
+        background-image: linear-gradient(135deg, white 100%, red 0%);
+    }
+
+    10% {
+        background-image: linear-gradient(135deg, white 0%, white 90%, red 90%, red 100%);
+    }
+
+    20% {
+        background-image: linear-gradient(135deg, white 0%, white 80%, red 80%, red 100%);
+    }
+
+    30% {
+        background-image: linear-gradient(135deg, white 0%, white 70%, red 70%, red 100%);
+    }
+
+    40% {
+        background-image: linear-gradient(135deg, white 0%, white 60%, red 40%, red 100%);
+    }
+
+    50% {
+        background-image: linear-gradient(135deg, white 0%, white 50%, red 50%, red 100%);
+    }
+
+    60% {
+        background-image: linear-gradient(135deg, white 0%, white 40%, red 40%, red 100%);
+    }
+
+    70% {
+        background-image: linear-gradient(135deg, white 0%, white 30%, red 30%, red 100%);
+    }
+
+    80% {
+        background-image: linear-gradient(135deg, white 0%, white 20%, red 20%, red 100%);
+    }
+
+    90% {
+        background-image: linear-gradient(135deg, white 0%, white 10%, red 10%, red 100%);
+    }
+
+    100% {
+        background-image: linear-gradient(135deg, red 100%);
+    }
+}
+
+.btn-custom:hover { 
+    animation: ButtonFill 0.17s linear 1 forwards;
+    background-color: red;
+    color: white;
+}
+
+#AnswerOne {
+    margin-left: 30%; 
+}
+
+#AnswerTwo {
+    margin-left: 30%; 
+}
+
+#AnswerThree {
+    margin-left: 19%;
+}
+
+#AnswerFour {
+    margin-left: 19%;
+}
+
+#ReturnHomeButton {
+    margin-right: 5%;
+}
+
+#QuestionText {
+    color: black;
+    font-family: 'LexendExa';
+}
+
+#ButtonRow {
+    background-color: rgba(255, 255, 255, 0.055);
+    box-shadow: 10px 15px 20px #000000;
+    border-radius: 15px;
+    border-style: solid;
+    border-color: black;
+    border-width: 5px;
+}
+
+#QuestionRow {
+    background-color: rgba(255, 255, 255, 0.055);
+    box-shadow: 10px 15px 20px #000000;
+    border-radius: 15px;
+    border-style: solid;
+    border-color: black;
+    border-width: 5px;
+}
+
+.placeholder {
+    height: 50px;
+}

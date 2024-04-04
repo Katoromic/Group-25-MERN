@@ -1,12 +1,36 @@
 @font-face {
-    font-family: 'LexendExa';
-    src: url(../fonts/LexendExa-VariableFont_wght.ttf) format('truetype');
+    font-family: 'sweet-sans-pro';
+    src: url(../fonts/SweetSansProThin.otf) format('opentype');
 }
 
 #AboutUsButton {
-    font-family: 'LexendExa';
-    font-size: 24px;
+    font-family: 'sweet-sans-pro';
+    font-size: 20px;
     margin-right: 60px;
     text-decoration: none; 
     color: black; 
 }
+
+.aboutus-underline-animation {
+    display: inline-block;
+    position: relative;
+    color: black;
+  }
+  
+  .aboutus-underline-animation::after {
+    content: '';
+    position: absolute;
+    width: 65%;
+    transform: scaleX(0);
+    height: 1px;
+    bottom: 0;
+    left: 0;
+    background-color: black;
+    transform-origin: bottom right;
+    transition: transform 0.25s ease-out;
+  }
+  
+  .aboutus-underline-animation:hover::after {
+    transform: scaleX(1);
+    transform-origin: bottom left;
+  }

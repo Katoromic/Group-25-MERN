@@ -7,6 +7,9 @@ exports.buildPath = function (route) {
   }
   else
   {
-    return `http://localhost:5000/${route}`;
+    const PORT = (process.env.PORT || 5000);
+    const HOST = (process.env.HOST || 'localhost');
+
+    return `http://${HOST}:${PORT}/${route}`;
   }
 }

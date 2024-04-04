@@ -3,12 +3,17 @@ import { jwtDecode as decode } from "jwt-decode";
 import axios from "axios";
 
 function Login() {
+
+
   var bp = require("./Path.js");
   var storage = require("../tokenStorage.js");
   var loginName;
   var loginPassword;
   const [message, setMessage] = useState("");
+
+
   const doLogin = async (event) => {
+    
     event.preventDefault();
     var obj = { login: loginName.value, password: loginPassword.value };
     var js = JSON.stringify(obj);
