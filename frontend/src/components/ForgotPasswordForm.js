@@ -45,7 +45,7 @@ const ForgotPasswordForm = () => {
 
                     <div id='FormParentElement' >
                         
-                        <h1 className='mb-4'>Password Recovery</h1>
+                        <h1 className='mb-4'>Passssssssword Recovery</h1>
 
                         <input type='text' name='username' value={RecoveryData.username} onChange={HandleInputChange} placeholder='Username' className='Input-Box mb-4'/>
 
