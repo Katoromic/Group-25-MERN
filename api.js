@@ -559,14 +559,14 @@ exports.setApp = function (app, client) {
 
     try {
       // Check if the CourseID is valid
-      if (!ObjectId.isValid(courseId)) {
+      if (courseId == "") {
         throw new Error("Invalid CourseID");
       }
 
       let questionBankCollection = client.db("MainDatabase").collection("QuestionBank");
 
       // Fetch questions from QuestionBank collection for the given CourseID
-      questions = await questionBankCollection.find({ CourseID: courseId }).toArray();
+      questions = await questionBankCollection.find({ Language: courseId }).toArray();
       if (questions.length === 0) {
         error = "No questions found for this course";
         status = 404;
