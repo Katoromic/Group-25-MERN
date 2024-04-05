@@ -535,7 +535,7 @@ exports.setApp = function (app, client) {
             status = 404;
         } else {
             // Extract course IDs to send them in the response
-            userCoursesData = userCourses.map(uc => uc.CourseID);
+            userCoursesData = userCourses;
         }
     } catch (e) {
         error = e.message;
