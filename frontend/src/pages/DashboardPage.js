@@ -1,5 +1,6 @@
 import React from 'react'; 
 import { useState } from "react";
+import { useNavigate } from 'react-router-dom';
 import { jwtDecode as decode } from "jwt-decode";
 import axios from "axios";
 import '../styles/Dashboard.css'
@@ -71,7 +72,7 @@ const DashboardPage = () => {
             } else {
         
               try {
-                console.log(res.courses[0].Language);      
+                console.log(res);      
               } catch (e) {
                 console.log(e.toString());
                 return "";
@@ -82,6 +83,21 @@ const DashboardPage = () => {
             console.log(error);
           });
     };
+
+    function CourseCard({ course }) {
+        // for dynamical card loading
+        // first call the getCourse API to retreive desc and image path
+        return (
+            <button className= 'course' id={course.Language}>
+                <img className= 'logo' src={JavaLogo} />
+                    <h1>Build a Solid Foundation in Java</h1>
+                    <div className='progressBar'> 
+                        <div className= 'progressBar-inner' style={{width: '0%'}}></div>
+                    </div>
+                    <p>0% complete</p>
+            </button>
+        )
+    }
 
     return (
         <div>
