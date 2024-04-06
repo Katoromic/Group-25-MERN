@@ -655,5 +655,26 @@ exports.setApp = function (app, client) {
 
     res.status(status).json({ error: error });
   });
+
+    app.get("/api/getCourse/:language", async (req, res) => {
+    let status = 200;
+    let courseData = null;
+    let error = "";
+
+    try {
+        let courses = client.db("MainDatabase").collection("Courses");
+        courseData = await courses.findOne({ Language: req.params.language });
+
+        if (!courseData) {
+            error = "Course not found";
+            status = 404;
+        }
+    } catch (e) {
+        error = e.message;
+        status = 500;
+    }
+
+    res.status(status).json({ courseData: courseData, error: error });
+});
   
 };
