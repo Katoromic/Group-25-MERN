@@ -656,6 +656,8 @@ exports.setApp = function (app, client) {
     res.status(status).json({ error: error });
   });
 
+// Get Course Info API
+
     app.get("/api/getCourse/:language", async (req, res) => {
     let status = 200;
     let courseData = null;
