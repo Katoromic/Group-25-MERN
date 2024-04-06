@@ -99,7 +99,7 @@ const DashboardPage = () => {
                     <h1>MY COURSES</h1>
                 </div>
                 <div className='dashboard'>
-                    <button className= 'course' id= 'cbutton' onClick={getCourses}>    // {HandleClick.bind(null, 'python')}
+                    <button className= 'course' id= 'cbutton' onClick={getCourses}>    {/*{HandleClick.bind(null, 'python')}*/}
                         <img className= 'logo' src={CLogo} />
                         <h1>Learning C From Zero to Hero</h1>
                         <div className='progressBar'> 
