@@ -512,30 +512,37 @@ exports.setApp = function (app, client) {
     try {
         // Check if the Authorization header exists
         if (!req.headers.authorization) {
-            throw new Error("Authorization header is missing");
-        }
-
-        const token = req.headers.authorization.split(" ")[1];
-        if (!token) {
-            throw new Error("Bearer token is missing");
-        }
-
-        const payload = JWT.getPayload(token);
-        if (!payload || !payload.userId) {
-            throw new Error("Invalid token or token does not contain userId");
-        }
-
-        const { userId } = payload;
-        let userCoursesCollection = client.db("MainDatabase").collection("UserCourses");
-
-        // Fetch user course IDs from UserCourses collection
-        const userCourses = await userCoursesCollection.find({ UserID: userId.toString() }).toArray();
-        if (userCourses.length === 0) {
-            error = "No courses found for this user";
-            status = 404;
+            error = "Authorization header is missing";
+            status = 400;
         } else {
-            // Extract course IDs to send them in the response
-            userCoursesData = userCourses;
+          const token = req.headers.authorization.split(" ")[1];
+
+          if (!token) {
+              error = "Bearer token is missing";
+              status = 400;
+          } else {
+            if (JWT.isValidAccessToken(token)) {
+              const payload = JWT.getPayload(token);
+              const { userId, verified } = payload;
+              let userCoursesCollection = client.db("MainDatabase").collection("UserCourses");
+    
+              if (verified){
+                // Fetch user course IDs from UserCourses collection
+                userCoursesData = await userCoursesCollection.find({ UserID: userId.toString() }).toArray();
+    
+                if (userCoursesData.length === 0) {
+                    error = "No courses found for this user";
+                    status = 404;
+                }
+              } else {
+                status = 403;
+                error = "User not verified";
+              }
+            } else {
+              status = 401;
+              error = "Invalid access token";
+            }
+          }
         }
     } catch (e) {
         error = e.message;
