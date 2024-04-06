@@ -1,4 +1,7 @@
 import React from 'react'; 
+import { useState } from "react";
+import { jwtDecode as decode } from "jwt-decode";
+import axios from "axios";
 import '../styles/Dashboard.css'
 import { FaUserAlt } from "react-icons/fa";
 import BackgroundVideo from '../images/background.mp4';
@@ -9,6 +12,43 @@ import JSLogo from '../images/js logo.PNG';
 
 
 const DashboardPage = () => {
+
+    var bp = require("../components/Path.js");
+  var storage = require("../tokenStorage.js");
+  const [message, setMessage] = useState("");
+
+  const getCourses = async (event) => {
+
+    var token = storage.retrieveToken();
+    console.log(token);
+    var config = {
+      method: "get",
+      url: bp.buildPath("api/user-courses"),
+      headers: {
+        "Authorization": `Bearer ${token}`,
+      },
+    };
+    console.log(config);
+    axios(config)
+      .then(function (response) {
+        var res = response.data;
+        if (res.error) {
+          setMessage("Error getting courses");
+        } else {
+
+          try {
+            console.log(res.courses[0].Language);      
+          } catch (e) {
+            console.log(e.toString());
+            return "";
+          }
+        }
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  };
+
     return (
         <div>
              <video autoPlay muted loop className='BackgroundVideo'>
@@ -25,7 +65,7 @@ const DashboardPage = () => {
                     <h1>MY COURSES</h1>
                 </div>
                 <div className='dashboard'>
-                    <button className= 'course' id= 'cbutton'>
+                    <button className= 'course' id= 'cbutton' onClick={getCourses}>
                         <img className= 'logo' src={CLogo} />
                         <h1>Learning C From Zero to Hero</h1>
                         <div className='progressBar'> 
