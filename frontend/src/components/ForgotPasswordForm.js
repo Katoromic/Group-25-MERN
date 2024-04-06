@@ -37,7 +37,7 @@ const ForgotPasswordForm = () => {
                 console.log('it broke :(', error)
             }
     };
-
+    
     return (
 
         <div className='container-fluid'>
