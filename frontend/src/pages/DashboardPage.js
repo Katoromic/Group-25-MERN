@@ -14,40 +14,74 @@ import JSLogo from '../images/js logo.PNG';
 const DashboardPage = () => {
 
     var bp = require("../components/Path.js");
-  var storage = require("../tokenStorage.js");
-  const [message, setMessage] = useState("");
+    var storage = require("../tokenStorage.js");
+    const [message, setMessage] = useState("");
 
-  const getCourses = async (event) => {
+    // for passing information to other pages.
+    const navigate = useNavigate();
 
-    var token = storage.retrieveToken();
-    console.log(token);
-    var config = {
-      method: "get",
-      url: bp.buildPath("api/user-courses"),
-      headers: {
-        "Authorization": `Bearer ${token}`,
-      },
-    };
-    console.log(config);
-    axios(config)
-      .then(function (response) {
-        var res = response.data;
-        if (res.error) {
-          setMessage("Error getting courses");
-        } else {
+    const GetQuestionBank = async (CourseID) => {
+        try {
+            const response = await axios.get(bp.buildPath('api/course-question-bank/' + CourseID));
+            const { questions, error } = response.data;
+            console.log(bp.buildPath('api/course-question-bank/' + CourseID));
+            console.log(response);
 
-          try {
-            console.log(res.courses[0].Language);      
-          } catch (e) {
-            console.log(e.toString());
-            return "";
-          }
+
+            if (error) {
+                console.error('Error fetching data:', error);
+                return []; 
+            }
+            
+            return questions;
+        } catch (error) {
+            console.error('Error fetching data:', error);
+            return [];
         }
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
-  };
+    };
+
+    const HandleClick = async (CourseID) => {
+
+        try {
+            const Questions = await GetQuestionBank(CourseID);
+            navigate('/Questions', {state: {progress: 1, correct: 1, QuestionBank: Questions}});
+        } catch (error) {
+            console.log('It Broke! >:(')
+        }
+        
+    };
+    
+    const getCourses = async (event) => {
+    
+        var token = storage.retrieveToken();
+        console.log(token);
+        var config = {
+          method: "get",
+          url: bp.buildPath("api/user-courses"),
+          headers: {
+            "Authorization": `Bearer ${token}`,
+          },
+        };
+        console.log(config);
+        axios(config)
+          .then(function (response) {
+            var res = response.data;
+            if (res.error) {
+              setMessage("Error getting courses");
+            } else {
+        
+              try {
+                console.log(res.courses[0].Language);      
+              } catch (e) {
+                console.log(e.toString());
+                return "";
+              }
+            }
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+    };
 
     return (
         <div>
@@ -65,7 +99,7 @@ const DashboardPage = () => {
                     <h1>MY COURSES</h1>
                 </div>
                 <div className='dashboard'>
-                    <button className= 'course' id= 'cbutton' onClick={getCourses}>
+                    <button className= 'course' id= 'cbutton' onClick={getCourses}>    // {HandleClick.bind(null, 'python')}
                         <img className= 'logo' src={CLogo} />
                         <h1>Learning C From Zero to Hero</h1>
                         <div className='progressBar'> 
