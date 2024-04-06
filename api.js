@@ -67,6 +67,11 @@ exports.setApp = function (app, client) {
   // Incoming: FirstName, LastName, Email, Username, Password
   // Outgoing: token, error
   //
+  // Signup
+  //
+  // Incoming: FirstName, LastName, Email, Username, Password
+  // Outgoing: token, error
+  //
   app.post("/api/signup", async (req, res, next) => {
     
     const { FirstName, LastName, Email, Username, Password } = req.body;
@@ -80,6 +85,7 @@ exports.setApp = function (app, client) {
       try
       {
         let users = client.db("MainDatabase").collection("Users");
+        let userCourses = client.db("MainDatabase").collection("UserCourses");
         
         // Check if Username is available
         const existingUser = await users.findOne({ Username: Username });
@@ -92,6 +98,22 @@ exports.setApp = function (app, client) {
           
           // Add user to database
           const newUser = await users.insertOne({ FirstName: FirstName, LastName: LastName, Email: Email, Username: Username, Password: hashedPassword, Verified: false });
+
+          
+        const languages = ['c++', 'python', 'haskell'];
+        let userCourseDocuments = [];
+
+        for (const language of languages) {
+            const userCourseDoc = await userCourses.insertOne({
+                Language: language,
+                UserId: newUser.insertedId.toString(), 
+                DateLastWorked: 0,
+                CurrentQuestion: 0,
+                NumCorrect: 0
+            });
+
+            userCourseDocuments.push(userCourseDoc);
+        }
           
           // Create the token
           token = JWT.createAccessToken(FirstName, LastName, false, newUser.insertedId).accessToken;
