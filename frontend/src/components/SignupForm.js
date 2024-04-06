@@ -45,7 +45,6 @@ function SignupForm() {
         } else {
           storage.storeToken(res.token);
           var uddecoded = decode(storage.retrieveToken(), { complete: true });
-          //console.log(uddecoded);
 
           try {
             var ud = uddecoded;
@@ -54,7 +53,7 @@ function SignupForm() {
             var lastName = ud.lastName;
             var user = { firstName: firstName, lastName: lastName, id: userId };
             localStorage.setItem("user_data", JSON.stringify(user));
-            //window.location.href = "/login";
+            window.location.href = "/CheckEmail";
             sendLink(storage.retrieveToken());
           } catch (e) {
             console.error(e.response.data);
@@ -86,7 +85,6 @@ function SignupForm() {
           setMessage("Something went wrong");
         } else {
           setMessage("Verification email sent. Please check your email to verify your account.");
-          alert("Verification email sent. Please check your email to verify your account.");
         }
       })
       .catch(function (error) {

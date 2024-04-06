@@ -9,6 +9,10 @@ const ForgotPasswordForm = () => {
     // Stores the email and username?
     const [RecoveryData, SetRecoveryData] = useState ({username: '', email: ''});
 
+    // Conditional display
+    const [SuccessMessage, SetSuccessMessage] = useState(false);
+    const [FailMessage, SetFailMesage] = useState(false);
+
     // Path builder
     var bp = require("./Path.js");
 
@@ -20,19 +24,18 @@ const ForgotPasswordForm = () => {
     // This handles the subit for the recovery. Contacts the backend?
     const HandleRecoveryRequest = async () => {
 
-        try {
+            try {
 
-            const response = await axios.post(bp.buildPath('api/requestPasswordReset'), RecoveryData);
-            
-            // error catch
-            if(!response.data) {
-                throw new Error('Recovery Failure');
+                const response = await axios.post(bp.buildPath('api/requestPasswordReset'), RecoveryData);
+                
+                // error catch
+                if(!response.data) {
+                    throw new Error('Recovery Failure');
+                }
+
+            } catch (error) {
+                console.log('it broke :(', error)
             }
-
-
-        } catch (error) {
-            console.log('it broke', error)
-        }
     };
     
     return (
@@ -46,6 +49,9 @@ const ForgotPasswordForm = () => {
                     <div id='FormParentElement' >
                         
                         <h1 className='mb-4'>Password Recovery</h1>
+
+                        {SuccessMessage && <h2 id='SuccessMessage' className='m-3'>Recovery successful! Please check your email.</h2>}
+                        {FailMessage && <h2 id='FailMessage' className='m-3'>Uh oh something went wrong...</h2>}
 
                         <input type='text' name='username' value={RecoveryData.username} onChange={HandleInputChange} placeholder='Username' className='Input-Box mb-4'/>
 

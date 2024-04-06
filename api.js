@@ -67,6 +67,11 @@ exports.setApp = function (app, client) {
   // Incoming: FirstName, LastName, Email, Username, Password
   // Outgoing: token, error
   //
+  // Signup
+  //
+  // Incoming: FirstName, LastName, Email, Username, Password
+  // Outgoing: token, error
+  //
   app.post("/api/signup", async (req, res, next) => {
     
     const { FirstName, LastName, Email, Username, Password } = req.body;
@@ -80,6 +85,7 @@ exports.setApp = function (app, client) {
       try
       {
         let users = client.db("MainDatabase").collection("Users");
+        let userCourses = client.db("MainDatabase").collection("UserCourses");
         
         // Check if Username is available
         const existingUser = await users.findOne({ Username: Username });
@@ -92,6 +98,22 @@ exports.setApp = function (app, client) {
           
           // Add user to database
           const newUser = await users.insertOne({ FirstName: FirstName, LastName: LastName, Email: Email, Username: Username, Password: hashedPassword, Verified: false });
+
+          
+        const languages = ['c++', 'python', 'haskell'];
+        let userCourseDocuments = [];
+
+        for (const language of languages) {
+            const userCourseDoc = await userCourses.insertOne({
+                Language: language,
+                UserId: newUser.insertedId.toString(), 
+                DateLastWorked: 0,
+                CurrentQuestion: 0,
+                NumCorrect: 0
+            });
+
+            userCourseDocuments.push(userCourseDoc);
+        }
           
           // Create the token
           token = JWT.createAccessToken(FirstName, LastName, false, newUser.insertedId).accessToken;
@@ -369,7 +391,7 @@ exports.setApp = function (app, client) {
             users.updateOne({"_id": ObjectId.createFromHexString(userId)}, {$set: {Verified: true}});
             
             status = 200;
-            message = 'Yay! Your account is now verified (:';
+            message = '<h1>Yay! Your account is now verified (:</h1><br><a href="http://localhost:3000/login">Click here to login</a>';
           }
         }
         else
@@ -512,30 +534,37 @@ exports.setApp = function (app, client) {
     try {
         // Check if the Authorization header exists
         if (!req.headers.authorization) {
-            throw new Error("Authorization header is missing");
-        }
-
-        const token = req.headers.authorization.split(" ")[1];
-        if (!token) {
-            throw new Error("Bearer token is missing");
-        }
-
-        const payload = JWT.getPayload(token);
-        if (!payload || !payload.userId) {
-            throw new Error("Invalid token or token does not contain userId");
-        }
-
-        const { userId } = payload;
-        let userCoursesCollection = client.db("MainDatabase").collection("UserCourses");
-
-        // Fetch user course IDs from UserCourses collection
-        const userCourses = await userCoursesCollection.find({ UserID: userId.toString() }).toArray();
-        if (userCourses.length === 0) {
-            error = "No courses found for this user";
-            status = 404;
+            error = "Authorization header is missing";
+            status = 400;
         } else {
-            // Extract course IDs to send them in the response
-            userCoursesData = userCourses.map(uc => uc.CourseID);
+          const token = req.headers.authorization.split(" ")[1];
+
+          if (!token) {
+              error = "Bearer token is missing";
+              status = 400;
+          } else {
+            if (JWT.isValidAccessToken(token)) {
+              const payload = JWT.getPayload(token);
+              const { userId, verified } = payload;
+              let userCoursesCollection = client.db("MainDatabase").collection("UserCourses");
+    
+              if (verified){
+                // Fetch user course IDs from UserCourses collection
+                userCoursesData = await userCoursesCollection.find({ UserId: userId.toString() }).toArray();
+    
+                if (userCoursesData.length === 0) {
+                    error = "No courses found for this user";
+                    status = 404;
+                }
+              } else {
+                status = 403;
+                error = "User not verified";
+              }
+            } else {
+              status = 401;
+              error = "Invalid access token";
+            }
+          }
         }
     } catch (e) {
         error = e.message;
@@ -579,5 +608,75 @@ exports.setApp = function (app, client) {
     res.status(status).json({ questions: questions, error: error });
   });
 
+  //Update Progress API
+  app.post('/api/updateProgress', async (req, res, next) => {
+
+    const { token, userCourses, currentQuestion, numCorrect } = req.body;
+
+    let error = "";
+    let status = 200;
+
+    try {
+      if (JWT.isValidAccessToken(token)) {
+        const { userId, verified } = JWT.getPayload(token);
+
+        if (!verified) {
+          error = "Account not verified";
+          status = 403;
+        }
+
+        else {
+          // Connect to database
+
+          let usersCourses = client.db("MainDatabase").collection("UserCourses");
+
+          if (usersCourses != null) {
+            const result = await usersCourses.findOne({ UserID: userId, Language: userCourses });
+            //console.log(result);
+            console.log(result._id);
+            usersCourses.updateOne({ "_id": (result._id) }, { $set: { "CurrentQuestion": currentQuestion, "NumCorrect": numCorrect, "DateLastWorked": new Date() } });
+
+          }
+          else {
+            error = "Unable to connect to database";
+            status = 500;
+          }
+        }
+      }
+      else {
+        error = "Access token is not valid";
+        status = 401;
+      }
+    }
+    catch (e) {
+      error = e.message;
+      status = 500;
+    }
+
+    res.status(status).json({ error: error });
+  });
+
+// Get Course Info API
+
+    app.get("/api/getCourse/:language", async (req, res) => {
+    let status = 200;
+    let courseData = null;
+    let error = "";
+
+    try {
+        let courses = client.db("MainDatabase").collection("Courses");
+        courseData = await courses.findOne({ Language: req.params.language });
+
+        if (!courseData) {
+            error = "Course not found";
+            status = 404;
+        }
+    } catch (e) {
+        error = e.message;
+        status = 500;
+    }
+
+    res.status(status).json({ courseData: courseData, error: error });
+});
   
 };

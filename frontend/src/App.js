@@ -10,6 +10,7 @@ import DashBoard from './pages/DashboardPage';
 import Unverified from './pages/Unverified';
 import QuestionPage from './pages/QuestionPage';
 import ForgotPassword from './pages/ForgotPassword';
+import CheckEmailPage from './pages/CheckEmailPage';
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
         <Route path="/unverified" index element={<Unverified />} />
         <Route path="/Questions" index element={<QuestionPage />} />
         <Route path="/PassRecover" index element={<ForgotPassword />} />
+        <Route path="/CheckEmail" index element={<CheckEmailPage />} />
       </Routes>
     </BrowserRouter>
   );

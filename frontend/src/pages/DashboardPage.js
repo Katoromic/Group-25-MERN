@@ -1,4 +1,8 @@
 import React from 'react'; 
+import { useEffect, useState } from "react";
+import { useNavigate } from 'react-router-dom';
+import { jwtDecode as decode } from "jwt-decode";
+import axios from "axios";
 import '../styles/Dashboard.css'
 import { FaUserAlt } from "react-icons/fa";
 import BackgroundVideo from '../images/background.mp4';
@@ -6,9 +10,154 @@ import NavBar from '../components/NavBar';
 import CLogo from '../images/c logo.PNG';
 import JavaLogo from '../images/java logo.PNG';
 import JSLogo from '../images/js logo.PNG';
+import LoadingPage from './LoadingPage.js';
 
 
 const DashboardPage = () => {
+
+    var bp = require("../components/Path.js");
+    var storage = require("../tokenStorage.js");
+    const [message, setMessage] = useState("");
+    const [courses, setCourses] = useState([]);
+    const [courseInfo, setCourseInfo] = useState([]);
+    var courseInfoArray = [];
+    const [isLoaded, setIsLoaded] = useState(false);
+
+    // for passing information to other pages.
+    const navigate = useNavigate();
+
+    const GetQuestionBank = async (CourseID) => {
+        try {
+            const response = await axios.get(bp.buildPath('api/course-question-bank/' + CourseID));
+            const { questions, error } = response.data;
+            console.log(bp.buildPath('api/course-question-bank/' + CourseID));
+            console.log(response);
+
+
+            if (error) {
+                console.error('Error fetching data:', error);
+                return []; 
+            }
+            
+            return questions;
+        } catch (error) {
+            console.error('Error fetching data:', error);
+            return [];
+        }
+    };
+
+    const HandleClick = async (CourseID) => {
+
+        try {
+            const Questions = await GetQuestionBank(CourseID);
+            navigate('/Questions', {state: {progress: 1, correct: 1, QuestionBank: Questions}});
+        } catch (error) {
+            console.log('It Broke! >:(')
+        }
+        
+    };
+
+    useEffect(() => {getCourses()}, []); // load the cards upon page load
+
+    const getCourses = async (event) => {
+        var token = storage.retrieveToken();
+        var config = {
+            method: "get",
+            url: bp.buildPath("api/user-courses"),
+            headers: {
+                "Authorization": `Bearer ${token}`,
+            },
+        };
+        try {
+            const response = await axios(config);
+            var res = response.data;
+            if (res.error) {
+                setMessage("Error getting courses");
+            } else {
+                setCourses(res.courses);
+                const courseInfoArray = await getCourseInfo(res.courses);
+                setCourseInfo(courseInfoArray);
+                
+                setIsLoaded(true);
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    function getCourseInfo(courses) {
+        return new Promise(async (resolve, reject) => {
+            let promises = [];
+        if (courseInfoArray.length <= 0) {
+        for (let i = 0; i < courses.length; i++) {
+            var config = {
+          method: "get",
+          url: bp.buildPath("api/getCourse/" + courses[i].Language),
+        };
+        let promise = axios(config)
+          .then(function (response) {
+            var res = response.data;
+            if (res.error) {
+              setMessage("Error getting courses");
+            } else {
+        
+              try { 
+                courseInfoArray.push(res.courseData);
+              } catch (e) {
+                console.log(e.toString());
+                return "";
+              }
+            }
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+          promises.push(promise);
+        }
+        }
+
+        await Promise.all(promises);
+        resolve(courseInfoArray);
+    });
+    }
+
+    function Dashboard({courses, courseInfo}) {
+        console.log("courseInfo in Dashboard: ", courseInfo);
+        let info = [];
+        // The following is me reorganizing the code because the indexes of the courseInfo array are not always in the order of the courses array.
+        // This is because for whatever reason, the page gets rendered twice, which calls the APIs twice.
+        // I don't know why this is happening, but this is a workaround.
+        for (let i = 0; i < courseInfo.length; i++) {
+            if (courseInfo[i].Language == 'c++') {
+                info[0] = courseInfo[i]; // resets c++ to always be the 0th index, etc
+            } else if (courseInfo[i].Language == 'python') {
+                info[1] = courseInfo[i];
+            } else if (courseInfo[i].Language == 'haskell') {
+                info[2] = courseInfo[i];
+            }
+        }
+
+        console.log("info: ", info);
+        return (
+            <>
+            {isLoaded ?
+            <div className='dashboard' id="dashboard">
+                    {info.map((c, index) => (
+                        <button className= 'course' id= {c.Language}>    {/*{HandleClick.bind(null, 'c.Language')}*/}
+                        <img className= 'logo' src={c.LogoFile} />
+                        <h1>{c.Description}</h1>
+                        <div className='progressBar'> 
+                            <div className= 'progressBar-inner' style={{width: courses[index].CurrentQuestion*10 + '%'}}></div>
+                        </div>
+                        <p>{courses[index].CurrentQuestion*10}% complete</p>
+                        <p>{courses[index].NumCorrect} out of 10 correct</p>
+                    </button>
+                    ))}
+                </div>: <LoadingPage></LoadingPage>}
+                </>
+        );
+    }
+
     return (
         <div>
              <video autoPlay muted loop className='BackgroundVideo'>
@@ -24,32 +173,7 @@ const DashboardPage = () => {
                 <div className='title'>
                     <h1>MY COURSES</h1>
                 </div>
-                <div className='dashboard'>
-                    <button className= 'course' id= 'cbutton'>
-                        <img className= 'logo' src={CLogo} />
-                        <h1>Learning C From Zero to Hero</h1>
-                        <div className='progressBar'> 
-                            <div className= 'progressBar-inner' style={{width: '90%'}}></div>
-                        </div>
-                        <p>90% complete</p>
-                    </button>
-                    <button className= 'course' id='javabutton'>
-                        <img className= 'logo' src={JavaLogo} />
-                        <h1>Build a Solid Foundation in Java</h1>
-                        <div className='progressBar'> 
-                            <div className= 'progressBar-inner' style={{width: '0%'}}></div>
-                        </div>
-                        <p>0% complete</p>
-                    </button>
-                    <button className= 'course' id= 'jsbutton'>
-                        <img className= 'logo' src={JSLogo} />
-                        <h1>Bringing Web Pages to Life With JavaScript</h1>
-                        <div className='progressBar'> 
-                            <div className= 'progressBar-inner' style={{width: '30%'}}></div>
-                        </div>
-                        <p>30% complete</p>
-                    </button>  
-                </div>
+                <Dashboard courses={courses} courseInfo={courseInfo}/>
             </div>
         </div>
     );
