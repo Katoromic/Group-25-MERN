@@ -550,7 +550,7 @@ exports.setApp = function (app, client) {
     
               if (verified){
                 // Fetch user course IDs from UserCourses collection
-                userCoursesData = await userCoursesCollection.find({ UserID: userId.toString() }).toArray();
+                userCoursesData = await userCoursesCollection.find({ UserId: userId.toString() }).toArray();
     
                 if (userCoursesData.length === 0) {
                     error = "No courses found for this user";
