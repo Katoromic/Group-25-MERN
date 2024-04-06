@@ -57,15 +57,10 @@ const DashboardPage = () => {
         
     };
 
-    useEffect(() => {
-        console.log("courseInfo FROM USEEEFFT: ", courseInfo);
-    }, [courseInfo]);
-
     useEffect(() => {getCourses()}, []); // load the cards upon page load
 
     const getCourses = async (event) => {
         var token = storage.retrieveToken();
-        console.log(token);
         var config = {
             method: "get",
             url: bp.buildPath("api/user-courses"),
@@ -80,10 +75,9 @@ const DashboardPage = () => {
                 setMessage("Error getting courses");
             } else {
                 setCourses(res.courses);
-                console.log("res.courses: ", res.courses); 
                 const courseInfoArray = await getCourseInfo(res.courses);
                 setCourseInfo(courseInfoArray);
-                console.log("courseInfo: ", courseInfo);
+                
                 setIsLoaded(true);
             }
         } catch (error) {
@@ -94,10 +88,7 @@ const DashboardPage = () => {
     function getCourseInfo(courses) {
         return new Promise(async (resolve, reject) => {
             let promises = [];
-            console.log("courses: ", courses);
-
         if (courseInfoArray.length <= 0) {
-            console.log("courseInfoArray is length", courseInfoArray.length);
         for (let i = 0; i < courses.length; i++) {
             var config = {
           method: "get",
@@ -111,9 +102,7 @@ const DashboardPage = () => {
             } else {
         
               try { 
-                console.log("res in getCourseInfo ", res);
-                courseInfoArray.push(res);
-                console.log("array after push ", courseInfoArray);
+                courseInfoArray.push(res.courseData);
               } catch (e) {
                 console.log(e.toString());
                 return "";
@@ -128,44 +117,42 @@ const DashboardPage = () => {
         }
 
         await Promise.all(promises);
-        //setCourseInfo(courseInfoArray);
         resolve(courseInfoArray);
     });
     }
 
     function Dashboard({courses, courseInfo}) {
         console.log("courseInfo in Dashboard: ", courseInfo);
+        let info = [];
+        // The following is me reorganizing the code because the indexes of the courseInfo array are not always in the order of the courses array.
+        // This is because for whatever reason, the page gets rendered twice, which calls the APIs twice.
+        // I don't know why this is happening, but this is a workaround.
+        for (let i = 0; i < courseInfo.length; i++) {
+            if (courseInfo[i].Language == 'c++') {
+                info[0] = courseInfo[i]; // resets c++ to always be the 0th index, etc
+            } else if (courseInfo[i].Language == 'python') {
+                info[1] = courseInfo[i];
+            } else if (courseInfo[i].Language == 'haskell') {
+                info[2] = courseInfo[i];
+            }
+        }
+
+        console.log("info: ", info);
         return (
             <>
             {isLoaded ?
             <div className='dashboard' id="dashboard">
-                    <button className= 'course' id= 'cbutton'>    {/*{HandleClick.bind(null, 'python')}*/}
-                        <img className= 'logo' src={courseInfo[0].courseData.LogoFile} />
-                        <h1>{courseInfo[0].courseData.Description}</h1>
+                    {info.map((c, index) => (
+                        <button className= 'course' id= {c.Language}>    {/*{HandleClick.bind(null, 'c.Language')}*/}
+                        <img className= 'logo' src={c.LogoFile} />
+                        <h1>{c.Description}</h1>
                         <div className='progressBar'> 
-                            <div className= 'progressBar-inner' style={{width: courses[0].CurrentQuestion*10 + '%'}}></div>
+                            <div className= 'progressBar-inner' style={{width: courses[index].CurrentQuestion*10 + '%'}}></div>
                         </div>
-                        <p>{courses[0].CurrentQuestion*10}% complete</p>
-                        <p>{courses[0].NumCorrect} out of 10 correct</p>
+                        <p>{courses[index].CurrentQuestion*10}% complete</p>
+                        <p>{courses[index].NumCorrect} out of 10 correct</p>
                     </button>
-                    <button className= 'course' id='javabutton'>
-                        <img className= 'logo' src={courseInfo[1].courseData.LogoFile} />
-                        <h1>{courseInfo[1].courseData.Description}</h1>
-                        <div className='progressBar'> 
-                            <div className= 'progressBar-inner' style={{width: courses[1].CurrentQuestion*10 + '%'}}></div>
-                        </div>
-                        <p>{courses[1].CurrentQuestion*10}% complete</p>
-                        <p>{courses[1].NumCorrect} out of 10 correct</p>
-                    </button>
-                    <button className= 'course' id= 'jsbutton'>
-                        <img className= 'logo' src={courseInfo[2].courseData.LogoFile} />
-                        <h1>{courseInfo[2].courseData.Description}</h1>
-                        <div className='progressBar'> 
-                            <div className= 'progressBar-inner' style={{width: courses[2].CurrentQuestion*10 + '%'}}></div>
-                        </div>
-                        <p>{courses[2].CurrentQuestion*10}% complete</p>
-                        <p>{courses[2].NumCorrect} out of 10 correct</p>
-                    </button>
+                    ))}
                 </div>: <LoadingPage></LoadingPage>}
                 </>
         );
