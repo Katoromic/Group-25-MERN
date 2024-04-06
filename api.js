@@ -391,7 +391,7 @@ exports.setApp = function (app, client) {
             users.updateOne({"_id": ObjectId.createFromHexString(userId)}, {$set: {Verified: true}});
             
             status = 200;
-            message = 'Yay! Your account is now verified (:';
+            message = '<h1>Yay! Your account is now verified (:</h1><br><a href="http://localhost:3000/login">Click here to login</a>';
           }
         }
         else
