@@ -623,23 +623,38 @@ exports.setApp = function (app, client) {
         if (!verified) {
           error = "Account not verified";
           status = 403;
-        }
+        } else {
 
-        else {
-          // Connect to database
+          if (userCourses !== undefined &&
+              currentQuestion !== undefined &&
+              numCorrect !== undefined)
+          {
+            // Connect to database
 
-          let usersCourses = client.db("MainDatabase").collection("UserCourses");
+            let usersCourses = client.db("MainDatabase").collection("UserCourses");
 
-          if (usersCourses != null) {
-            const result = await usersCourses.findOne({ UserID: userId, Language: userCourses });
-            //console.log(result);
-            console.log(result._id);
-            usersCourses.updateOne({ "_id": (result._id) }, { $set: { "CurrentQuestion": currentQuestion, "NumCorrect": numCorrect, "DateLastWorked": new Date() } });
-
+            if (usersCourses != null) {
+              const result = await usersCourses.findOne({ UserId: userId, Language: userCourses });
+              
+              if (result)
+              {
+                usersCourses.updateOne({ "_id": (result._id) }, { $set: { "CurrentQuestion": currentQuestion, "NumCorrect": numCorrect, "DateLastWorked": new Date() } });
+              }
+              else
+              {
+                error = "UserCourse is not valid";
+                status = 400;
+              }
+            }
+            else {
+              error = "Unable to connect to database";
+              status = 500;
+            }
           }
-          else {
-            error = "Unable to connect to database";
-            status = 500;
+          else
+          {
+            error = "Undefined parameters";
+            status = 400;
           }
         }
       }
