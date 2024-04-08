@@ -1,18 +1,3 @@
-import React from 'react'; 
-import { useEffect, useState } from "react";
-import { useNavigate } from 'react-router-dom';
-import { jwtDecode as decode } from "jwt-decode";
-import axios from "axios";
-import '../styles/Dashboard.css'
-import { FaUserAlt } from "react-icons/fa";
-import BackgroundVideo from '../images/background.mp4';
-import NavBar from '../components/NavBar';
-import CLogo from '../images/c logo.PNG';
-import JavaLogo from '../images/java logo.PNG';
-import JSLogo from '../images/js logo.PNG';
-import LoadingPage from './LoadingPage.js';
-
-
 const DashboardPage = () => {
 
     var bp = require("../components/Path.js");
@@ -46,11 +31,55 @@ const DashboardPage = () => {
         }
     };
 
+    const GetUserCourseInfo = async (CourseID) => {
+
+        // Get the JWT token.
+        var token = storage.retrieveToken();
+
+        // Define json object for api request.
+        var config = {
+            method: "get",
+            url: bp.buildPath("api/user-courses"),
+            headers: {
+                "Authorization": `Bearer ${token}`,
+            },
+        };
+
+        try {
+
+            // Attempt to access the api.
+            const response = await axios(config);
+
+            // extract the data 
+            var res = response.data.courses;
+            
+            if (res.error) {
+                setMessage("Error getting courses");
+            } 
+
+            // If we find the language we clicked on, return its info.
+            for (let i = 0; i < res.length; i++) {
+
+                if (res[i].Language === CourseID) {
+                    console.log('hehehehahahahah');
+                    console.log(res[i]);
+                    return res[i];
+                }
+            }
+
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
     const HandleClick = async (CourseID) => {
 
         try {
             const Questions = await GetQuestionBank(CourseID);
-            navigate('/Questions', {state: {progress: 1, correct: 1, QuestionBank: Questions}});
+            const UserCourseInfo = await GetUserCourseInfo(CourseID);
+            const UserTokenRaw = storage.retrieveToken();
+            const UserTokenDecoded = decode(storage.retrieveToken(), { complete: true });
+            navigate('/Questions', {state: {QuestionBank: Questions, UserInfo: UserCourseInfo, UserTokenRaw: UserTokenRaw, UserTokenDecoded: UserTokenDecoded}});
         } catch (error) {
             console.log('It Broke! >:(')
         }
@@ -77,7 +106,6 @@ const DashboardPage = () => {
                 setCourses(res.courses);
                 const courseInfoArray = await getCourseInfo(res.courses);
                 setCourseInfo(courseInfoArray);
-                
                 setIsLoaded(true);
             }
         } catch (error) {
@@ -143,7 +171,7 @@ const DashboardPage = () => {
             {isLoaded ?
             <div className='dashboard' id="dashboard">
                     {info.map((c, index) => (
-                        <button className= 'course' id= {c.Language}>    {/*{HandleClick.bind(null, 'c.Language')}*/}
+                        <button className= 'course' id= {c.Language} onClick={HandleClick.bind(null, c.Language)}>  
                         <img className= 'logo' src={c.LogoFile} />
                         <h1>{c.Description}</h1>
                         <div className='progressBar'> 
