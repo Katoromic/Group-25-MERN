@@ -5,13 +5,6 @@ import BackGroundVideo from '../images/background.mp4'
 import NavBar from '../components/QuestionPageNavBar.js';
 import { useLocation } from 'react-router-dom';
 
-
-
-// STUFF I NEED:  NEED TO GET THE USERS NAME! NEED THE CORRECT/ INCORRECT COUNT, IMPLEMENT DASHBOARD BUTTONS.
-// MAKE THE DASHBOARD BUTTON AVALIBLE FOR SMALLER SCREENS. MAKE A TITLE ELEMENT?
-// NEED TO MAKE A WAY FOR THE ANSWERS TO BE RANDOMLY APPLIES TSO THAT THE CORRECT ASNSWER ISNT ALWASY IN THE SAME SPOT.
-
-
 const QuestionPage = () => {
 
     // Contains data from the dashboard page.
