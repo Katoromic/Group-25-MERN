@@ -1,23 +1,75 @@
 import React, {useState} from 'react';
-
+import axios from "axios";
 import '../styles/QuestionPage.css';
 import BackGroundVideo from '../images/background.mp4'
-
 import NavBar from '../components/QuestionPageNavBar.js';
+import { useLocation } from 'react-router-dom';
 
 
 
-const QuestionPage = (props) => {
+// STUFF I NEED:  NEED TO GET THE USERS NAME! NEED THE CORRECT/ INCORRECT COUNT, IMPLEMENT DASHBOARD BUTTONS.
+// MAKE THE DASHBOARD BUTTON AVALIBLE FOR SMALLER SCREENS. MAKE A TITLE ELEMENT?
+// NEED TO MAKE A WAY FOR THE ANSWERS TO BE RANDOMLY APPLIES TSO THAT THE CORRECT ASNSWER ISNT ALWASY IN THE SAME SPOT.
 
-    // TO BE IMPLEMENTED
-    let CorrectAnswer = 'Answer 1';
-    // let QuestionText = props.QuestionText;
-    // let IncorrectAnswers = props.IncorrectAnswers;
 
-    // For updating the progress bar.
-    const [Progress, SetProgress] = useState(0); // THIS WILL NEED TO BE INITIALIZED TO WHATEVER THE LANDING PAGE SEND US SO IT IS USER SPECIFIC!!!!!!!
+const QuestionPage = () => {
 
-    // Conditional styles.
+    // Contains data from the dashboard page.
+    const location = useLocation(); 
+
+    // For api build path.
+    var bp = require("../components/Path.js");
+
+    // User info.
+    const UserTokenRaw = location.state.UserTokenRaw;
+    const UserCourseInfo = location.state.UserInfo;
+    const QuestionBank = location.state.QuestionBank;
+    const UsersName = location.state.UserTokenDecoded.firstName + ' ' + location.state.UserTokenDecoded.lastName;
+    const [CurrentQuestion, SetCurrentQuestion] = useState(UserCourseInfo.CurrentQuestion); 
+
+    // Question and answer choices.
+    let QuestionText = QuestionBank[CurrentQuestion].QuestionText;
+    let CorrectAnswer = QuestionBank[CurrentQuestion].Answer; // NEED USERS CURRENT QUESTION HERE!
+    let Incorrect1 = QuestionBank[CurrentQuestion].OtherChoices[0];
+    let Incorrect2 = QuestionBank[CurrentQuestion].OtherChoices[1];
+    let Incorrect3 = QuestionBank[CurrentQuestion].OtherChoices[2];
+
+    // Progress bar control.
+    const [Progress, SetProgress] = useState(UserCourseInfo.CurrentQuestion * 10); 
+
+    // Sets the value for incorrect and correct question counters.
+    const [QuestionsCorrect, SetQuestionsCorrect] = useState(UserCourseInfo.NumCorrect); 
+    const [QuestionsIncorrect, SetQuestionsIncorrect] = useState((UserCourseInfo.CurrentQuestion - UserCourseInfo.NumCorrect)); 
+
+    // For conditional display of buttons and messages.
+    const [Tries, SetTries] = useState(0);
+    const [Correct, SetCorrect] = useState(false);
+    const [Incorrect, SetIncorrect] = useState(false);
+    const [IncorrectTryAgain, SetTryAgain] = useState(false);
+    const [NextButton, SetNextButton] = useState(false);
+    const [RestartButton, SetRestartButton] = useState(false);
+    const [ReturnHome, SetReturnHome] = useState(false);
+
+    // For applying conditional styles to answer choices.
+    const [StyleButton1, SetStyleButton1] = useState();
+    const [StyleButton2, SetStyleButton2] = useState();
+    const [StyleButton3, SetStyleButton3] = useState();
+    const [StyleButton4, SetStyleButton4] = useState();
+
+    // For Toggling the hover animation for answer choices after they have been chosen.
+    const [StyleHover1, SetStyleHover1] = useState('btn-custom w-50 mt-2 mb-2');
+    const [StyleHover2, SetStyleHover2] = useState('btn-custom w-50 mt-2 mb-2');
+    const [StyleHover3, SetStyleHover3] = useState('btn-custom w-50 mt-2 mb-2');
+    const [StyleHover4, SetStyleHover4] = useState('btn-custom w-50 mt-2 mb-2');
+
+    // For disabling already chosen buttons.
+    const [DisableButton1, SetButtonDisable1] = useState(false);
+    const [DisableButton2, SetButtonDisable2] = useState(false);
+    const [DisableButton3, SetButtonDisable3] = useState(false);
+    const [DisableButton4, SetButtonDisable4] = useState(false);
+
+
+    // Conditional styles for buttons.
     const CorrectStyle = {
         backgroundColor: 'green',
         borderColor: 'green',
@@ -28,40 +80,6 @@ const QuestionPage = (props) => {
         backgroundColor: 'red',
         color: 'white',
     };
-
-    // For conditional display
-    const [Tries, SetTries] = useState(0);
-    const [Correct, SetCorrect] = useState(false);
-    const [Incorrect, SetIncorrect] = useState(false);
-    const [IncorrectTryAgain, SetTryAgain] = useState(false);
-    const [NextButton, SetNextButton] = useState(false);
-    const [RestartButton, SetRestartButton] = useState(false);
-    const [ReturnHome, SetReturnHome] = useState(false);
-    const [CurrentQuestion, SetCurrentQuestion] = useState(0); // this will need to be fed in per user.
-
-    // For applying conditional styles to answer choices.
-    const [StyleButton1, SetStyleButton1] = useState();
-    const [StyleButton2, SetStyleButton2] = useState();
-    const [StyleButton3, SetStyleButton3] = useState();
-    const [StyleButton4, SetStyleButton4] = useState();
-
-    // For Toggling the hover animation for answer choices after they have een chosen.
-    const [StyleHover1, SetStyleHover1] = useState('btn-custom w-50 mt-2 mb-2');
-    const [StyleHover2, SetStyleHover2] = useState('btn-custom w-50 mt-2 mb-2');
-    const [StyleHover3, SetStyleHover3] = useState('btn-custom w-50 mt-2 mb-2');
-    const [StyleHover4, SetStyleHover4] = useState('btn-custom w-50 mt-2 mb-2');
-
-
-    // For disabling already chosen buttons.
-    const [DisableButton1, SetButtonDisable1] = useState(false);
-    const [DisableButton2, SetButtonDisable2] = useState(false);
-    const [DisableButton3, SetButtonDisable3] = useState(false);
-    const [DisableButton4, SetButtonDisable4] = useState(false);
-
-    // For question counters.
-    const [QuestionsCorrect, SetQuestionsCorrect] = useState(0); // This will need to passed in for user specifc.
-    const [QuestionsIncorrect, SetQuestionsIncorrect] = useState(0); // This will need to passed in for user specifc.
-
 
     // Disables all buttons.
     const DisableAllButtons = () => {
@@ -131,20 +149,20 @@ const QuestionPage = (props) => {
 
     };
 
-    // Applies the hover animation to all the answer choice buttons.
-    const ResetAllHover = () => {
-        SetStyleHover1('btn-custom w-50 mt-2 mb-2');
-        SetStyleHover2('btn-custom w-50 mt-2 mb-2');
-        SetStyleHover3('btn-custom w-50 mt-2 mb-2');
-        SetStyleHover4('btn-custom w-50 mt-2 mb-2');
-    };
-
     // Removes the hover animation from all the answer choice buttons.
     const RemoveAllHover = () => {
         SetStyleHover1('btn-custom-alt w-50 mt-2 mb-2');
         SetStyleHover2('btn-custom-alt w-50 mt-2 mb-2');
         SetStyleHover3('btn-custom-alt w-50 mt-2 mb-2');
         SetStyleHover4('btn-custom-alt w-50 mt-2 mb-2');
+    };
+
+    // Applies the hover animation to all the answer choice buttons.
+    const ResetAllHover = () => {
+        SetStyleHover1('btn-custom w-50 mt-2 mb-2');
+        SetStyleHover2('btn-custom w-50 mt-2 mb-2');
+        SetStyleHover3('btn-custom w-50 mt-2 mb-2');
+        SetStyleHover4('btn-custom w-50 mt-2 mb-2');
     };
 
     // Sets all buttons to the default style.
@@ -179,9 +197,9 @@ const QuestionPage = (props) => {
 
     };
 
-    // Increments progress by 5%.
+    // Increments progress by 10%.
     const UpdateProgress = () => {
-        SetProgress(Progress + 5);
+        SetProgress(Progress + 10);
     };
 
     // Increments questions answered correctly by 1 if user is on first try.
@@ -198,8 +216,8 @@ const QuestionPage = (props) => {
         }
     };
 
-    // Restarts the current lesson when all questions have been answered.                           THIS NEEDS TO RELOAD THE FIRST QUESTION!
-    const RestartLesson = () => {
+    // Restarts the current lesson when all questions have been answered.                      
+    const RestartLesson = (UserTokenRaw, LanguageName, CurrentQuestion, NumberCorrect) => {
         SetProgress(0);
         SetQuestionsCorrect(0);
         SetQuestionsIncorrect(0);
@@ -208,10 +226,19 @@ const QuestionPage = (props) => {
         SetReturnHome(false);
         EnableAllButtons();
         ResetButtonStyles();
+
+
+        // Save progress to the database.
+        try {
+            SaveProgress(UserTokenRaw, LanguageName, CurrentQuestion, NumberCorrect);
+        } catch (error) {
+            console.log('it broke in restart');
+            console.log(error);
+        }
     };
 
     // Handle conditional messages when the correct answer is chosen.
-    const HandleCorrectAnswerChoice = (ButtonChosen) => {
+    const HandleCorrectAnswerChoice = (ButtonChosen, QuestionBank) => {
 
         // Disable all buttons
         DisableAllButtons();
@@ -225,8 +252,17 @@ const QuestionPage = (props) => {
         // Remove other messages if present.
         SetTryAgain(false);
 
+        console.log('outside correct');
+        console.log(QuestionBank.length - 1);
+        console.log(CurrentQuestion);
+
         // If at the end of the lesson.
-        if (CurrentQuestion == 19) {
+        if (CurrentQuestion == (QuestionBank.length - 1)) {
+
+            console.log('in correct');
+            console.log(QuestionBank.length - 1);
+            console.log(CurrentQuestion);
+
             SetRestartButton(true);
             SetReturnHome(true);
             SetCurrentQuestion(0);
@@ -237,13 +273,12 @@ const QuestionPage = (props) => {
             SetCorrect(true);
             SetNextButton(true);
             SetTries(0);
-            SetCurrentQuestion(CurrentQuestion + 1);
         }
 
     };
 
     // Handle conditional messages when an incorrect answer is chosen.
-    const HandleIncorrectAnswerChoice = (ButtonChosen) => {
+    const HandleIncorrectAnswerChoice = (ButtonChosen, QuestionBank) => {
 
         // Disable the incorrect button and remove the hover animation.
         DisableIncorrectChoice(ButtonChosen);
@@ -262,7 +297,7 @@ const QuestionPage = (props) => {
             RemoveAllHover();
             
             // If all questions have been answered.
-            if (CurrentQuestion == 19) {
+            if (CurrentQuestion == (QuestionBank.length - 1)) {
                 SetRestartButton(true);
                 SetReturnHome(true);
                 SetCurrentQuestion(0);
@@ -274,14 +309,13 @@ const QuestionPage = (props) => {
                 SetIncorrect(true);
                 SetNextButton(true);
                 SetTries(0);
-                SetCurrentQuestion(CurrentQuestion + 1);
             }
         }
 
     };
 
     // Checks the answer and displays the proper messages.               
-    const CheckAnswer = (ButtonChosen, CorrectAnswer, ChosenAnswer) => {
+    const CheckAnswer = (ButtonChosen, CorrectAnswer, ChosenAnswer, QuestionBank) => {
 
         // If the correct answer was chosen.
         if (ChosenAnswer == CorrectAnswer) {
@@ -290,7 +324,7 @@ const QuestionPage = (props) => {
             UpdateCorrectQuestions();
             
             // Handle conditional messages.
-            HandleCorrectAnswerChoice(ButtonChosen);
+            HandleCorrectAnswerChoice(ButtonChosen, QuestionBank);
             
         }
 
@@ -300,14 +334,17 @@ const QuestionPage = (props) => {
             UpdateIncorrectQuestions();
             
             // Handle conditional messages.
-            HandleIncorrectAnswerChoice(ButtonChosen);
+            HandleIncorrectAnswerChoice(ButtonChosen, QuestionBank);
         }
 
     };
 
     // Moves to the next question and removes messages.                                             Need to add the next question functionality!!!!!!!!!!!!
-    const NextQuestion = () => {
+    const NextQuestion = async (UserTokenRaw, LanguageName, CurrentQuestion, NumberCorrect) => {
 
+        // Increment the current question.
+        SetCurrentQuestion(CurrentQuestion + 1);
+        
         EnableAllButtons();
 
         // Reset all styles.
@@ -329,7 +366,41 @@ const QuestionPage = (props) => {
 
         // Update progress bar.
         UpdateProgress();
-    }
+
+        try {
+
+            // save progress to the database.
+            SaveProgress(UserTokenRaw, LanguageName, CurrentQuestion, NumberCorrect);
+
+        } catch (error) {
+            console.log('Failed to save progress. :(');
+        }
+        
+    };
+
+    // Updates the users progress to the database.
+    const SaveProgress = async (UserTokenRaw, LanguageName, CurrentQuestion, NumberCorrect) => {
+
+        const data = {
+            token: UserTokenRaw,
+            userCourses: LanguageName,
+            currentQuestion: CurrentQuestion,
+            numCorrect: NumberCorrect
+        };
+
+        try {
+
+            const response = await axios.post(bp.buildPath('api/updateProgress'), data);
+
+        } catch (error) {
+            console.log(error);
+            console.log('broke in saveprogress.')
+            console.log(UserTokenRaw);
+            console.log(CurrentQuestion);
+            console.log(NumberCorrect);
+        }
+
+    };
 
     return(
 
@@ -344,14 +415,14 @@ const QuestionPage = (props) => {
                 <div className='row'>
 
                     <div className='col-3 d-none d-xl-inline'>
-                        <NavBar Progress={Progress} QuestionsCorrect={QuestionsCorrect} QuestionsIncorrect={QuestionsIncorrect}/>
+                        <NavBar Progress={Progress} QuestionsCorrect={QuestionsCorrect} QuestionsIncorrect={QuestionsIncorrect} UsersName={UsersName} LanguageName={UserCourseInfo.Language} CurrentQuestion={CurrentQuestion} UserTokenRaw={UserTokenRaw}/>
                     </div>
 
                     <div className='col-xl-8'>
 
                         <div id='QuestionRow' className='row m-5 p-3' >
                             <div className='col d-flex align-items-center justify-content-center'>
-                                <h1 id='QuestionText'>1). THE QUESTION TEXT WILL GO HERE THE QUESTION TEXT WILL GO HERE THE QUESTION TEXT WILL GO HERE THE QUESTION TEXT WILL GO HERE THE QUESTION TEXT WILL GO HERE THE QUESTION TEXT WILL GO HERE THE QUESTION TEXT WILL GO HERE </h1>
+                                <h1 id='QuestionText'>{QuestionText}</h1>
                             </div>
                         </div>
 
@@ -370,9 +441,9 @@ const QuestionPage = (props) => {
 
                                 <div className='row'>
 
-                                    <button id='AnswerOne' className={StyleHover1} style={StyleButton1} disabled={DisableButton1} onClick={() => CheckAnswer(1, CorrectAnswer, document.getElementById('AnswerOne').textContent)}>Answer 1</button>
+                                    <button id='AnswerOne' className={StyleHover1} style={StyleButton1} disabled={DisableButton1} onClick={() => CheckAnswer(1, CorrectAnswer, document.getElementById('AnswerOne').textContent, QuestionBank)}>{CorrectAnswer}</button>
 
-                                    <button id='AnswerTwo' className={StyleHover2} style={StyleButton2} disabled={DisableButton2} onClick={() => CheckAnswer(2, CorrectAnswer, document.getElementById('AnswerTwo').textContent)}>Answer 2</button>
+                                    <button id='AnswerTwo' className={StyleHover2} style={StyleButton2} disabled={DisableButton2} onClick={() => CheckAnswer(2, CorrectAnswer, document.getElementById('AnswerTwo').textContent, QuestionBank)}>{Incorrect1}</button>
 
                                 </div>
 
@@ -382,9 +453,9 @@ const QuestionPage = (props) => {
 
                                 <div className='row'> 
 
-                                    <button id='AnswerThree' className={StyleHover3} style={StyleButton3} disabled={DisableButton3} onClick={() => CheckAnswer(3, CorrectAnswer, document.getElementById('AnswerThree').textContent)}>Answer 3</button>
+                                    <button id='AnswerThree' className={StyleHover3} style={StyleButton3} disabled={DisableButton3} onClick={() => CheckAnswer(3, CorrectAnswer, document.getElementById('AnswerThree').textContent, QuestionBank)}>{Incorrect2}</button>
 
-                                    <button id='AnswerFour' className={StyleHover4} style={StyleButton4} disabled={DisableButton4} onClick={() => CheckAnswer(4, CorrectAnswer, document.getElementById('AnswerFour').textContent)}>Answer 4</button>
+                                    <button id='AnswerFour' className={StyleHover4} style={StyleButton4} disabled={DisableButton4} onClick={() => CheckAnswer(4, CorrectAnswer, document.getElementById('AnswerFour').textContent, QuestionBank)}>{Incorrect3}</button>
 
                                 </div>
 
@@ -395,11 +466,11 @@ const QuestionPage = (props) => {
                         <div className='row'>
                             <div className='col d-flex align-items-center justify-content-center'>
 
-                                {NextButton && <button id='NextQestionButton' className='btn-custom w-25' onClick={() => NextQuestion()}>Next Question</button>}
+                                {NextButton && <button id='NextQestionButton' className='btn-custom w-25' onClick={() => NextQuestion(UserTokenRaw, UserCourseInfo.Language, CurrentQuestion, QuestionsCorrect)}>Next Question</button>}
 
                                 {ReturnHome && <button id='ReturnHomeButton' className='btn-custom w-25'>Home</button>}
 
-                                {RestartButton && <button id='RestartButton' className='btn-custom w-25' onClick={() => RestartLesson()}>Restart</button>}
+                                {RestartButton && <button id='RestartButton' className='btn-custom w-25' onClick={() => RestartLesson(UserTokenRaw, UserCourseInfo.Language, 0, 0)}>Restart</button>}
                                 
                             </div>
                         </div>
