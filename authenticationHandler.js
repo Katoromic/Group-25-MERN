@@ -41,7 +41,7 @@ function sendVerificationEmail(user) {
     const token = jwt.createVerificationToken(user._id);
     emailSender.sendMail(verifyEmail(toEmail, token), function (error, info) {
         if (error) throw Error(error);
-        console.log('Verification Email Sent');
+        //console.log('Verification Email Sent');
         //console.log(info);
     });
 }
@@ -65,7 +65,7 @@ function sendPassRec(user) {
     const token = jwt.createVerificationToken(user._id);
     emailSender.sendMail(psEmail(toEmail, token), function (error, info) {
         if (error) throw Error(error);
-        console.log('Password Recovery Email Sent');
+        //console.log('Password Recovery Email Sent');
         //console.log(info);
     });
 }
@@ -89,7 +89,7 @@ function sendPassConfirmation(user) {
     const token = jwt.createVerificationToken(user._id);
     emailSender.sendMail(psConfirmEmail(toEmail, token), function (error, info) {
         if (error) throw Error(error);
-        console.log('Change Confirmed Email Sent');
+        //console.log('Change Confirmed Email Sent');
         //console.log(info);
     });
 }

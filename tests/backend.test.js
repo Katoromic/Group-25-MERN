@@ -203,7 +203,7 @@ describe('SendVerificationLink', () => {
         let token = JWT.createAccessToken("Test", "Test", false, "65f0d3f92c22df65ba6ea6d2").accessToken;
 
         const response = await superPost('/sendVerificationLink', {"token": token});
-        console.log(response.body);
+        
         expect(response.statusCode).toBe(400);
         expect(response.body.error).not.toBe("");
     });
@@ -365,13 +365,186 @@ describe('changePassword', () => {
 });
 
 
+// Get User Courses tests
+//
+describe('user-courses', () => {
+
+    test('Valid token / verified user', async() => {
+
+        let token = JWT.createAccessToken("Test", "Test", true, "65e549b49478d16924146fa8").accessToken;
+
+        const response = await superGet('/user-courses', token);
+
+        expect(response.statusCode).toBe(200);
+        expect(response.body.courses).not.toStrictEqual([]);
+        expect(response.body.error).toBe("");
+    });
+
+    test('Valid token / unverified user', async() => {
+
+        let token = JWT.createAccessToken("Test", "Test", false, "660a25f3527fb4d540a5f2b2").accessToken;
+
+        const response = await superGet('/user-courses', token);
+
+        expect(response.statusCode).toBe(403);
+        expect(response.body.courses).toStrictEqual([]);
+        expect(response.body.error).not.toBe("");
+    });
+
+    test('Expired token', async() => {
+
+        let expToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NjAzMzIzZDgyMTMzYWYwMjAyNjRiMDQiLCJmaXJzdE5hbWUiOiJHdWVzdCIsImxhc3ROYW1lIjoiVXNlciIsInZlcmlmaWVkIjpmYWxzZSwiaWF0IjoxNzExNTcwNDM4LCJleHAiOjE3MTE1NzA0OTh9.4NfLt10jEIv4PJMkufZUoX5-clC_Dx2GFOTYB77fchI";
+
+        const response = await superGet('/user-courses', expToken);
+
+        expect(response.statusCode).toBe(401);
+        expect(response.body.courses).toStrictEqual([]);;
+        expect(response.body.error).not.toBe("");
+    });
+
+    test('Missing token', async() => {
+
+        const response = await superGet('/user-courses', ' ');
+
+        expect(response.statusCode).toBe(400);
+        expect(response.body.courses).toStrictEqual([]);
+        expect(response.body.error).not.toBe("");
+    });
+
+    test('Missing Authorization header', async() => {
+
+        const response = await superGet('/user-courses', null);
+
+        expect(response.statusCode).toBe(400);
+        expect(response.body.courses).toStrictEqual([]);
+        expect(response.body.error).not.toBe("");
+    });
+});
+
+
+// Update Progress tests
+//
+describe('updateProgress', () => {
+
+    test('Valid token / verified user', async() => {
+
+        let token = JWT.createAccessToken("Test", "Test", true, "65e549b49478d16924146fa8").accessToken;
+
+        let req = { token: token, userCourses: 'c++', currentQuestion: 0, numCorrect: 0 };
+
+        const response = await superPost('/updateProgress', req);
+
+        expect(response.statusCode).toBe(200);
+        expect(response.body.error).toBe("");
+    });
+
+    test('Valid token / unverified user', async() => {
+
+        let token = JWT.createAccessToken("Test", "Test", false, "65e549b49478d16924146fa8").accessToken;
+
+        let req = { token: token, userCourses: 'c++', currentQuestion: 0, numCorrect: 0 };
+
+        const response = await superPost('/updateProgress', req);
+
+        expect(response.statusCode).toBe(403);
+        expect(response.body.error).not.toBe("");
+    });
+
+    test('Expired token', async() => {
+
+        let expToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NjAzMzIzZDgyMTMzYWYwMjAyNjRiMDQiLCJmaXJzdE5hbWUiOiJHdWVzdCIsImxhc3ROYW1lIjoiVXNlciIsInZlcmlmaWVkIjpmYWxzZSwiaWF0IjoxNzExNTcwNDM4LCJleHAiOjE3MTE1NzA0OTh9.4NfLt10jEIv4PJMkufZUoX5-clC_Dx2GFOTYB77fchI";
+
+        let req = { token: expToken, userCourses: 'c++', currentQuestion: 0, numCorrect: 0 };
+
+        const response = await superPost('/updateProgress', req);
+
+        expect(response.statusCode).toBe(401);
+        expect(response.body.error).not.toBe("");
+    });
+
+    test('Missing token', async() => {
+
+        let req = { userCourses: 'c++', currentQuestion: 0, numCorrect: 0 };
+
+        const response = await superPost('/updateProgress', req);
+
+        expect(response.statusCode).toBe(401);
+        expect(response.body.error).not.toBe("");
+    });
+
+    test('Missing course', async() => {
+
+        let token = JWT.createAccessToken("Test", "Test", true, "65e549b49478d16924146fa8").accessToken;
+
+        let req = { token: token, currentQuestion: 0, numCorrect: 0 };
+
+        const response = await superPost('/updateProgress', req);
+
+        expect(response.statusCode).toBe(400);
+        expect(response.body.error).not.toBe("");
+    });
+});
+
+
+// Get Course tests
+//
+describe('getCourse', () => {
+
+    test('Valid course', async() => {
+
+        const response = await superGet('/getCourse/c++', null);
+
+        expect(response.statusCode).toBe(200);
+        expect(response.body.courseData).not.toBe(null);
+        expect(response.body.error).toBe("");
+    });
+    
+    test('Invalid course', async() => {
+
+        const response = await superGet('/getCourse/language', null);
+        
+        expect(response.statusCode).toBe(404);
+        expect(response.body.courseData).toBe(null);
+        expect(response.body.error).not.toBe("");
+    });
+});
+
+
+// Get Question Bank tests
+//
+describe('course-question-bank', () => {
+
+    test('Valid course', async() => {
+
+        const response = await superGet('/course-question-bank/c++', null);
+
+        expect(response.statusCode).toBe(200);
+        expect(response.body.questions).not.toStrictEqual([]);
+        expect(response.body.error).toBe("");
+    });
+    
+    test('Invalid course', async() => {
+
+        const response = await superGet('/course-question-bank/language', null);
+        
+        expect(response.statusCode).toBe(404);
+        expect(response.body.questions).toStrictEqual([]);
+        expect(response.body.error).not.toBe("");
+    });
+});
+
+
 //
 // Wrapper functions for GET and POST
 //
 
-async function superGet(endpoint)
+async function superGet(endpoint, token)
 {
-    return await supertest(Path.buildPath('api')).get(endpoint);
+    if (token)
+        return await supertest(Path.buildPath('api')).get(endpoint)
+                                                     .set('Authorization', `Bearer ${token}`);
+    else
+        return await supertest(Path.buildPath('api')).get(endpoint);
 }
 
 async function superPost(endpoint, body)
