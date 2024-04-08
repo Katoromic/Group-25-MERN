@@ -332,7 +332,7 @@ const QuestionPage = () => {
 
     };
 
-    // Moves to the next question and removes messages.                                             Need to add the next question functionality!!!!!!!!!!!!
+    // Moves to the next question and removes messages.                                            
     const NextQuestion = async (UserTokenRaw, LanguageName, CurrentQuestion, NumberCorrect) => {
 
         // Increment the current question.
