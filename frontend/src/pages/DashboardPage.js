@@ -1,3 +1,17 @@
+import React from 'react'; 
+import { useEffect, useState } from "react";
+import { useNavigate } from 'react-router-dom';
+import { jwtDecode as decode } from "jwt-decode";
+import axios from "axios";
+import '../styles/Dashboard.css'
+import { FaUserAlt } from "react-icons/fa";
+import BackgroundVideo from '../images/background.mp4';
+import NavBar from '../components/NavBar';
+import CLogo from '../images/c logo.PNG';
+import JavaLogo from '../images/java logo.PNG';
+import JSLogo from '../images/js logo.PNG';
+import LoadingPage from './LoadingPage.js';
+
 const DashboardPage = () => {
 
     var bp = require("../components/Path.js");
