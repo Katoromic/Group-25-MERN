@@ -2,22 +2,18 @@
     font-family: 'sweet-sans-pro';
     src: url(../fonts/SweetSansProThin.otf) format('opentype');
 }
-
 nav {
-    background-color: rgba(0, 255, 255, 0);
-    width: 100vw;
-    margin-top: 1%;
+    width: 95vw;
+    height: 1%;
+    margin-top: 2%;
 }
-
 #NavBarBackGround {
     position: sticky;
    background-color: rgba(255, 235, 205, 0);
 }
-s
 .bg-customNavBar {
     background-color: rgba(255, 235, 205, 0);
 }
-
 .profileIcon {
     background-color: black;
     padding: 2.5px;
@@ -25,24 +21,34 @@ s
     border-radius: 50%;
     border-width: thin;
     color: white;
-    width: 30px;
-    height: 30px;
-    margin-right: 60px;
+    width: 130%;
+    height: 130%;
     transition: width 0.5s ease-in;
 }
-
+@media only screen and (max-width: 600px) {
+    .profileIcon {
+        width: 20px;
+        height: 20px;
+        margin-right: 0.5vh;
+    }
+}
 .profileIcon:hover{
-    width: 35px;
+    width: 140%;
     height: auto;
     color: lightgrey;
 }
-
 .shuriken{
-    margin-right: 55%;
-    width: 50px;
+    width: 50%;
     height: auto;
-    transition: transform 0.5s ease;
-    
+    transition: transform 0.5s ease; 
+    justify-content: start;
+    justify-self: start;
+}
+@media only screen and (max-width: 300px) {
+    .shuriken {
+      width: 30px;
+      margin-right: 4vh;
+    }
 }
 .shuriken:hover{
     transform: rotate(180deg);
