@@ -37,13 +37,13 @@ const LoginPage = () => {
                         </div>
 
                         <div className='remember-forgot'>
-                            <a href="#">Forgot password?</a>
+                            <a href="/PassRecover">Forgot password?</a>
                         </div>
 
                         <button type= "submit">LOGIN</button>
 
                         <div className='register-link'>
-                            <p>Don't have an account? <a href= "#">Register</a></p>
+                            <p>Don't have an account? <a href= "/signup">Register</a></p>
                         </div>
                     </form>
                 </div>
