@@ -5,10 +5,18 @@
 
 #AboutUsButton {
     font-family: 'sweet-sans-pro';
-    font-size: 20px;
-    margin-right: 60px;
+    font-size: 120%;
+    margin-right: 7vh;
     text-decoration: none; 
     color: black; 
+    white-space: nowrap; 
+}
+
+@media only screen and (max-width: 600px) {
+  #AboutUsButton {
+    font-size: 80%;
+    margin-right: 4vh;
+  }
 }
 
 .aboutus-underline-animation {
@@ -20,7 +28,7 @@
   .aboutus-underline-animation::after {
     content: '';
     position: absolute;
-    width: 65%;
+    width: 70%;
     transform: scaleX(0);
     height: 1px;
     bottom: 0;
@@ -29,8 +37,14 @@
     transform-origin: bottom right;
     transition: transform 0.25s ease-out;
   }
+
+  @media only screen and (max-width: 300px) {
+    .aboutus-underline-animation::after {
+      width: 85%;
+    }
+}
   
-  .aboutus-underline-animation:hover::after {
+.aboutus-underline-animation:hover::after {
     transform: scaleX(1);
     transform-origin: bottom left;
-  }
+}
