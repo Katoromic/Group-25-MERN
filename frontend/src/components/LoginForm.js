@@ -7,9 +7,13 @@ import { FaUnlockAlt } from "react-icons/fa";
 import BackgroundVideo from '../images/background.mp4'
 import SenseiImage from './SenseiImage.js'
 
+console.log("LoginForm.js");
+
 const LoginForm = () => {
 
-var bp = require("./Path.js");
+  console.log("LoginForm.js2");
+
+  var bp = require("./Path.js");
   var storage = require("../tokenStorage.js");
   const [loginName, setLoginName] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
@@ -47,10 +51,12 @@ var bp = require("./Path.js");
             localStorage.setItem("user_data", JSON.stringify(user));
             if (!verified)
             {
+              console.log("unverified");
               window.location.href = "/unverified";
             }
             else
             {
+              console.log("verified");
               window.location.href = "/landing";
             }
             

@@ -12,6 +12,43 @@ import JavaLogo from '../images/java logo.PNG';
 import JSLogo from '../images/js logo.PNG';
 import LoadingPage from './LoadingPage.js';
 
+function Dashboard({courses, courseInfo, isLoaded, HandleClick}) {
+    console.log("courseInfo in Dashboard: ", courseInfo);
+    let info = [];
+    // The following is me reorganizing the code because the indexes of the courseInfo array are not always in the order of the courses array.
+    // This is because for whatever reason, the page gets rendered twice, which calls the APIs twice.
+    // I don't know why this is happening, but this is a workaround.
+    for (let i = 0; i < courseInfo.length; i++) {
+        if (courseInfo[i].Language == 'c++') {
+            info[0] = courseInfo[i]; // resets c++ to always be the 0th index, etc
+        } else if (courseInfo[i].Language == 'python') {
+            info[1] = courseInfo[i];
+        } else if (courseInfo[i].Language == 'haskell') {
+            info[2] = courseInfo[i];
+        }
+    }
+
+    console.log("info: ", info);
+    return (
+        <>
+        {isLoaded ?
+        <div className='dashboard' id="dashboard">
+                {info.map((c, index) => (
+                    <button className= 'course' id= {c.Language} onClick={HandleClick.bind(null, c.Language)}>  
+                    <img className= 'logo' src={c.LogoFile} />
+                    <h1>{c.Description}</h1>
+                    <div className='progressBar'> 
+                        <div className= 'progressBar-inner' style={{width: courses[index].CurrentQuestion*10 + '%'}}></div>
+                    </div>
+                    <p>{courses[index].CurrentQuestion*10}% complete</p>
+                    <p>{courses[index].NumCorrect} out of 10 correct</p>
+                </button>
+                ))}
+            </div>: <LoadingPage></LoadingPage>}
+            </>
+    );
+}
+
 const DashboardPage = () => {
 
     var bp = require("../components/Path.js");
@@ -163,43 +200,6 @@ const DashboardPage = () => {
     });
     }
 
-    function Dashboard({courses, courseInfo}) {
-        console.log("courseInfo in Dashboard: ", courseInfo);
-        let info = [];
-        // The following is me reorganizing the code because the indexes of the courseInfo array are not always in the order of the courses array.
-        // This is because for whatever reason, the page gets rendered twice, which calls the APIs twice.
-        // I don't know why this is happening, but this is a workaround.
-        for (let i = 0; i < courseInfo.length; i++) {
-            if (courseInfo[i].Language == 'c++') {
-                info[0] = courseInfo[i]; // resets c++ to always be the 0th index, etc
-            } else if (courseInfo[i].Language == 'python') {
-                info[1] = courseInfo[i];
-            } else if (courseInfo[i].Language == 'haskell') {
-                info[2] = courseInfo[i];
-            }
-        }
-
-        console.log("info: ", info);
-        return (
-            <>
-            {isLoaded ?
-            <div className='dashboard' id="dashboard">
-                    {info.map((c, index) => (
-                        <button className= 'course' id= {c.Language} onClick={HandleClick.bind(null, c.Language)}>  
-                        <img className= 'logo' src={c.LogoFile} />
-                        <h1>{c.Description}</h1>
-                        <div className='progressBar'> 
-                            <div className= 'progressBar-inner' style={{width: courses[index].CurrentQuestion*10 + '%'}}></div>
-                        </div>
-                        <p>{courses[index].CurrentQuestion*10}% complete</p>
-                        <p>{courses[index].NumCorrect} out of 10 correct</p>
-                    </button>
-                    ))}
-                </div>: <LoadingPage></LoadingPage>}
-                </>
-        );
-    }
-
     return (
         <div>
              <video autoPlay muted loop className='BackgroundVideo'>
@@ -215,7 +215,7 @@ const DashboardPage = () => {
                 <div className='title'>
                     <h1>MY COURSES</h1>
                 </div>
-                <Dashboard courses={courses} courseInfo={courseInfo}/>
+                <Dashboard courses={courses} courseInfo={courseInfo} HandleClick={HandleClick} isLoaded={isLoaded}/>
             </div>
         </div>
     );
