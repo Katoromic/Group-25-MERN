@@ -4,20 +4,18 @@ import { useNavigate } from 'react-router-dom';
 import { jwtDecode as decode } from "jwt-decode";
 import axios from "axios";
 import '../styles/Dashboard.css'
-import { FaUserAlt } from "react-icons/fa";
 import BackgroundVideo from '../images/background.mp4';
 import NavBar from '../components/NavBar';
-import CLogo from '../images/c logo.PNG';
-import JavaLogo from '../images/java logo.PNG';
-import JSLogo from '../images/js logo.PNG';
 import LoadingPage from './LoadingPage.js';
 
 var bp = require("../components/Path.js");
 var storage = require("../tokenStorage.js");
 
-
-
-
+const course_ids = {
+    1: 'c++',
+    2: 'python',
+    3: 'haskell',
+};
 
 const GetQuestionBank = async (CourseID) => {
     try {
@@ -73,6 +71,18 @@ const GetUserCourseInfo = async (CourseID) => {
 
     } catch (error) {
         console.log(error);
+    }
+};
+
+const HandleClick = async (CourseID) => {
+    try {
+        const Questions = await GetQuestionBank(CourseID);
+        const UserCourseInfo = await GetUserCourseInfo(CourseID);
+        const UserTokenRaw = storage.retrieveToken();
+        const UserTokenDecoded = decode(storage.retrieveToken(), { complete: true });
+        //navigate('/Questions', {state: {QuestionBank: Questions, UserInfo: UserCourseInfo, UserTokenRaw: UserTokenRaw, UserTokenDecoded: UserTokenDecoded}});
+    } catch (error) {
+        console.log('It Broke! >:(')
     }
 };
 
@@ -136,40 +146,18 @@ const getCourses = async (event) => {
 function Dashboard({courses, courseInfo, isLoaded}) {
     
     // for passing information to other pages.
-    const navigate = useNavigate();
+    //const navigate = useNavigate();
 
-    const HandleClick = async (CourseID) => {
-
-        try {
-            const Questions = await GetQuestionBank(CourseID);
-            const UserCourseInfo = await GetUserCourseInfo(CourseID);
-            const UserTokenRaw = storage.retrieveToken();
-            const UserTokenDecoded = decode(storage.retrieveToken(), { complete: true });
-            navigate('/Questions', {state: {QuestionBank: Questions, UserInfo: UserCourseInfo, UserTokenRaw: UserTokenRaw, UserTokenDecoded: UserTokenDecoded}});
-        } catch (error) {
-            console.log('It Broke! >:(')
-        }
-        
-    };
-
-    //console.log("courseInfo in Dashboard: ", courseInfo);
     let info = [];
-    // The following is me reorganizing the code because the indexes of the courseInfo array are not always in the order of the courses array.
-    // This is because for whatever reason, the page gets rendered twice, which calls the APIs twice.
-    // I don't know why this is happening, but this is a workaround.
     for (let i = 0; i < courseInfo.length; i++) {
-        if (courseInfo[i].Language == 'c++') {
-            info[0] = courseInfo[i]; // resets c++ to always be the 0th index, etc
-        } else if (courseInfo[i].Language == 'python') {
-            info[1] = courseInfo[i];
-        } else if (courseInfo[i].Language == 'haskell') {
-            info[2] = courseInfo[i];
+        let course = courseInfo[i];
+        for (let id in course_ids) {
+            if (course.Language === course_ids[id]) {
+                info[id - 1] = course;
+            }
         }
     }
 
-    //console.log("info: ", info);
-    console.log("courses: ", courses);
-    console.log("isLoaded: ", isLoaded);
     return (
         <>
         {isLoaded ?
@@ -203,7 +191,7 @@ const DashboardPage = () => {
         if (res !== null) {
             res.then((res) => {
                 if (ignore) return;
-                
+
                 setCourses(res);
                 
                 getCourseInfo(res).then((courseInfoArray) => {
