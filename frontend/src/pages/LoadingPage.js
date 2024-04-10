@@ -12,7 +12,7 @@ function LoadingPage() {
                 <div className='loadingBar'> 
                     <div className= 'loadingBar-inner'></div>
                 </div>
-                <div class='dynamicText'>
+                <div className='dynamicText'>
                     <p>Loading...</p>
                 </div>
             </div>

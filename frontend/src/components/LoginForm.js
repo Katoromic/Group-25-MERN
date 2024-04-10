@@ -7,11 +7,7 @@ import { FaUnlockAlt } from "react-icons/fa";
 import BackgroundVideo from '../images/background.mp4'
 import SenseiImage from './SenseiImage.js'
 
-console.log("LoginForm.js");
-
 const LoginForm = () => {
-
-  console.log("LoginForm.js2");
 
   var bp = require("./Path.js");
   var storage = require("../tokenStorage.js");

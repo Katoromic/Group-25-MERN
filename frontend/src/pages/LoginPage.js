@@ -9,7 +9,6 @@ import LoginForm from '../components/LoginForm';
 
 
 const LoginPage = () => {
-    console.log("LoginPage.js");
 
     return (
         <div>
