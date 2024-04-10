@@ -336,7 +336,8 @@ const QuestionPage = () => {
     const NextQuestion = async (UserTokenRaw, LanguageName, CurrentQuestion, NumberCorrect) => {
 
         // Increment the current question.
-        SetCurrentQuestion(CurrentQuestion + 1);
+        const newCurrentQuestion = CurrentQuestion + 1;
+        SetCurrentQuestion(newCurrentQuestion);
         
         EnableAllButtons();
 
@@ -363,7 +364,7 @@ const QuestionPage = () => {
         try {
 
             // save progress to the database.
-            SaveProgress(UserTokenRaw, LanguageName, CurrentQuestion, NumberCorrect);
+            SaveProgress(UserTokenRaw, LanguageName, newCurrentQuestion, NumberCorrect);
 
         } catch (error) {
             console.log('Failed to save progress. :(');
@@ -387,7 +388,7 @@ const QuestionPage = () => {
 
         } catch (error) {
             console.log(error);
-            console.log('broke in saveprogress.')
+            console.log('broke in saveprogress.');
             console.log(UserTokenRaw);
             console.log(CurrentQuestion);
             console.log(NumberCorrect);
