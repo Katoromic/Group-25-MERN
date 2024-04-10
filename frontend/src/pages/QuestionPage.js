@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import axios from "axios";
 import '../styles/QuestionPage.css';
 import BackGroundVideo from '../images/background.mp4'
@@ -18,11 +18,12 @@ const QuestionPage = () => {
     const UserCourseInfo = location.state.UserInfo;
     const QuestionBank = location.state.QuestionBank;
     const UsersName = location.state.UserTokenDecoded.firstName + ' ' + location.state.UserTokenDecoded.lastName;
+    const LanguageName = UserCourseInfo.Language;
     const [CurrentQuestion, SetCurrentQuestion] = useState(UserCourseInfo.CurrentQuestion); 
 
     // Question and answer choices.
     let QuestionText = QuestionBank[CurrentQuestion].QuestionText;
-    let CorrectAnswer = QuestionBank[CurrentQuestion].Answer; // NEED USERS CURRENT QUESTION HERE!
+    let CorrectAnswer = QuestionBank[CurrentQuestion].Answer; 
     let Incorrect1 = QuestionBank[CurrentQuestion].OtherChoices[0];
     let Incorrect2 = QuestionBank[CurrentQuestion].OtherChoices[1];
     let Incorrect3 = QuestionBank[CurrentQuestion].OtherChoices[2];
@@ -41,7 +42,6 @@ const QuestionPage = () => {
     const [IncorrectTryAgain, SetTryAgain] = useState(false);
     const [NextButton, SetNextButton] = useState(false);
     const [RestartButton, SetRestartButton] = useState(false);
-    const [ReturnHome, SetReturnHome] = useState(false);
 
     // For applying conditional styles to answer choices.
     const [StyleButton1, SetStyleButton1] = useState();
@@ -61,6 +61,15 @@ const QuestionPage = () => {
     const [DisableButton3, SetButtonDisable3] = useState(false);
     const [DisableButton4, SetButtonDisable4] = useState(false);
 
+    // For updating the current question.
+    useEffect(() => {
+        try {
+            // save progress to the database.
+            SaveProgress(UserTokenRaw, LanguageName, CurrentQuestion, QuestionsCorrect);
+        } catch (error) {
+            console.log('Failed to save progress. :(');
+        }
+    }, [CurrentQuestion]);
 
     // Conditional styles for buttons.
     const CorrectStyle = {
@@ -214,9 +223,9 @@ const QuestionPage = () => {
         SetProgress(0);
         SetQuestionsCorrect(0);
         SetQuestionsIncorrect(0);
+        SetCurrentQuestion(0);
         SetTries(0);
         SetRestartButton(false);
-        SetReturnHome(false);
         EnableAllButtons();
         ResetButtonStyles();
 
@@ -245,20 +254,9 @@ const QuestionPage = () => {
         // Remove other messages if present.
         SetTryAgain(false);
 
-        console.log('outside correct');
-        console.log(QuestionBank.length - 1);
-        console.log(CurrentQuestion);
-
         // If at the end of the lesson.
         if (CurrentQuestion == (QuestionBank.length - 1)) {
-
-            console.log('in correct');
-            console.log(QuestionBank.length - 1);
-            console.log(CurrentQuestion);
-
             SetRestartButton(true);
-            SetReturnHome(true);
-            SetCurrentQuestion(0);
             UpdateProgress();
         }
 
@@ -292,8 +290,6 @@ const QuestionPage = () => {
             // If all questions have been answered.
             if (CurrentQuestion == (QuestionBank.length - 1)) {
                 SetRestartButton(true);
-                SetReturnHome(true);
-                SetCurrentQuestion(0);
                 UpdateProgress();
             }
 
@@ -335,9 +331,11 @@ const QuestionPage = () => {
     // Moves to the next question and removes messages.                                            
     const NextQuestion = async (UserTokenRaw, LanguageName, CurrentQuestion, NumberCorrect) => {
 
+        console.log('Current question before inc: ', CurrentQuestion);
+
         // Increment the current question.
         SetCurrentQuestion(CurrentQuestion + 1);
-        
+
         EnableAllButtons();
 
         // Reset all styles.
@@ -360,15 +358,6 @@ const QuestionPage = () => {
         // Update progress bar.
         UpdateProgress();
 
-        try {
-
-            // save progress to the database.
-            SaveProgress(UserTokenRaw, LanguageName, CurrentQuestion, NumberCorrect);
-
-        } catch (error) {
-            console.log('Failed to save progress. :(');
-        }
-        
     };
 
     // Updates the users progress to the database.
@@ -382,9 +371,7 @@ const QuestionPage = () => {
         };
 
         try {
-
             const response = await axios.post(bp.buildPath('api/updateProgress'), data);
-
         } catch (error) {
             console.log(error);
             console.log('broke in saveprogress.')
@@ -408,7 +395,7 @@ const QuestionPage = () => {
                 <div className='row'>
 
                     <div className='col-3 d-none d-xl-inline'>
-                        <NavBar Progress={Progress} QuestionsCorrect={QuestionsCorrect} QuestionsIncorrect={QuestionsIncorrect} UsersName={UsersName} LanguageName={UserCourseInfo.Language} CurrentQuestion={CurrentQuestion} UserTokenRaw={UserTokenRaw}/>
+                        <NavBar Progress={Progress} QuestionsCorrect={QuestionsCorrect} QuestionsIncorrect={QuestionsIncorrect} UsersName={UsersName} LanguageName={LanguageName} CurrentQuestion={CurrentQuestion} UserTokenRaw={UserTokenRaw}/>
                     </div>
 
                     <div className='col-xl-8'>
@@ -459,11 +446,9 @@ const QuestionPage = () => {
                         <div className='row'>
                             <div className='col d-flex align-items-center justify-content-center'>
 
-                                {NextButton && <button id='NextQestionButton' className='btn-custom w-25' onClick={() => NextQuestion(UserTokenRaw, UserCourseInfo.Language, CurrentQuestion, QuestionsCorrect)}>Next Question</button>}
+                                {NextButton && <button id='NextQestionButton' className='btn-custom w-25' onClick={() => NextQuestion(UserTokenRaw, LanguageName, CurrentQuestion, QuestionsCorrect)}>Next Question</button>}
 
-                                {ReturnHome && <button id='ReturnHomeButton' className='btn-custom w-25'>Home</button>}
-
-                                {RestartButton && <button id='RestartButton' className='btn-custom w-25' onClick={() => RestartLesson(UserTokenRaw, UserCourseInfo.Language, 0, 0)}>Restart</button>}
+                                {RestartButton && <button id='RestartButton' className='btn-custom w-25' onClick={() => RestartLesson(UserTokenRaw, LanguageName, 0, 0)}>Restart</button>}
                                 
                             </div>
                         </div>
@@ -476,3 +461,4 @@ const QuestionPage = () => {
 };
 
 export default QuestionPage;
+
