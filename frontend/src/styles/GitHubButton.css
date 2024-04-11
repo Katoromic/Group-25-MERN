@@ -13,7 +13,7 @@
 }
 @media only screen and (max-width: 600px) {
   #GitHubButton {
-    font-size: 80%;
+    font-size: 70%;
     margin-right: 4vh;
   }
 }
