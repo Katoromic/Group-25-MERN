@@ -49,7 +49,7 @@ s
     justify-content: start;
     justify-self: start;
 }
-@media only screen and (max-width: 300px) {
+@media only screen and (max-width: 600px) {
     .shuriken {
       width: 30px;
       height: auto;
