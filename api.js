@@ -306,6 +306,10 @@ exports.setApp = function (app, client) {
 
                   Users.updateOne({"_id": ObjectId.createFromHexString(userId)}, {$set: {Password: hashedPassword}});
 
+                  let user = await Users.findOne({"_id": ObjectId.createFromHexString(userId)});
+
+                  sendPassConfirmation(user);
+
                   // Refresh the token
                   refreshedToken = JWT.refresh(token).accessToken;
                 }
