@@ -51,7 +51,7 @@ function verifyEmail(toEmail, fn, token) {
 function sendVerificationEmail(user) {
     const token = jwt.createVerificationToken(user._id);
     emailSender.sendMail(verifyEmail(user.Email, user.FirstName, token), function (error, info) {
-        if (error) throw Error(error);
+        if (error) console.error(error);
         //console.log('Verification Email Sent');
         //console.log(info);
     });
@@ -87,15 +87,14 @@ function sendPassRec(user) {
     const toEmail = user.Email;
     const token = jwt.createVerificationToken(user._id);
     emailSender.sendMail(psEmail(toEmail, token), function (error, info) {
-        if (error) throw Error(error);
+        if (error) console.error(error);
         //console.log('Password Recovery Email Sent');
         //console.log(info);
     });
 }
 
 //Password (Successful change)
-function psConfirmEmail(toEmail, token) {
-    const path = Path.buildPath(`verify/${token}`);
+function psConfirmEmail(toEmail) {
     return {
         from: "senseijake24@gmail.com",
         to: toEmail,
@@ -121,9 +120,8 @@ function psConfirmEmail(toEmail, token) {
 
 function sendPassConfirmation(user) {
     const toEmail = user.Email;
-    const token = jwt.createVerificationToken(user._id);
-    emailSender.sendMail(psConfirmEmail(toEmail, token), function (error, info) {
-        if (error) throw Error(error);
+    emailSender.sendMail(psConfirmEmail(toEmail), function (error, info) {
+        if (error) console.error(error);
         //console.log('Change Confirmed Email Sent');
         //console.log(info);
     });
