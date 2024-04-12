@@ -35,6 +35,7 @@
     background-color: black;
     transform-origin: bottom right;
     transition: transform 0.25s ease-out;
+}
 
   @media only screen and (max-width: 300px) {
     .aboutus-underline-animation::after {
