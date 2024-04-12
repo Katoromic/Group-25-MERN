@@ -20,6 +20,7 @@
     position: relative;
     color: black;
 }
+
 .home-underline-animation::after {
     content: '';
     position: absolute;
@@ -32,7 +33,7 @@
     transform-origin: bottom right;
     transition: transform 0.25s ease-out;
 }
-  
+
 @media only screen and (max-width: 300px) {
     .home-underline-animation::after {
       width: 80%;

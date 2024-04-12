@@ -6,7 +6,7 @@ import NavBar from '../components/NavBar';
 
 const AboutUsPage = () => {
     return (
-
+      
         <div id='AboutUsPage' className='overflow-auto'>
 
             <video autoPlay muted loop className='BackgroundVideo'>
@@ -23,6 +23,7 @@ const AboutUsPage = () => {
                 <div className='title'>
                     <h1>About Us</h1>
                     <div className='intro'>
+
                        <p> WE OFFER A PLATFORM FOR STUDENTS TO LEARN CODING BASICS IN A SUPPORTIVE
                         SETTING WITH SIMPLE, INTERACTIVE, AND BEGINNER-FRIENDLY LESSONS.</p>
                     </div>

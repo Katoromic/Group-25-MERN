@@ -2,22 +2,18 @@
     font-family: 'sweet-sans-pro';
     src: url(../fonts/SweetSansProThin.otf) format('opentype');
 }
-
 nav {
     width: 95vw;
     height: 1%;
     margin-top: 2%;
 }
-
 #NavBarBackGround {
     position: sticky;
    background-color: rgba(255, 235, 205, 0);
 }
-s
 .bg-customNavBar {
     background-color: rgba(255, 235, 205, 0);
 }
-
 .profileIcon {
     background-color: #000000;
     padding: 2.5px;
@@ -41,7 +37,6 @@ s
 .profileIcon:hover{
     color: lightgrey;
 }
-
 .shuriken{
     width: 50px;
     height: auto;
@@ -49,6 +44,7 @@ s
     justify-content: start;
     justify-self: start;
 }
+
 @media only screen and (max-width: 600px) {
     .shuriken {
       width: 30px;
