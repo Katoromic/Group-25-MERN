@@ -72,41 +72,24 @@ const LoginForm = () => {
             <video autoPlay muted loop className='BackgroundVideo'>
               <source src={BackgroundVideo} type='video/mp4' />
             </video>
-
             <div className='wrapper'>
                 <form onSubmit={doLogin}>
-
                     <h1>Login</h1>
-
                     <div className='input-box'>
-
                       <input type="text" id="loginName" placeholder='Username' required value={loginName} onChange={(e) => setLoginName(e.target.value)}/>
                       <FaUserAlt className='icon' />
-
                     </div>
-
                     <div className='input-box'>
-
                       <input type="password" id='loginPassword' placeholder='Password' required value={loginPassword} onChange={(e) => setLoginPassword(e.target.value)}/>
                       <FaUnlockAlt className='icon'/>                
-
                     </div>
-
                     <div className='remember-forgot'>
-
-                      <label><input type="checkbox"/>Remember me</label>
                       <a href="/PassRecover">Forgot password?</a>
-
                     </div>
-
                     <button type= "submit" onClick={doLogin}>Login</button>
-
                     <div className='register-link'>
-
                       <p>Don't have an account? <a href= "/signup">Register</a></p>
-
                     </div>
-
                 </form>
             </div>
         </div>
