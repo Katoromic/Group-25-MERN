@@ -15,38 +15,40 @@ nav {
     background-color: rgba(255, 235, 205, 0);
 }
 .profileIcon {
-    background-color: black;
+    background-color: #000000;
     padding: 2.5px;
     border-color: black;
     border-radius: 50%;
     border-width: thin;
     color: white;
-    width: 130%;
-    height: 130%;
+    width: 30px;
+    height: auto;
     transition: width 0.5s ease-in;
 }
+
 @media only screen and (max-width: 600px) {
     .profileIcon {
         width: 20px;
         height: 20px;
         margin-right: 0.5vh;
     }
-}
+  }
+
 .profileIcon:hover{
-    width: 140%;
-    height: auto;
     color: lightgrey;
 }
 .shuriken{
-    width: 50%;
+    width: 50px;
     height: auto;
     transition: transform 0.5s ease; 
     justify-content: start;
     justify-self: start;
 }
-@media only screen and (max-width: 300px) {
+
+@media only screen and (max-width: 600px) {
     .shuriken {
       width: 30px;
+      height: auto;
       margin-right: 4vh;
     }
 }

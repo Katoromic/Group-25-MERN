@@ -11,9 +11,11 @@
     color: black; 
     white-space: nowrap; 
 }
+
 @media only screen and (max-width: 600px) {
   #AboutUsButton {
-    font-size: 80%;
+    font-size: 70%;
+
     margin-right: 4vh;
   }
 }
@@ -25,7 +27,7 @@
 .aboutus-underline-animation::after {
     content: '';
     position: absolute;
-    width: 65%;
+    width: 70%;
     transform: scaleX(0);
     height: 1px;
     bottom: 0;
@@ -33,12 +35,13 @@
     background-color: black;
     transform-origin: bottom right;
     transition: transform 0.25s ease-out;
-}
-@media only screen and (max-width: 300px) {
+
+  @media only screen and (max-width: 300px) {
     .aboutus-underline-animation::after {
       width: 85%;
     }
 }
+
 .aboutus-underline-animation:hover::after {
     transform: scaleX(1);
     transform-origin: bottom left;

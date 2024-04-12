@@ -6,6 +6,7 @@ import NavBar from '../components/NavBar';
 
 const AboutUsPage = () => {
     return (
+      
         <div id='AboutUsPage' className='overflow-auto'>
 
             <video autoPlay muted loop className='BackgroundVideo'>
@@ -22,20 +23,46 @@ const AboutUsPage = () => {
                 <div className='title'>
                     <h1>About Us</h1>
                     <div className='intro'>
-                        WE OFFER A PLATFORM FOR STUDENTS TO LEARN CODING BASICS IN A SUPPORTIVE
-                        <p>SETTING LESSONS ARE SIMPLE, INTERACTIVE, AND BEGINNER-FRIENDLY.</p>
+
+                       <p> WE OFFER A PLATFORM FOR STUDENTS TO LEARN CODING BASICS IN A SUPPORTIVE
+                        SETTING WITH SIMPLE, INTERACTIVE, AND BEGINNER-FRIENDLY LESSONS.</p>
                     </div>
                 </div>
                 <div className='aboutUsBody'>
                     <div>
                         <div id="circleImage"></div>
-                        PAUL PUHNATY
-                        <p>DATABASE - BACKEND</p>
+                        DEANA CUNNINGHAM
+                        <p>PROJECT MANAGER</p>
+                        <p>MOBILE</p>
                     </div>
                     <div>
                         <div id="circleImage"></div>
-                       DENNIS KLINGENER
-                       <p>FRONTEND</p>
+                       NICOLE DREWRY
+                        <p>FRONTEND</p>
+                        <p>MOBILE</p>
+                    </div>
+                    <div>
+                        <div id="circleImage"></div>
+                        GIULLYA SANTOS
+                        <p>FRONTEND</p>
+                        <p>WEB</p>
+                    </div>
+                    <div>
+                        <div id="circleImage"></div>
+                        DENNIS KLINGENER
+                        <p>FRONTEND</p>
+                        <p>WEB</p>
+                    </div>
+                    <div>
+                        <div id="circleImage"></div>
+                        PAUL PUHNATY
+                        <p>DATABASE</p>
+                        <p>BACKEND</p>
+                    </div>
+                    <div>
+                        <div id="circleImage"></div>
+                        JITHIN SAMUEL
+                        <p>BACKEND</p>
                     </div>
                     <div>
                         <div id="circleImage"></div>
@@ -44,27 +71,7 @@ const AboutUsPage = () => {
                     </div>
                     <div>
                         <div id="circleImage"></div>
-                        GIULLYA SANTOS
-                        <p>FRONTEND</p>
-                    </div>
-                    <div>
-                        <div id="circleImage"></div>
-                        NICOLE DREWRY
-                        <p>MOBILE</p>
-                    </div>
-                    <div>
-                        <div id="circleImage"></div>
-                        Name here
-                        <p>MOBILE</p>
-                    </div>
-                    <div>
-                        <div id="circleImage"></div>
-                        Name here
-                        <p>BACKEND</p>
-                    </div>
-                    <div>
-                        <div id="circleImage"></div>
-                        Name here
+                        WILLIAMS OREMA
                         <p>BACKEND</p>
                     </div>
 

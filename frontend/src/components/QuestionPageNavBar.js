@@ -8,7 +8,7 @@ import SaveLogoutButton from './SaveLogoutButton';
 import ProgressBar from './ProgressBar';
 import QuestionCounters from './QuestionCounters';
 
-const QuestionPageNavBar = ({Progress, QuestionsCorrect, QuestionsIncorrect}) => {
+const QuestionPageNavBar = ({Progress, QuestionsCorrect, QuestionsIncorrect, UsersName, LanguageName, CurrentQuestion, UserTokenRaw}) => {
     return (
 
         <div id='QuestionPageNavElement'>
@@ -18,8 +18,7 @@ const QuestionPageNavBar = ({Progress, QuestionsCorrect, QuestionsIncorrect}) =>
                 <div className='row'>
 
                     <div id='UsersName' className='col d-flex align-items-center justify-content-center'>
-                        <h1 id='FirstName' className='d-none d-xl-inline text-wrap'>Dennis</h1>
-                        <h1 id='LastName' className='d-none d-xl-inline text-wrap'>Klingener</h1>
+                        <h1 id='Name' className='d-none d-xl-inline text-wrap'>{UsersName}</h1>
                     </div>
                 </div>
 
@@ -37,8 +36,8 @@ const QuestionPageNavBar = ({Progress, QuestionsCorrect, QuestionsIncorrect}) =>
                 
                 <div className='d-grid gap-2 mx-auto'>
                     <HintButton />
-                    <DashBoardButton />
-                    <SaveLogoutButton />
+                    <DashBoardButton QuestionsCorrect={QuestionsCorrect} LanguageName={LanguageName} CurrentQuestion={CurrentQuestion} UserTokenRaw={UserTokenRaw}/>
+                    <SaveLogoutButton QuestionsCorrect={QuestionsCorrect} LanguageName={LanguageName} CurrentQuestion={CurrentQuestion} UserTokenRaw={UserTokenRaw}/>
                 </div>
 
             </div>
@@ -48,7 +47,6 @@ const QuestionPageNavBar = ({Progress, QuestionsCorrect, QuestionsIncorrect}) =>
 };
 
 export default QuestionPageNavBar;
-
 
 
 

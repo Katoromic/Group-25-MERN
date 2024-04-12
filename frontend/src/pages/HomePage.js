@@ -10,7 +10,7 @@ import SenseiImage from '../components/SenseiImage'
 import GetStartedButton from '../components/GetStartedButton';
 import LoginButton from '../components/LoginButton';
 
-const LoginPage = () => {
+const HomePage = () => {
     return (
 
         <div id='LoginPage' className='overflow-auto'>
@@ -54,5 +54,4 @@ const LoginPage = () => {
     );
 };
 
-
-export default LoginPage;
+export default HomePage;

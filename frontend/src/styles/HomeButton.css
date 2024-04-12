@@ -11,7 +11,7 @@
 }
 @media only screen and (max-width: 600px) {
   #HomeButton {
-    font-size: 80%;
+    font-size: 70%;
     margin-right: 4vh;
   }
 }
@@ -19,7 +19,8 @@
     display: inline-block;
     position: relative;
     color: black;
-  }
+}
+
 .home-underline-animation::after {
     content: '';
     position: absolute;
@@ -32,6 +33,7 @@
     transform-origin: bottom right;
     transition: transform 0.25s ease-out;
 }
+
 @media only screen and (max-width: 300px) {
     .home-underline-animation::after {
       width: 80%;
