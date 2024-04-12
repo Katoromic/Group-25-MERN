@@ -17,9 +17,61 @@ function SignupForm() {
   const [loginUserName, setLoginUserName] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
   const [message, setMessage] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+
+  const validateForm = () => {
+    let validationMessage = "";    
+     // check for empty fields
+    if (!loginFirst) {
+      setMessage("Please enter a valid First Name.");
+      return false;
+    }
+    else if (!loginLast) {
+      setMessage("Please enter a valid Last Name.");
+      return false;
+    }
+    else if (!loginEmail) {
+      setMessage("Please enter a valid Email");
+      return false;
+    }    
+    else if (!loginUserName) {
+      setMessage("Please enter a valid username");
+      return false;
+    }    
+    else if (!loginPassword) {
+      setMessage("Please enter a valid password");
+      return false;
+    }    
+    else if (!confirmPassword) {
+      setMessage("Please confirm your password");
+      return false;
+    }
+    // email validation
+    const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i;
+    if (!emailRegex.test(loginEmail.trim())) {
+       setMessage(`Please enter a valid email address`);
+       return false;
+    }
+    // password complexity validation
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
+    if (!passwordRegex.test(loginPassword)) {
+      setMessage("Password must contain letters, at least one number, and one special character.");
+      return false;
+    }
+    // check if passwords match
+    if (loginPassword !== confirmPassword) {
+      setMessage("Passwords do not match.");
+      return false;
+    }
+    setMessage(null);
+    return true;
+  };
 
   const doSignup = async (event) => {
     event.preventDefault();
+    if (!validateForm()) {
+  	  return;
+    }
     console.log(loginFirst);
     console.log(loginLast);
     console.log(loginEmail);
@@ -124,7 +176,7 @@ function SignupForm() {
           </div>
 
           <div className='input-box'>
-              <input type="password" placeholder='Confirm Password' required/>
+              <input type="password" id='confirmPassword' placeholder='Confirm Password' required value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)}/>
               <FaUnlockAlt className='icon'/>                
           </div>
 
