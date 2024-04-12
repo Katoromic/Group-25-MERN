@@ -7,6 +7,7 @@ exports.setApp = function (app, client) {
   const ObjectId = require('mongodb').ObjectId;
   const bcrypt = require("bcrypt");
   const { sendVerificationEmail, sendPassRec, sendPassConfirmation } = require('./authenticationHandler');
+  const Path = require('./frontend/src/components/Path');
   
   // Login
   //
@@ -439,53 +440,47 @@ exports.setApp = function (app, client) {
     
     const { token } = req.params;
     
-    let status;
-    let message;
+    let linkParam = '';
     
     try
     {
       if (!JWT.isValidVerificationToken(token))
       {
-        status = 400;
-        message = 'The verification link has expired ):';
+        linkParam = 'expired';
       }
       else
       {
         const { userId } = JWT.getPayload(token);
         
         let users = client.db("MainDatabase").collection("Users");
-        
         if (users != null)
         {
           const user = await users.findOne({"_id": ObjectId.createFromHexString(userId)});
           
           if (user.Verified)
           {
-            status = 400;
-            message = 'This account is already verified |:';
+            linkParam = 'late';
           }
           else
           {
             users.updateOne({"_id": ObjectId.createFromHexString(userId)}, {$set: {Verified: true}});
-            
-            status = 200;
-            message = '<h1>Yay! Your account is now verified (:</h1><br><a href="http://localhost:3000/login">Click here to login</a>';
+            linkParam = 'success';
           }
         }
         else
         {
-          status = 500;
-          message = 'There was an error connecting to our database. Please try again later... );';
+          console.error('Unable to connect to MongoDB "Users" collection');
+          linkParam = 'unavailable';
         }
       }
     }
     catch (e)
     {
-      status = 500;
-      message = e.message;
+      console.error(e.message);
+      linkParam = 'unavailable';
     }
     
-    res.status(status).send(message);
+    res.redirect(303, Path.buildPathFrontend(`verified/${linkParam}`));
   });
   
   
