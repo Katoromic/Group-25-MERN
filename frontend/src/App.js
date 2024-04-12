@@ -12,6 +12,7 @@ import QuestionPage from './pages/QuestionPage';
 import ForgotPassword from './pages/ForgotPassword';
 import CheckEmailPage from './pages/CheckEmailPage';
 import AboutUsPage from './pages/AboutUsPage';
+import PasswordResetPage from './pages/PasswordResetPage';
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
         <Route path="/PassRecover" index element={<ForgotPassword />} />
         <Route path="/CheckEmail" index element={<CheckEmailPage />} />
         <Route path="/aboutUs" index element={<AboutUsPage />}/>
+        <Route path="/reset/:token" index element={<PasswordResetPage />}/>
       </Routes>
     </BrowserRouter>
   );

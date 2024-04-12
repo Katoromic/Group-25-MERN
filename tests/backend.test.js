@@ -170,8 +170,14 @@ describe('Signup', () => {
         //
         try
         {
-            const users = server.mongo.db("MainDatabase").collection("Users");
-            await users.deleteOne({ Username: "_prltgnwkcedbsyertt" });
+            const Users = server.mongo.db("MainDatabase").collection("Users");
+            const UserCourses = server.mongo.db("MainDatabase").collection("UserCourses");
+
+            let user = await Users.findOne({ Username: "_prltgnwkcedbsyertt" });
+
+            await Users.deleteOne({ Username: "_prltgnwkcedbsyertt" });
+
+            await UserCourses.deleteMany({ UserId: user._id.toString() });
         }
         catch (e)
         {
@@ -362,6 +368,62 @@ describe('changePassword', () => {
         expect(response.body.token).toBe(null);
         expect(response.body.error).not.toBe("");
     });
+});
+
+
+// Change Password tests
+//
+describe('resetPassword', () => {
+
+  test('Valid token', async() => {
+
+      let token = JWT.createVerificationToken("660a25f3527fb4d540a5f2b2");
+
+      let validReq = {token: token, password: process.env.TEST_USER_PASSWORD};
+
+      const response = await superPost('/resetPassword', validReq);
+
+      expect(response.statusCode).toBe(200);
+      expect(response.body.token).not.toBe(null);
+      expect(response.body.error).toBe("");
+  });
+
+  test('Missing password', async() => {
+
+    let token = JWT.createVerificationToken("660a25f3527fb4d540a5f2b2");
+
+    let invalidReq = {token: token};
+
+    const response = await superPost('/resetPassword', invalidReq);
+
+    expect(response.statusCode).toBe(400);
+    expect(response.body.token).toBe(null);
+    expect(response.body.error).not.toBe("");
+  });
+
+  test('Expired token', async() => {
+
+      let expToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NWU1NDliNDk0NzhkMTY5MjQxNDZmYTgiLCJpYXQiOjE3MTI4MDM2MjEsImV4cCI6MTcxMjgwNDgyMX0.MhSVOucEhB_B02QoJ_GZPA7JWnJrzqFAY1YO49PKcTs";
+
+      let invalidReq = {token: expToken, password: process.env.TEST_USER_PASSWORD};
+
+      const response = await superPost('/resetPassword', invalidReq);
+
+      expect(response.statusCode).toBe(401);
+      expect(response.body.token).toBe(null);
+      expect(response.body.error).not.toBe("");
+  });
+
+  test('Missing token', async() => {
+
+      let invalidReq = { password: "test"};
+
+      const response = await superPost('/resetPassword', invalidReq);
+
+      expect(response.statusCode).toBe(401);
+      expect(response.body.token).toBe(null);
+      expect(response.body.error).not.toBe("");
+  });
 });
 
 

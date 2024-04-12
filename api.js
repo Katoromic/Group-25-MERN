@@ -7,7 +7,6 @@ exports.setApp = function (app, client) {
   const ObjectId = require('mongodb').ObjectId;
   const bcrypt = require("bcrypt");
   const { sendVerificationEmail, sendPassRec, sendPassConfirmation } = require('./authenticationHandler');
-  const randomstring = require('randomstring');
   
   // Login
   //
@@ -359,6 +358,81 @@ exports.setApp = function (app, client) {
   });
   
   
+  // Reset Password
+  //
+  // Incoming: token, password
+  // Outgoing: token, error
+  //
+  app.post('/api/resetPassword', async (req, res, next) => {
+
+    const { token, password } = req.body;
+
+    let accessToken = null;
+
+    let status = 200;
+    let error = "";
+
+    try
+    {
+      if (JWT.isValidVerificationToken(token))
+      {
+        let { userId } = JWT.getPayload(token);
+
+        if (password)
+        {
+          const Users = client.db("MainDatabase").collection("Users");
+
+          if (Users)
+          {
+            const result = await Users.findOne({"_id": ObjectId.createFromHexString(userId)});
+
+            if (result)
+            {
+              // Hash the password before storing it
+              const salt = await bcrypt.genSalt();
+              const hashedPassword = await bcrypt.hash(password, salt);
+
+              Users.updateOne({"_id": ObjectId.createFromHexString(userId)}, {$set: {Password: hashedPassword}});
+
+              sendPassConfirmation(result);
+
+              // Create a token
+              accessToken = JWT.createAccessToken(result.FirstName, result.LastName, result.Verified, result._id).accessToken;
+            }
+            else
+            {
+              status = 404;
+              error = "User not found";
+            }
+          }
+          else
+          {
+            status = 500;
+            error = "Unable to connect to database";
+          }
+        }
+        else
+        {
+          status = 400;
+          error = "Password missing";
+        }
+      }
+      else
+      {
+        status = 401;
+        error = "Reset token not valid";
+      }
+    }
+    catch (e)
+    {
+      status = 500;
+      error = e.message;
+    }
+
+    res.status(status).json({token: accessToken, error: error});
+  });
+
+
   // Process email verification link
   //
   app.get('/verify/:token', async (req, res) => {
@@ -402,60 +476,6 @@ exports.setApp = function (app, client) {
         {
           status = 500;
           message = 'There was an error connecting to our database. Please try again later... );';
-        }
-      }
-    }
-    catch (e)
-    {
-      status = 500;
-      message = e.message;
-    }
-    
-    res.status(status).send(message);
-  });
-  
-  
-  // Process password reset link
-  //
-  app.get('/reset/:token', async (req, res) => {
-    
-    const { token } = req.params;
-    
-    let status;
-    let message;
-    
-    try
-    {
-      if (!JWT.isValidVerificationToken(token))
-      {
-        status = 400;
-        message = 'The password reset link has expired';
-      }
-      else
-      {
-        const { userId } = JWT.getPayload(token);
-        
-        let Users = client.db("MainDatabase").collection("Users");
-        
-        if (Users != null) {
-          let user = await Users.findOne({ "_id": ObjectId.createFromHexString(userId) });
-          if (user) {
-            let randPassword = randomstring.generate(15);
-            const salt = await bcrypt.genSalt();
-            const hashedPassword = await bcrypt.hash(randPassword, salt);
-            await Users.updateOne({ "_id": ObjectId.createFromHexString(userId) }, { $set: { Password: hashedPassword } });
-            status = 200;
-            message = `Password successfully reset\n\nNew password: ${randPassword}`;
-            sendPassConfirmation(user);
-          } else {
-            status = 404;
-            message = 'User not found';
-          }
-        }
-        else
-        {
-          status = 500;
-          message = 'There was an error connecting to our database. Please try again later...';
         }
       }
     }
