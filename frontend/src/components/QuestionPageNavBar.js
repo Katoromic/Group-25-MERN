@@ -35,7 +35,6 @@ const QuestionPageNavBar = ({Progress, QuestionsCorrect, QuestionsIncorrect, Use
                 </div>
                 
                 <div className='d-grid gap-2 mx-auto'>
-                    <HintButton />
                     <DashBoardButton QuestionsCorrect={QuestionsCorrect} LanguageName={LanguageName} CurrentQuestion={CurrentQuestion} UserTokenRaw={UserTokenRaw}/>
                     <SaveLogoutButton QuestionsCorrect={QuestionsCorrect} LanguageName={LanguageName} CurrentQuestion={CurrentQuestion} UserTokenRaw={UserTokenRaw}/>
                 </div>
