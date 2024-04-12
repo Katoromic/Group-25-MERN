@@ -179,7 +179,7 @@ function SignupForm() {
               <input type="password" id='confirmPassword' placeholder='Confirm Password' required value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)}/>
               <FaUnlockAlt className='icon'/>                
           </div>
-
+          {message && <p className="message error">{message}</p>}
           <button type= "submit" onClick={doSignup}>Sign Up</button>
 
           <div className='register-link'>
