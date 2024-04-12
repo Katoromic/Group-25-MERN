@@ -28,5 +28,12 @@
     align-items: center;
     margin: auto;
     overflow: hidden;
-
+}
+.error {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.65vh;
+    width: 30vw;
+    color: red;
 }
