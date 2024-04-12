@@ -80,7 +80,7 @@ const HandleClick = async (CourseID) => {
         const UserCourseInfo = await GetUserCourseInfo(CourseID);
         const UserTokenRaw = storage.retrieveToken();
         const UserTokenDecoded = decode(storage.retrieveToken(), { complete: true });
-        //navigate('/Questions', {state: {QuestionBank: Questions, UserInfo: UserCourseInfo, UserTokenRaw: UserTokenRaw, UserTokenDecoded: UserTokenDecoded}});
+        navigate('/Questions', {state: {QuestionBank: Questions, UserInfo: UserCourseInfo, UserTokenRaw: UserTokenRaw, UserTokenDecoded: UserTokenDecoded}});
     } catch (error) {
         console.log('It Broke! >:(')
     }
