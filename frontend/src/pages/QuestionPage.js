@@ -27,6 +27,13 @@ const QuestionPage = () => {
     let Incorrect1 = QuestionBank[CurrentQuestion].OtherChoices[0];
     let Incorrect2 = QuestionBank[CurrentQuestion].OtherChoices[1];
     let Incorrect3 = QuestionBank[CurrentQuestion].OtherChoices[2];
+    
+    // for answer choices
+
+    const [Answer1, SetAnswer1] = useState(CorrectAnswer);
+    const [Answer2, SetAnswer2] = useState(Incorrect1);
+    const [Answer3, SetAnswer3] = useState(Incorrect2);
+    const [Answer4, SetAnswer4] = useState(Incorrect3);
 
     // Progress bar control.
     const [Progress, SetProgress] = useState(UserCourseInfo.CurrentQuestion * 10); 
@@ -61,11 +68,53 @@ const QuestionPage = () => {
     const [DisableButton3, SetButtonDisable3] = useState(false);
     const [DisableButton4, SetButtonDisable4] = useState(false);
 
+    // randomizes the correct answer location.
+    const RandomizeAnswers = () => {
+
+        // Get a random int
+        const CorrectAnswerLocation = GetRandomInt();
+
+        // apply the answer choices.
+        switch (CorrectAnswerLocation) {
+
+            case 1:
+                SetAnswer1(CorrectAnswer);
+                SetAnswer2(Incorrect1);
+                SetAnswer3(Incorrect2);
+                SetAnswer4(Incorrect3);
+                break;
+            case 2:
+                SetAnswer1(Incorrect1);
+                SetAnswer2(CorrectAnswer);
+                SetAnswer3(Incorrect2);
+                SetAnswer4(Incorrect3);
+                break;
+            case 3:
+                SetAnswer1(Incorrect1);
+                SetAnswer2(Incorrect2);
+                SetAnswer3(CorrectAnswer);
+                SetAnswer4(Incorrect3);
+                break;
+            case 4:
+                SetAnswer1(Incorrect1);
+                SetAnswer2(Incorrect2);
+                SetAnswer3(Incorrect3);
+                SetAnswer4(CorrectAnswer);
+                break;
+        }
+    };
+    
+    // Generates a random integer.
+    const GetRandomInt = () => {
+        return Math.floor(Math.random() * (5 - 1) + 1);
+    };
+
     // For updating the current question.
     useEffect(() => {
         try {
             // save progress to the database.
             SaveProgress(UserTokenRaw, LanguageName, CurrentQuestion, QuestionsCorrect);
+            RandomizeAnswers();
         } catch (error) {
             console.log('Failed to save progress. :(');
         }
@@ -306,8 +355,11 @@ const QuestionPage = () => {
     // Checks the answer and displays the proper messages.               
     const CheckAnswer = (ButtonChosen, CorrectAnswer, ChosenAnswer, QuestionBank) => {
 
+        console.log(ChosenAnswer);
+        console.log(CorrectAnswer);
+
         // If the correct answer was chosen.
-        if (ChosenAnswer == CorrectAnswer) {
+        if (ChosenAnswer === CorrectAnswer) {
 
             // Increment answers answered correctly.
             UpdateCorrectQuestions();
@@ -358,6 +410,7 @@ const QuestionPage = () => {
         // Update progress bar.
         UpdateProgress();
 
+
     };
 
     // Updates the users progress to the database.
@@ -374,7 +427,7 @@ const QuestionPage = () => {
             const response = await axios.post(bp.buildPath('api/updateProgress'), data);
         } catch (error) {
             console.log(error);
-            console.log('broke in saveprogress.');
+            console.log('broke in saveprogress.')
             console.log(UserTokenRaw);
             console.log(CurrentQuestion);
             console.log(NumberCorrect);
@@ -421,9 +474,9 @@ const QuestionPage = () => {
 
                                 <div className='row'>
 
-                                    <button id='AnswerOne' className={StyleHover1} style={StyleButton1} disabled={DisableButton1} onClick={() => CheckAnswer(1, CorrectAnswer, document.getElementById('AnswerOne').textContent, QuestionBank)}>{CorrectAnswer}</button>
+                                    <button id='AnswerOne' className={StyleHover1} style={StyleButton1} disabled={DisableButton1} onClick={() => CheckAnswer(1, CorrectAnswer, Answer1, QuestionBank)}>{Answer1}</button>
 
-                                    <button id='AnswerTwo' className={StyleHover2} style={StyleButton2} disabled={DisableButton2} onClick={() => CheckAnswer(2, CorrectAnswer, document.getElementById('AnswerTwo').textContent, QuestionBank)}>{Incorrect1}</button>
+                                    <button id='AnswerTwo' className={StyleHover2} style={StyleButton2} disabled={DisableButton2} onClick={() => CheckAnswer(2, CorrectAnswer, Answer2, QuestionBank)}>{Answer2}</button>
 
                                 </div>
 
@@ -433,9 +486,9 @@ const QuestionPage = () => {
 
                                 <div className='row'> 
 
-                                    <button id='AnswerThree' className={StyleHover3} style={StyleButton3} disabled={DisableButton3} onClick={() => CheckAnswer(3, CorrectAnswer, document.getElementById('AnswerThree').textContent, QuestionBank)}>{Incorrect2}</button>
+                                    <button id='AnswerThree' className={StyleHover3} style={StyleButton3} disabled={DisableButton3} onClick={() => CheckAnswer(3, CorrectAnswer, Answer3, QuestionBank)}>{Answer3}</button>
 
-                                    <button id='AnswerFour' className={StyleHover4} style={StyleButton4} disabled={DisableButton4} onClick={() => CheckAnswer(4, CorrectAnswer, document.getElementById('AnswerFour').textContent, QuestionBank)}>{Incorrect3}</button>
+                                    <button id='AnswerFour' className={StyleHover4} style={StyleButton4} disabled={DisableButton4} onClick={() => CheckAnswer(4, CorrectAnswer, Answer4, QuestionBank)}>{Answer4}</button>
 
                                 </div>
 
