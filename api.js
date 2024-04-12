@@ -489,61 +489,6 @@ exports.setApp = function (app, client) {
   });
   
   
-  // Process password reset link
-  //
-  app.get('/reset/:token', async (req, res) => {
-    
-    const { token } = req.params;
-    
-    let status;
-    let message;
-    
-    try
-    {
-      if (!JWT.isValidVerificationToken(token))
-      {
-        status = 400;
-        message = 'The password reset link has expired';
-      }
-      else
-      {
-        const { userId } = JWT.getPayload(token);
-        
-        let Users = client.db("MainDatabase").collection("Users");
-        
-        if (Users != null) {
-          let user = await Users.findOne({ "_id": ObjectId.createFromHexString(userId) });
-          if (user) {
-            // new password 
-            let randPassword = randomstring.generate(15);
-
-            const salt = await bcrypt.genSalt();
-            const hashedPassword = await bcrypt.hash(randPassword, salt);
-            await Users.updateOne({ "_id": ObjectId.createFromHexString(userId) }, { $set: { Password: hashedPassword } });
-            status = 200;
-            message = `Password successfully reset\n\nNew password: ${randPassword}`;
-            sendPassConfirmation(user);
-          } else {
-            status = 404;
-            message = 'User not found';
-          }
-        }
-        else
-        {
-          status = 500;
-          message = 'There was an error connecting to our database. Please try again later...';
-        }
-      }
-    }
-    catch (e)
-    {
-      status = 500;
-      message = e.message;
-    }
-    
-    res.status(status).send(message);
-  });
-
 // Return User Courses
 //
 // Incoming: Authorization token
