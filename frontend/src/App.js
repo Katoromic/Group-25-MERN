@@ -13,6 +13,7 @@ import ForgotPassword from './pages/ForgotPassword';
 import CheckEmailPage from './pages/CheckEmailPage';
 import AboutUsPage from './pages/AboutUsPage';
 import PasswordResetPage from './pages/PasswordResetPage';
+import VerifiedPage from './pages/VerifiedPage';
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
         <Route path="/CheckEmail" index element={<CheckEmailPage />} />
         <Route path="/aboutUs" index element={<AboutUsPage />}/>
         <Route path="/reset/:token" index element={<PasswordResetPage />}/>
+        <Route path="/verified/:result" index element={<VerifiedPage />}/>
       </Routes>
     </BrowserRouter>
   );
