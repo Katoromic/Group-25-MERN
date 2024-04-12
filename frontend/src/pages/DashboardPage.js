@@ -74,7 +74,7 @@ const GetUserCourseInfo = async (CourseID) => {
     }
 };
 
-const HandleClick = async (CourseID) => {
+const HandleClick = async (CourseID, navigate) => {
     try {
         const Questions = await GetQuestionBank(CourseID);
         const UserCourseInfo = await GetUserCourseInfo(CourseID);
@@ -146,7 +146,7 @@ const getCourses = async (event) => {
 function Dashboard({courses, courseInfo, isLoaded}) {
     
     // for passing information to other pages.
-    //const navigate = useNavigate();
+    const navigate = useNavigate();
 
     let info = [];
     for (let i = 0; i < courseInfo.length; i++) {
@@ -163,7 +163,7 @@ function Dashboard({courses, courseInfo, isLoaded}) {
         {isLoaded ?
         <div className='dashboard' id="dashboard">
                 {info.map((c, index) => (
-                    <button key={index} className= 'course' id= {c.Language} onClick={HandleClick.bind(null, c.Language)}>  
+                    <button key={index} className= 'course' id= {c.Language} onClick={HandleClick.bind(null, c.Language, navigate)}>  
                         <img className= 'logo' src={c.LogoFile} />
                         <h1>{c.Description}</h1>
                         <div className='progressBar'> 
