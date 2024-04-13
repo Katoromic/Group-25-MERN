@@ -18,7 +18,7 @@ const VerifiedPage = () => {
     if (result === 'success')
     {
         textb.textContent = "Your account is now verified. Let's get started!";
-        buttonb.onclick = () => {window.location.href = "/landing";};
+        buttonb.onclick = () => {window.location.href = "/login";};
     }
     else if (result === 'expired')
     {
