@@ -661,6 +661,72 @@ describe('Verifification Link Processing', () => {
   });
 });
 
+// Exchange token endpoint tests
+//
+describe('exchangeToken', () => {
+
+    test('Valid token / verified user / verified token', async() => {
+
+        let token = JWT.createAccessToken("Test", "Test", true, "660a25f3527fb4d540a5f2b2").accessToken;
+
+        let invalidReq = {token: token};
+
+        const response = await superPost('/exchangeToken', invalidReq);
+
+        expect(response.statusCode).toBe(400);
+        expect(response.body.token).toBe(null);
+        expect(response.body.error).not.toBe("");
+    });
+
+    test('Valid token / verified user / unverified token', async() => {
+
+        let token = JWT.createAccessToken("Test", "Test", false, "660a25f3527fb4d540a5f2b2").accessToken;
+
+        let validReq = {token: token};
+
+        const response = await superPost('/exchangeToken', validReq);
+
+        expect(response.statusCode).toBe(200);
+        expect(response.body.token).not.toBe(null);
+        expect(response.body.error).toBe("");
+    });
+
+    test('Valid token / unverified user', async() => {
+
+        let token = JWT.createAccessToken("Test", "Test", false, "6603323d82133af020264b04").accessToken;
+
+        let invalidReq = {token: token};
+
+        const response = await superPost('/exchangeToken', invalidReq);
+
+        expect(response.statusCode).toBe(403);
+        expect(response.body.token).toBe(null);
+        expect(response.body.error).not.toBe("");
+    });
+
+    test('Missing token', async() => {
+
+        const response = await superPost('/exchangeToken', {});
+
+        expect(response.statusCode).toBe(401);
+        expect(response.body.token).toBe(null);
+        expect(response.body.error).not.toBe("");
+    });
+
+    test('Expired token', async() => {
+
+        let expToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NjAzMzIzZDgyMTMzYWYwMjAyNjRiMDQiLCJmaXJzdE5hbWUiOiJHdWVzdCIsImxhc3ROYW1lIjoiVXNlciIsInZlcmlmaWVkIjpmYWxzZSwiaWF0IjoxNzExNTcwNDM4LCJleHAiOjE3MTE1NzA0OTh9.4NfLt10jEIv4PJMkufZUoX5-clC_Dx2GFOTYB77fchI";
+
+        let invalidReq = {token: expToken, oldPassword: "test", newPassword: "test"};
+
+        const response = await superPost('/exchangeToken', invalidReq);
+
+        expect(response.statusCode).toBe(401);
+        expect(response.body.token).toBe(null);
+        expect(response.body.error).not.toBe("");
+    });
+});
+
 
 //
 // Wrapper functions for GET and POST

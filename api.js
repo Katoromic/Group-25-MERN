@@ -657,5 +657,77 @@ exports.setApp = function (app, client) {
 
     res.status(status).json({ courseData: courseData, error: error });
 });
+
+  // Exchange Token
+  //
+  // In: token
+  // Out: token, error
+  //
+  app.post("/api/exchangeToken", async (req, res, next) => {
+
+    const { token } = req.body;
+
+    let error = "";
+    let status = 200;
+    let newToken = null;
+
+    try
+    {
+      if (JWT.isValidAccessToken(token))
+      {
+        const { userId, firstName, lastName, verified } = JWT.getPayload(token);
+
+        if (verified)
+        {
+          status = 400;
+          error = "Token already verified";
+        }
+        else
+        {
+          const Users = client.db("MainDatabase").collection("Users");
+
+          if (Users)
+          {
+            const result = await Users.findOne({"_id": ObjectId.createFromHexString(userId)});
+
+            if (result)
+            {
+              if (result.Verified)
+              {
+                newToken = JWT.createAccessToken(firstName, lastName, result.Verified, userId).accessToken;
+              }
+              else
+              {
+                error = "User has not been verified";
+                status = 403;
+              }
+            }
+            else
+            {
+              error = "Cannot find user";
+              status = 404;
+            }
+          }
+          else
+          {
+            error = "Cannot connect to database";
+            status = 500;
+          }
+        }
+      }
+      else
+      {
+        status = 401;
+        error = "Access token not valid";
+      }
+    }
+    catch (e)
+    {
+      error = e.message;
+      status = 500;
+    }
+
+    res.status(status).json({token: newToken, error: error});
+  });
   
 };
