@@ -4,6 +4,7 @@ import '../styles/QuestionPage.css';
 import BackGroundVideo from '../images/background.mp4'
 import NavBar from '../components/QuestionPageNavBar.js';
 import { useLocation } from 'react-router-dom';
+import Sensei from '../images/sensei.GIF'
 
 const QuestionPage = () => {
 
