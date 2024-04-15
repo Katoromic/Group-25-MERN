@@ -46,7 +46,7 @@ const LoginForm = () => {
           if (!verified)
           {
             console.log("unverified");
-            window.location.href = "/unverified";
+            window.location.href = "/CheckEmail";
           }
           else
           {
