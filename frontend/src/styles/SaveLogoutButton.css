@@ -1,8 +1,10 @@
 /*The btn-custom class is in the QuestionPage.css file!*/
 
 #SaveLogoutButton {
-    font-family: 'LexendExa';
-    border: 2px;
-    border-style: solid;
-    border-color: red;
+    margin-top: 50vh;
+    font-family: 'bebas';
+    letter-spacing: 2px;
+    border: none;
+    font-size: 20px;
+    border-radius: 0;
 }
