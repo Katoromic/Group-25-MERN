@@ -20,18 +20,18 @@ function ResetPasswordForm() {
 
   const validateForm = () => {  
      // check for empty fields
-    if (!Password) {
+    if (Password == "") {
       setMessage("Please enter a valid password");
       return false;
     }    
-    else if (!ConfirmPassword) {
+    else if (ConfirmPassword == "") {
       setMessage("Please confirm your password");
       return false;
     }
     // password complexity validation
     const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
     if (!passwordRegex.test(Password)) {
-      setMessage("Password must contain letters, at least one number, and one special character.");
+      setMessage("Password must contain letters, at least one number, one special character, and at least 8 characters total.");
       return false;
     }
     // check if passwords match
@@ -95,14 +95,10 @@ function ResetPasswordForm() {
           {
             setMessage('The password reset link has expired');
           }
-          else if (error.response.data.error)
+          else
           {
             setMessage('Something went wrong. Try again later');
             console.error(error.response.data.error);
-          }
-          else
-          {
-            console.error(error.message);
           }
         });
     }
