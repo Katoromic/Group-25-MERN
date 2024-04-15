@@ -8,11 +8,21 @@ import Sensei from '../images/sensei.GIF'
 
 const QuestionPage = () => {
 
+    // For api build path.
+    const bp = require("../components/Path.js");
+    const storage = require("../tokenStorage.js");
+
     // Contains data from the dashboard page.
     const location = useLocation(); 
 
-    // For api build path.
-    var bp = require("../components/Path.js");
+    if (location.state == null)
+    {
+      window.location.href = "/landing";
+    }
+    else if (storage.retrieveToken() == "")
+    {
+      window.location.href = "/login";
+    }
 
     // User info.
     const UserTokenRaw = location.state.UserTokenRaw;
@@ -427,11 +437,19 @@ const QuestionPage = () => {
         try {
             const response = await axios.post(bp.buildPath('api/updateProgress'), data);
         } catch (error) {
-            console.log(error);
-            console.log('broke in saveprogress.')
-            console.log(UserTokenRaw);
-            console.log(CurrentQuestion);
-            console.log(NumberCorrect);
+          if (error.response.status === 401)
+          {
+            storage.storeToken("");
+            window.location.href = "/login";
+          }
+          else if (error.response.status === 403)
+          {
+            window.location.href = "/CheckEmail";
+          }
+          else
+          {
+            console.error(error.response.data.error);
+          }
         }
 
     };
