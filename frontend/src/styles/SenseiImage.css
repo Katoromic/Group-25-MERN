@@ -5,4 +5,10 @@
     left: 10%;
     bottom: 0%;
 }
+@media screen and (max-device-width: 1280px){
+    #SenseiImageElement{
+	height: 75vh;
+	left: 5%;
+     }
+}
 
