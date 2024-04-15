@@ -55,7 +55,7 @@ function SignupForm() {
     // password complexity validation
     const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
     if (!passwordRegex.test(loginPassword)) {
-      setMessage("Password must contain letters, at least one number, and one special character.");
+      setMessage("Password must contain letters, at least one number, one special character, and at least 8 characters total.");
       return false;
     }
     // check if passwords match
@@ -92,29 +92,29 @@ function SignupForm() {
     axios(config)
       .then(function (response) {
         var res = response.data;
-        if (res.error) {
-          setMessage("Something went wrong");
-        } else {
-          storage.storeToken(res.token);
-          var uddecoded = decode(storage.retrieveToken(), { complete: true });
+        storage.storeToken(res.token);
+        var uddecoded = decode(storage.retrieveToken(), { complete: true });
 
-          try {
-            var ud = uddecoded;
-            var userId = ud.userId;
-            var firstName = ud.firstName;
-            var lastName = ud.lastName;
-            var user = { firstName: firstName, lastName: lastName, id: userId };
-            localStorage.setItem("user_data", JSON.stringify(user));
-            window.location.href = "/CheckEmail";
-            sendLink(storage.retrieveToken());
-          } catch (e) {
-            console.error(e.response.data);
-            return "";
-          }
+        try {
+          var ud = uddecoded;
+          var userId = ud.userId;
+          var firstName = ud.firstName;
+          var lastName = ud.lastName;
+          var user = { firstName: firstName, lastName: lastName, id: userId };
+          localStorage.setItem("user_data", JSON.stringify(user));
+          window.location.href = "/CheckEmail";
+          sendLink(storage.retrieveToken());
+        } catch (e) {
+          console.error(e.response.data);
+          return "";
         }
       })
       .catch(function (error) {
-        console.log(error);
+        if (error.response.status === 400)
+          setMessage("Username not available. Choose another one.");
+        else
+          setMessage("Something went wrong. Try again later");
+          console.error(error.response.data.error);
       });
   };
 
