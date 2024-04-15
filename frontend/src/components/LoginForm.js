@@ -93,8 +93,6 @@ const LoginForm = () => {
                     </div>
 
                     <div className='remember-forgot'>
-
-                      <label><input type="checkbox"/>Remember me</label>
                       <a href="/PassRecover">Forgot password?</a>
 
                     </div>
