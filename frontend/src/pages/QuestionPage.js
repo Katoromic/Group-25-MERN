@@ -58,10 +58,10 @@ const QuestionPage = () => {
     const [StyleButton4, SetStyleButton4] = useState();
 
     // For Toggling the hover animation for answer choices after they have been chosen.
-    const [StyleHover1, SetStyleHover1] = useState('btn-custom w-50 mt-2 mb-2');
-    const [StyleHover2, SetStyleHover2] = useState('btn-custom w-50 mt-2 mb-2');
-    const [StyleHover3, SetStyleHover3] = useState('btn-custom w-50 mt-2 mb-2');
-    const [StyleHover4, SetStyleHover4] = useState('btn-custom w-50 mt-2 mb-2');
+    const [StyleHover1, SetStyleHover1] = useState('btn-custom mt-2 mb-2');
+    const [StyleHover2, SetStyleHover2] = useState('btn-custom mt-2 mb-2');
+    const [StyleHover3, SetStyleHover3] = useState('btn-custom mt-2 mb-2');
+    const [StyleHover4, SetStyleHover4] = useState('btn-custom mt-2 mb-2');
 
     // For disabling already chosen buttons.
     const [DisableButton1, SetButtonDisable1] = useState(false);
@@ -186,16 +186,16 @@ const QuestionPage = () => {
         
         switch (ButtonChosen) {
             case 1:
-                SetStyleHover1('btn-custom-alt w-50 mt-2 mb-2');
+                SetStyleHover1('btn-custom-alt mt-2 mb-2');
                 break;
             case 2:
-                SetStyleHover2('btn-custom-alt w-50 mt-2 mb-2');
+                SetStyleHover2('btn-custom-alt mt-2 mb-2');
                 break;
             case 3:
-                SetStyleHover3('btn-custom-alt w-50 mt-2 mb-2');
+                SetStyleHover3('btn-custom-alt mt-2 mb-2');
                 break;
             case 4:
-                SetStyleHover4('btn-custom-alt w-50 mt-2 mb-2');
+                SetStyleHover4('btn-custom-alt mt-2 mb-2');
                 break;
         }
 
@@ -203,18 +203,18 @@ const QuestionPage = () => {
 
     // Removes the hover animation from all the answer choice buttons.
     const RemoveAllHover = () => {
-        SetStyleHover1('btn-custom-alt w-50 mt-2 mb-2');
-        SetStyleHover2('btn-custom-alt w-50 mt-2 mb-2');
-        SetStyleHover3('btn-custom-alt w-50 mt-2 mb-2');
-        SetStyleHover4('btn-custom-alt w-50 mt-2 mb-2');
+        SetStyleHover1('btn-custom-alt mt-2 mb-2');
+        SetStyleHover2('btn-custom-alt mt-2 mb-2');
+        SetStyleHover3('btn-custom-alt mt-2 mb-2');
+        SetStyleHover4('btn-custom-alt mt-2 mb-2');
     };
 
     // Applies the hover animation to all the answer choice buttons.
     const ResetAllHover = () => {
-        SetStyleHover1('btn-custom w-50 mt-2 mb-2');
-        SetStyleHover2('btn-custom w-50 mt-2 mb-2');
-        SetStyleHover3('btn-custom w-50 mt-2 mb-2');
-        SetStyleHover4('btn-custom w-50 mt-2 mb-2');
+        SetStyleHover1('btn-custom mt-2 mb-2');
+        SetStyleHover2('btn-custom mt-2 mb-2');
+        SetStyleHover3('btn-custom mt-2 mb-2');
+        SetStyleHover4('btn-custom mt-2 mb-2');
     };
 
     // Sets all buttons to the default style.
