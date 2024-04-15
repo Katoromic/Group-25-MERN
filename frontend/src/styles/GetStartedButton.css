@@ -22,16 +22,16 @@
 }
 @media screen and (min-device-width: 1024px) and (max-device-width: 1439px) { 
     #GetStartedButtonElement{
-	font-size: 2.5vh;
-	margin-right: 11vh;
-	width: 38vw;
-	font-size: 2.5vh;
+        font-size: 2.5vh;
+        margin-right: 11vh;
+        width: 38vw;
+        font-size: 2.5vh;
     }    
 }
 @media screen and (max-device-width: 1023px) {
     #GetStartedButtonElement{
      	margin-right: 1vw;
-     	margin-top: 20vh;
+     	margin-top: 8vh;
      	width: 85vw;
         font-size: 2.5vw;
         height: 40px;
