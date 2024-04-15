@@ -2,6 +2,7 @@ import React from 'react';
 
 import '../styles/HomePage.css'
 import BackgroundVideo from '../images/background.mp4'
+import SenseiMobile from '../images/senseimobile.PNG';
 
 import NavBar from '../components/NavBar';
 import LoginTitle from '../components/LoginTitle';
@@ -20,34 +21,35 @@ const HomePage = () => {
             </video>
 
             <div className='container'>
-
                 <div className='row'>
                     <div className='col d-flex align-items-center justify-content-center'>
                         <NavBar />
                     </div>
                 </div>
 
-                <div className='row'>
-                    <LoginTitle />
-                </div>
+                <div className='parent'>
+                    <div className='top'>
+                         <img id='mobileSensei' src={SenseiMobile} alt="Syntax Sensei" />
+                    </div>
+                    <div className='mobile'>
+                         <div className='row'>
+                            <LoginTitle />
+                        </div>
+                        <div className='row'>
+                            <LoginSubTitle />
+                        </div>
+                        <div className='row d-none d-xl-block'> 
+                            <SenseiImage />
+                        </div>
+                        <div className='row'>
+                            <GetStartedButton />
+                        </div>
 
-                <div className='row'>
-                    <LoginSubTitle />
+                        <div className='row'>
+                            <LoginButton />
+                        </div>
+                    </div>
                 </div>
-
-            
-                <div className='row d-none d-xl-block'> 
-                    <SenseiImage />
-                </div>
-
-                <div className='row'>
-                    <GetStartedButton />
-                </div>
-
-                <div className='row'>
-                    <LoginButton />
-                </div>
-
             </div>
 
         </div>
