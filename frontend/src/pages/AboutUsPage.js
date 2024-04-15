@@ -4,6 +4,9 @@ import '../styles/AboutUs.css'
 import BackgroundVideo from '../images/background.mp4'
 import NavBar from '../components/NavBar';
 
+import Giullya from '../images/giullya.jpg';
+import Nicole from '../images/nicole.jpg';
+
 const AboutUsPage = () => {
     return (
       
@@ -36,13 +39,13 @@ const AboutUsPage = () => {
                         <p>MOBILE</p>
                     </div>
                     <div>
-                        <div id="circleImage"></div>
+                    <div><img src={Nicole} alt='Nicole Drewry Mobile Frontend' className='circleImage'/></div>
                        NICOLE DREWRY
                         <p>FRONTEND</p>
                         <p>MOBILE</p>
                     </div>
                     <div>
-                        <div id="circleImage"></div>
+                        <div> <img src={Giullya} alt='Giullya Santos Web Frontend' className='circleImage'/></div>
                         GIULLYA SANTOS
                         <p>FRONTEND</p>
                         <p>WEB</p>
