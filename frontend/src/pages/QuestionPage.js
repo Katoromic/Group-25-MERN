@@ -452,60 +452,38 @@ const QuestionPage = () => {
                     </div>
 
                     <div className='col-xl-8'>
-
-                        <div id='QuestionRow' className='row m-5 p-3' >
+                        <div id='MessageRow'>
+                            <div className='col d-flex align-items-center justify-content-center'>
+                                <span className='placeholder'></span>
+                                {Correct && <h2 className='bubble' id='ResultMessageCorrect'>Correct!</h2>}
+                                {Incorrect && <h2 className='bubble' id='ResultMessageIncorrect'>The correct answer was...</h2>}
+                                {IncorrectTryAgain && <h2 className='bubble' id='ResultMessageTryAgain'>Incorrect, try again.</h2>}
+                            </div>
+                        </div>
+                        <div className='sensei'>
+                   	        <img src={Sensei} />
+                	    </div>
+                        <div id='QuestionRow' className='row m-0 p-3' >
                             <div className='col d-flex align-items-center justify-content-center'>
                                 <h1 id='QuestionText'>{QuestionText}</h1>
                             </div>
                         </div>
-
-                        <div id='MessageRow' className='row m-5'>
-                            <div className='col d-flex align-items-center justify-content-center'>
-                                <span className='placeholder'></span>
-                                {Correct && <h2 id='ResultMessageCorrect'>Correct!</h2>}
-                                {Incorrect && <h2 id='ResultMessageIncorrect'>The correct answer was...</h2>}
-                                {IncorrectTryAgain && <h2 id='ResultMessageTryAgain'>Incorrect, try again.</h2>}
-                            </div>
-                        </div>
-                        
                         <div id='ButtonRow' className='row m-5 pt-2 pb-2'>
-
-                            <div className='col'>
-
-                                <div className='row'>
-
+                            <div className='col d-flex align-items-center justify-content-center'>
+                                <div className='answers'>
                                     <button id='AnswerOne' className={StyleHover1} style={StyleButton1} disabled={DisableButton1} onClick={() => CheckAnswer(1, CorrectAnswer, Answer1, QuestionBank)}>{Answer1}</button>
-
                                     <button id='AnswerTwo' className={StyleHover2} style={StyleButton2} disabled={DisableButton2} onClick={() => CheckAnswer(2, CorrectAnswer, Answer2, QuestionBank)}>{Answer2}</button>
-
-                                </div>
-
-                            </div>
-
-                            <div className='col'>
-
-                                <div className='row'> 
-
                                     <button id='AnswerThree' className={StyleHover3} style={StyleButton3} disabled={DisableButton3} onClick={() => CheckAnswer(3, CorrectAnswer, Answer3, QuestionBank)}>{Answer3}</button>
-
                                     <button id='AnswerFour' className={StyleHover4} style={StyleButton4} disabled={DisableButton4} onClick={() => CheckAnswer(4, CorrectAnswer, Answer4, QuestionBank)}>{Answer4}</button>
-
                                 </div>
-
                             </div>
-
                         </div>
-
                         <div className='row'>
                             <div className='col d-flex align-items-center justify-content-center'>
-
-                                {NextButton && <button id='NextQestionButton' className='btn-custom w-25' onClick={() => NextQuestion(UserTokenRaw, LanguageName, CurrentQuestion, QuestionsCorrect)}>Next Question</button>}
-
-                                {RestartButton && <button id='RestartButton' className='btn-custom w-25' onClick={() => RestartLesson(UserTokenRaw, LanguageName, 0, 0)}>Restart</button>}
-                                
+                                {NextButton && <button id='NextQestionButton' className='btn-custom btnColor' onClick={() => NextQuestion(UserTokenRaw, LanguageName, CurrentQuestion, QuestionsCorrect)}>Next Question</button>}
+                                {RestartButton && <button id='RestartButton' className='btn-custom btnColor' onClick={() => RestartLesson(UserTokenRaw, LanguageName, 0, 0)}>Restart</button>}
                             </div>
                         </div>
-
                     </div>
                 </div>
             </div>
