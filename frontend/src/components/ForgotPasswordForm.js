@@ -18,7 +18,7 @@ const ForgotPasswordForm = () => {
         event.preventDefault();  // Prevents the default form submission behavior
         try {
             const response = await axios.post(bp.buildPath('api/requestPasswordReset'), recoveryData);
-            if (response.data.success) {
+            if (response.data) {
                 setSuccessMessage(true);
                 setFailMessage(false);
             } else {
