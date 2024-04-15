@@ -1,8 +1,13 @@
 #SenseiImageElement {
     position: absolute;
     width: auto;
-    height: 77%;
-    left: 5%;
+    height: 80vh;
+    left: 10%;
     bottom: 0%;
 }
-
+@media screen and (max-device-width: 1280px){
+    #SenseiImageElement{
+	height: 75vh;
+	left: 5%;
+     }
+}
