@@ -1,7 +1,8 @@
 import React, {useState} from 'react';
 import axios from "axios";
 import '../styles/ForgotPasswordForm.css';
-
+import '../styles/LoginForm.css'
+import BackgroundVideo from '../images/background.mp4'
 
 
 const ForgotPasswordForm = () => {
@@ -41,10 +42,10 @@ const ForgotPasswordForm = () => {
     return (
 
         <div className='container-fluid'>
-
-            <div className='row'>
-
-                <div className='col d-flex justify-content-center align-items-center'>
+           <video autoPlay muted loop className='BackgroundVideo'>
+              <source src={BackgroundVideo} type='video/mp4' />
+            </video>
+            <div className='wrapper'>
 
                     <div id='FormParentElement' >
                         
@@ -53,9 +54,9 @@ const ForgotPasswordForm = () => {
                         {SuccessMessage && <h2 id='SuccessMessage' className='m-3'>Recovery successful! Please check your email.</h2>}
                         {FailMessage && <h2 id='FailMessage' className='m-3'>Uh oh something went wrong...</h2>}
 
-                        <input type='text' name='username' value={RecoveryData.username} onChange={HandleInputChange} placeholder='Username' className='Input-Box mb-4'/>
+                        <input className='input-box' type='text' name='username' value={RecoveryData.username} onChange={HandleInputChange} placeholder='Username' className='Input-Box mb-4'/>
 
-                        <input type='text' name='email' value={RecoveryData.email} onChange={HandleInputChange} placeholder='Email' className='Input-Box' />
+                        <input className='input-box' type='text' name='email' value={RecoveryData.email} onChange={HandleInputChange} placeholder='Email' className='Input-Box' />
 
                         <button type='button' id='RequestButton' onClick={HandleRecoveryRequest} >Request</ button>
 
