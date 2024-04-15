@@ -18,6 +18,7 @@ const LoginForm = () => {
     event.preventDefault();
     console.log(loginName);
     console.log(loginPassword);
+    setMessage("");
     var obj = { login: loginName, password: loginPassword };
     var js = JSON.stringify(obj);
     var config = {
@@ -31,39 +32,39 @@ const LoginForm = () => {
     axios(config)
       .then(function (response) {
         var res = response.data;
-        if (res.error) {
-          setMessage("User/Password combination incorrect");
-        } else {
-          storage.storeToken(res.token);
-          var uddecoded = decode(storage.retrieveToken(), { complete: true });
+        storage.storeToken(res.token);
+        var uddecoded = decode(storage.retrieveToken(), { complete: true });
 
-          try {
-            var ud = uddecoded;
-            var userId = ud.userId;
-            var firstName = ud.firstName;
-            var lastName = ud.lastName;
-            var verified = ud.verified;
-            var user = { firstName: firstName, lastName: lastName, id: userId, verified: verified};
-            localStorage.setItem("user_data", JSON.stringify(user));
-            if (!verified)
-            {
-              console.log("unverified");
-              window.location.href = "/unverified";
-            }
-            else
-            {
-              console.log("verified");
-              window.location.href = "/landing";
-            }
-            
-          } catch (e) {
-            console.log(e.toString());
-            return "";
+        try {
+          var ud = uddecoded;
+          var userId = ud.userId;
+          var firstName = ud.firstName;
+          var lastName = ud.lastName;
+          var verified = ud.verified;
+          var user = { firstName: firstName, lastName: lastName, id: userId, verified: verified};
+          localStorage.setItem("user_data", JSON.stringify(user));
+          if (!verified)
+          {
+            console.log("unverified");
+            window.location.href = "/unverified";
           }
+          else
+          {
+            console.log("verified");
+            window.location.href = "/landing";
+          }
+          
+        } catch (e) {
+          console.log(e.toString());
+          return "";
         }
       })
       .catch(function (error) {
-        console.log(error);
+        if (error.response.status === 400)
+          setMessage("User/Password combination incorrect");
+        else
+          setMessage("Something went wrong. Try again later");
+          console.error(error.response.data.error);
       });
   };
 
@@ -83,6 +84,9 @@ const LoginForm = () => {
                       <input type="password" id='loginPassword' placeholder='Password' required value={loginPassword} onChange={(e) => setLoginPassword(e.target.value)}/>
                       <FaUnlockAlt className='icon'/>                
                     </div>
+
+                    {message && <p className="message error">{message}</p>}
+
                     <div className='remember-forgot'>
                       <a href="/PassRecover">Forgot password?</a>
                     </div>
