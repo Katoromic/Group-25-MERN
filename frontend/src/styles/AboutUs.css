@@ -22,6 +22,7 @@
 
 .aboutUsBody p {
     font-size: 13px;
+    margin: 0;
 }
 #circleImage {
     width: 150px;
