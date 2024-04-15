@@ -14,7 +14,7 @@ const QuestionPageNavBar = ({Progress, QuestionsCorrect, QuestionsIncorrect, Use
         <div id='QuestionPageNavElement'>
 
             <div className='container-fluid'>
-        
+                <DashBoardButton QuestionsCorrect={QuestionsCorrect} LanguageName={LanguageName} CurrentQuestion={CurrentQuestion} UserTokenRaw={UserTokenRaw}/>
                 <div className='row'>
 
                     <div id='UsersName' className='col d-flex align-items-center justify-content-center'>
@@ -35,13 +35,9 @@ const QuestionPageNavBar = ({Progress, QuestionsCorrect, QuestionsIncorrect, Use
                 </div>
                 
                 <div className='d-grid gap-2 mx-auto'>
-                    <HintButton />
-                    <DashBoardButton QuestionsCorrect={QuestionsCorrect} LanguageName={LanguageName} CurrentQuestion={CurrentQuestion} UserTokenRaw={UserTokenRaw}/>
                     <SaveLogoutButton QuestionsCorrect={QuestionsCorrect} LanguageName={LanguageName} CurrentQuestion={CurrentQuestion} UserTokenRaw={UserTokenRaw}/>
                 </div>
-
             </div>
-
         </div>
     );
 };
