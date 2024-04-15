@@ -10,6 +10,7 @@
 }
 
 #FirstName {
+    margin-top: 200px;
     display: inline;
     margin-right: 5%;
     padding-top: 5%;
@@ -20,3 +21,6 @@
     padding-top: 5%;
 }
 
+#Name{
+    margin-top: 10%;
+}
