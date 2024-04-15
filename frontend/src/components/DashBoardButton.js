@@ -41,7 +41,7 @@ const DashBoardButton = (QuestionsCorrect, LanguageName, CurrentQuestion, UserTo
     return (
 
         <div>
-            <button type='button' id='DashBoardButton' className='btn-custom w-100 mb-3' onClick={() => ToDashBoard(QuestionsCorrect, LanguageName, CurrentQuestion, UserTokenRaw)}>Dash Board</button>
+            <button type='button' id='DashBoardButton' className='w-100 mb-3' onClick={() => ToDashBoard(QuestionsCorrect, LanguageName, CurrentQuestion, UserTokenRaw)}>Return to Dashboard</button>
         </div>
 
     );
