@@ -3,6 +3,7 @@ import React from 'react';
 import '../styles/HomePage.css'
 import BackgroundVideo from '../images/background.mp4'
 import SenseiMobile from '../images/senseimobile.PNG';
+import Loading from '../pages/LoadingPage';
 
 import NavBar from '../components/NavBar';
 import LoginTitle from '../components/LoginTitle';
@@ -12,6 +13,19 @@ import GetStartedButton from '../components/GetStartedButton';
 import LoginButton from '../components/LoginButton';
 
 const HomePage = () => {
+    const [isLoading, setLoading] = useState(true);
+
+    useEffect(() => {
+        // Simulate loading data with a timeout
+        setTimeout(() => {
+        setLoading(false);
+    }, 2000); // 2 seconds loading
+    }, []);
+
+    if (isLoading) {
+    	return <Loading/>; 
+    }
+    
     return (
 
         <div id='LoginPage' className='overflow-auto'>
