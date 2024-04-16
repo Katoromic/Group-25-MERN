@@ -28,7 +28,7 @@
         font-size: 2.5vh;
     }    
 }
-@media screen and (max-device-width: 1023px) {
+@media screen and (max-device-width: 1024px) and (min-device-height: 1024px) {
     #GetStartedButtonElement{
      	margin-right: 1vw;
      	margin-top: 8vh;
