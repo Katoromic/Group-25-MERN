@@ -72,7 +72,7 @@ function ResetPasswordForm() {
               localStorage.setItem("user_data", JSON.stringify(user));
               if (verified)
               {
-                window.location.href = "/landing";
+                window.location.href = "/login";
               }
               else
               {
