@@ -17,6 +17,7 @@
 #AnnouncementBoxParent {
   width: auto;
   max-width: 50%;
+  min-width: 100px;
   background-color: transparent;
   border: 2px solid lightgrey;
   color: black;
@@ -54,7 +55,9 @@ h1 {
   margin-bottom: 15px;
   font-size: 21px;
   font-family: 'sweet-sans';
-  width: 400px;
+  max-width: 400px;
+  min-width: 200px;
+  width: 40%;
   height: 40px;
   padding-top: 2px;
   padding-bottom: 2px;

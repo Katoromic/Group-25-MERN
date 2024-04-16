@@ -8,11 +8,14 @@ const SaveLogoutButton = (QuestionsCorrect, LanguageName, CurrentQuestion, UserT
     // for api connection
     var bp = require("./Path.js");
 
+    const storage = require('../tokenStorage');
+
     // for navigating to other pages.
     const navigate = useNavigate();
 
     const Logout = async (QuestionsCorrect, LanguageName, CurrentQuestion, UserTokenRaw) => {
         SaveProgress(UserTokenRaw, LanguageName, CurrentQuestion, QuestionsCorrect);
+        storage.storeToken("");
         navigate('/');
     };
 

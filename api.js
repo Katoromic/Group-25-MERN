@@ -242,9 +242,11 @@ exports.setApp = function (app, client) {
 
           if (user)
           {
-            // Send Email
-            sendPassRec(user);
-            
+            if (user.Email === email)
+            {
+              // Send Email
+              sendPassRec(user);
+            }
           }
         }
       }
