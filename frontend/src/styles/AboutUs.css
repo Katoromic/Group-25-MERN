@@ -1,3 +1,14 @@
+@keyframes slideIn {
+    from {
+        transform: translateY(100%);  /* Start below the visible area */
+        opacity: 0;                   /* Start transparent for a smoother effect */
+    }
+    to {
+        transform: translateY(0);     /* End at the original position */
+        opacity: 1;                   /* Fully visible */
+    }
+}
+
 .aboutUsBody {
     position: flex;
     height: auto;
@@ -17,20 +28,20 @@
     align-items: center;
     height: 15vw; 
     font-size: 20px;
-    animation: gone 1s ease;
 }
 
 .aboutUsBody p {
     font-size: 13px;
     margin: 0;
 }
-#circleImage {
+.circleImage {
     width: 150px;
-    height: 150px; 
-    border-radius: 50%; 
-    background-color: #fa304c;
+    height: auto;
+    border-radius: 50%;
+    padding: 3px;
+    background-color: black;
     margin-bottom: 2vh;
-    filter: drop-shadow(1px 5px 1px black);
+    animation: slideIn 1s ease-out;
 }
 p {
     font-family: 'sweet-sans', serif;
@@ -43,6 +54,7 @@ p {
 .title{
    display: flex;
    flex-direction: column;
+   animation: fadeIn 1s ease;
 }
 .intro{
     font-family: 'sweet-sans', serif;
@@ -55,6 +67,7 @@ p {
     flex-direction: column;
     width: 60%;
     gap: 0;
+    animation: fadeIn 2s ease;
 }
 @media screen and (min-device-width: 1024px) and (max-device-width: 1439px) { 
     #circleImage {

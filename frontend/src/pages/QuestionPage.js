@@ -68,10 +68,10 @@ const QuestionPage = () => {
     const [StyleButton4, SetStyleButton4] = useState();
 
     // For Toggling the hover animation for answer choices after they have been chosen.
-    const [StyleHover1, SetStyleHover1] = useState('btn-custom w-50 mt-2 mb-2');
-    const [StyleHover2, SetStyleHover2] = useState('btn-custom w-50 mt-2 mb-2');
-    const [StyleHover3, SetStyleHover3] = useState('btn-custom w-50 mt-2 mb-2');
-    const [StyleHover4, SetStyleHover4] = useState('btn-custom w-50 mt-2 mb-2');
+    const [StyleHover1, SetStyleHover1] = useState('btn-custom mt-2 mb-2');
+    const [StyleHover2, SetStyleHover2] = useState('btn-custom mt-2 mb-2');
+    const [StyleHover3, SetStyleHover3] = useState('btn-custom mt-2 mb-2');
+    const [StyleHover4, SetStyleHover4] = useState('btn-custom mt-2 mb-2');
 
     // For disabling already chosen buttons.
     const [DisableButton1, SetButtonDisable1] = useState(false);
@@ -196,16 +196,16 @@ const QuestionPage = () => {
         
         switch (ButtonChosen) {
             case 1:
-                SetStyleHover1('btn-custom-alt w-50 mt-2 mb-2');
+                SetStyleHover1('btn-custom-alt mt-2 mb-2');
                 break;
             case 2:
-                SetStyleHover2('btn-custom-alt w-50 mt-2 mb-2');
+                SetStyleHover2('btn-custom-alt mt-2 mb-2');
                 break;
             case 3:
-                SetStyleHover3('btn-custom-alt w-50 mt-2 mb-2');
+                SetStyleHover3('btn-custom-alt mt-2 mb-2');
                 break;
             case 4:
-                SetStyleHover4('btn-custom-alt w-50 mt-2 mb-2');
+                SetStyleHover4('btn-custom-alt mt-2 mb-2');
                 break;
         }
 
@@ -213,18 +213,18 @@ const QuestionPage = () => {
 
     // Removes the hover animation from all the answer choice buttons.
     const RemoveAllHover = () => {
-        SetStyleHover1('btn-custom-alt w-50 mt-2 mb-2');
-        SetStyleHover2('btn-custom-alt w-50 mt-2 mb-2');
-        SetStyleHover3('btn-custom-alt w-50 mt-2 mb-2');
-        SetStyleHover4('btn-custom-alt w-50 mt-2 mb-2');
+        SetStyleHover1('btn-custom-alt mt-2 mb-2');
+        SetStyleHover2('btn-custom-alt mt-2 mb-2');
+        SetStyleHover3('btn-custom-alt mt-2 mb-2');
+        SetStyleHover4('btn-custom-alt mt-2 mb-2');
     };
 
     // Applies the hover animation to all the answer choice buttons.
     const ResetAllHover = () => {
-        SetStyleHover1('btn-custom w-50 mt-2 mb-2');
-        SetStyleHover2('btn-custom w-50 mt-2 mb-2');
-        SetStyleHover3('btn-custom w-50 mt-2 mb-2');
-        SetStyleHover4('btn-custom w-50 mt-2 mb-2');
+        SetStyleHover1('btn-custom mt-2 mb-2');
+        SetStyleHover2('btn-custom mt-2 mb-2');
+        SetStyleHover3('btn-custom mt-2 mb-2');
+        SetStyleHover4('btn-custom mt-2 mb-2');
     };
 
     // Sets all buttons to the default style.
@@ -471,7 +471,9 @@ const QuestionPage = () => {
                     </div>
 
                     <div className='col-xl-8'>
+
                         <div id='MessageRow'> 
+
                             <div className='col d-flex align-items-center justify-content-center'>
                                 <span className='placeholder'></span>
                                 {Correct && <h2 className='bubble' id='ResultMessageCorrect'>Correct!</h2>}
@@ -480,13 +482,16 @@ const QuestionPage = () => {
                             </div>
                         </div>
                         <div className='sensei'>
+
                    	       <img src={Sensei} />
+
                 	    </div>
                         <div id='QuestionRow' className='row m-0 p-3' >
                             <div className='col d-flex align-items-center justify-content-center'>
                                 <h1 id='QuestionText'>{QuestionText}</h1>
                             </div>
                         </div>                        
+
                         <div id='ButtonRow' className='row m-5 pt-2 pb-2'>
                             <div className='col d-flex align-items-center justify-content-center'>
                                 <div className='answers'>
@@ -497,7 +502,6 @@ const QuestionPage = () => {
                                 </div>
                             </div>
                         </div>
-
                         <div className='row'>
                             <div className='col d-flex align-items-center justify-content-center'>
                                 {NextButton && <button id='NextQestionButton' className='btn-custom btnColor' onClick={() => NextQuestion(UserTokenRaw, LanguageName, CurrentQuestion, QuestionsCorrect)}>Next Question</button>}

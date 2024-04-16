@@ -4,18 +4,16 @@
     background-color: white;
     box-shadow: 15px 0px 20px #000000;
     border-style: none solid none none;
-    border-width: 5px;
+    border-width: 0.5px;
     border-color: black;
     height: 100vh;
 }
-
 #FirstName {
     margin-top: 200px;
     display: inline;
     margin-right: 5%;
     padding-top: 5%;
 }
-
 #LastName {
     display: inline;
     padding-top: 5%;

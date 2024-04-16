@@ -24,7 +24,6 @@ const ForgotPassword = () => {
                     <ForgotPasswordForm />
                 </div>
             </div>
-            
         </div>
     );
 };

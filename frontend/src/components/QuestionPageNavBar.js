@@ -37,9 +37,7 @@ const QuestionPageNavBar = ({Progress, QuestionsCorrect, QuestionsIncorrect, Use
                 <div className='d-grid gap-2 mx-auto'>
                     <SaveLogoutButton QuestionsCorrect={QuestionsCorrect} LanguageName={LanguageName} CurrentQuestion={CurrentQuestion} UserTokenRaw={UserTokenRaw}/>
                 </div>
-
             </div>
-
         </div>
     );
 };
