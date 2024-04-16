@@ -19,7 +19,7 @@
 
     }    
 }
-@media screen and (max-device-width: 1023px) {
+@media screen and (max-device-width: 1024px) and (min-device-height: 1024px){
     #LoginSubTitleElement{
     	font-size: 3vw;
         margin-right: 10vw;
