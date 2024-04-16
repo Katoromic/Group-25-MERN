@@ -5,6 +5,8 @@
 const supertest = require('supertest');
 const Path = require('../frontend/src/components/Path');
 
+const ObjectId = require('mongodb').ObjectId;
+
 const server = require('../server');
 const JWT = require('../createJWT');
 
@@ -170,8 +172,14 @@ describe('Signup', () => {
         //
         try
         {
-            const users = server.mongo.db("MainDatabase").collection("Users");
-            await users.deleteOne({ Username: "_prltgnwkcedbsyertt" });
+            const Users = server.mongo.db("MainDatabase").collection("Users");
+            const UserCourses = server.mongo.db("MainDatabase").collection("UserCourses");
+
+            let user = await Users.findOne({ Username: "_prltgnwkcedbsyertt" });
+
+            await Users.deleteOne({ Username: "_prltgnwkcedbsyertt" });
+
+            await UserCourses.deleteMany({ UserId: user._id.toString() });
         }
         catch (e)
         {
@@ -365,6 +373,62 @@ describe('changePassword', () => {
 });
 
 
+// Change Password tests
+//
+describe('resetPassword', () => {
+
+  test('Valid token', async() => {
+
+      let token = JWT.createVerificationToken("660a25f3527fb4d540a5f2b2");
+
+      let validReq = {token: token, password: process.env.TEST_USER_PASSWORD};
+
+      const response = await superPost('/resetPassword', validReq);
+
+      expect(response.statusCode).toBe(200);
+      expect(response.body.token).not.toBe(null);
+      expect(response.body.error).toBe("");
+  });
+
+  test('Missing password', async() => {
+
+    let token = JWT.createVerificationToken("660a25f3527fb4d540a5f2b2");
+
+    let invalidReq = {token: token};
+
+    const response = await superPost('/resetPassword', invalidReq);
+
+    expect(response.statusCode).toBe(400);
+    expect(response.body.token).toBe(null);
+    expect(response.body.error).not.toBe("");
+  });
+
+  test('Expired token', async() => {
+
+      let expToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NWU1NDliNDk0NzhkMTY5MjQxNDZmYTgiLCJpYXQiOjE3MTI4MDM2MjEsImV4cCI6MTcxMjgwNDgyMX0.MhSVOucEhB_B02QoJ_GZPA7JWnJrzqFAY1YO49PKcTs";
+
+      let invalidReq = {token: expToken, password: process.env.TEST_USER_PASSWORD};
+
+      const response = await superPost('/resetPassword', invalidReq);
+
+      expect(response.statusCode).toBe(401);
+      expect(response.body.token).toBe(null);
+      expect(response.body.error).not.toBe("");
+  });
+
+  test('Missing token', async() => {
+
+      let invalidReq = { password: "test"};
+
+      const response = await superPost('/resetPassword', invalidReq);
+
+      expect(response.statusCode).toBe(401);
+      expect(response.body.token).toBe(null);
+      expect(response.body.error).not.toBe("");
+  });
+});
+
+
 // Get User Courses tests
 //
 describe('user-courses', () => {
@@ -413,7 +477,7 @@ describe('user-courses', () => {
 
     test('Missing Authorization header', async() => {
 
-        const response = await superGet('/user-courses', null);
+        const response = await superGet('api/user-courses', null);
 
         expect(response.statusCode).toBe(400);
         expect(response.body.courses).toStrictEqual([]);
@@ -492,7 +556,7 @@ describe('getCourse', () => {
 
     test('Valid course', async() => {
 
-        const response = await superGet('/getCourse/c++', null);
+        const response = await superGet('api/getCourse/c++', null);
 
         expect(response.statusCode).toBe(200);
         expect(response.body.courseData).not.toBe(null);
@@ -501,7 +565,7 @@ describe('getCourse', () => {
     
     test('Invalid course', async() => {
 
-        const response = await superGet('/getCourse/language', null);
+        const response = await superGet('api/getCourse/language', null);
         
         expect(response.statusCode).toBe(404);
         expect(response.body.courseData).toBe(null);
@@ -516,7 +580,7 @@ describe('course-question-bank', () => {
 
     test('Valid course', async() => {
 
-        const response = await superGet('/course-question-bank/c++', null);
+        const response = await superGet('api/course-question-bank/c++', null);
 
         expect(response.statusCode).toBe(200);
         expect(response.body.questions).not.toStrictEqual([]);
@@ -525,10 +589,140 @@ describe('course-question-bank', () => {
     
     test('Invalid course', async() => {
 
-        const response = await superGet('/course-question-bank/language', null);
+        const response = await superGet('api/course-question-bank/language', null);
         
         expect(response.statusCode).toBe(404);
         expect(response.body.questions).toStrictEqual([]);
+        expect(response.body.error).not.toBe("");
+    });
+});
+
+
+// Process email verification link endpoint tests
+//
+describe('Verifification Link Processing', () => {
+
+  test('Valid link / Unverified user', async() => {
+
+      let token = JWT.createVerificationToken("6603323d82133af020264b04");
+
+      let response = await superGet(`verify/${token}`);
+
+      // Unverify the user so this test works more than once!
+      //
+      try
+      {
+          const users = server.mongo.db("MainDatabase").collection("Users");
+          await users.updateOne({"_id": ObjectId.createFromHexString("6603323d82133af020264b04")}, {$set: {Verified: false}});
+      }
+      catch (e)
+      {
+          console.warn("Verifification Link Processing -> Valid link / Unverified user: User not unverified after test.");
+      }
+
+      expect(response.statusCode).toBe(303);
+      expect(response.header.location).toBe(Path.buildPathFrontend('verified/success'));
+  });
+
+  test('Valid link / Verified user', async() => {
+
+      let token = JWT.createVerificationToken("65f0d3f92c22df65ba6ea6d2");
+
+      let response = await superGet(`verify/${token}`);
+
+      expect(response.statusCode).toBe(303);
+      expect(response.header.location).toBe(Path.buildPathFrontend('verified/late'));
+  });
+
+  test('Expired token', async() => {
+
+      let response = await superGet('verify/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NWYwZDNmOTJjMjJkZjY1YmE2ZWE2ZDIiLCJpYXQiOjE3MTE2NjI4ODYsImV4cCI6MTcxMTY2NDA4Nn0.7wocvQIDyQvqdNruUi2S1A-f39LkFA99iqlirCfpp0U');
+
+      expect(response.statusCode).toBe(303);
+      expect(response.header.location).toBe(Path.buildPathFrontend('verified/expired'));
+  });
+
+  test('Garbage token', async() => {
+
+      let response = await superGet('verify/garbage');
+
+      expect(response.statusCode).toBe(303);
+      expect(response.header.location).toBe(Path.buildPathFrontend('verified/expired'));
+  });
+
+  test('Access token', async() => {
+
+      let token = JWT.createAccessToken("Test", "Test", true, "65f0d3f92c22df65ba6ea6d2").accessToken;
+
+      let response = await superGet(`verify/${token}`);
+
+      expect(response.statusCode).toBe(303);
+      expect(response.header.location).toBe(Path.buildPathFrontend('verified/expired'));
+  });
+});
+
+// Exchange token endpoint tests
+//
+describe('exchangeToken', () => {
+
+    test('Valid token / verified user / verified token', async() => {
+
+        let token = JWT.createAccessToken("Test", "Test", true, "660a25f3527fb4d540a5f2b2").accessToken;
+
+        let invalidReq = {token: token};
+
+        const response = await superPost('/exchangeToken', invalidReq);
+
+        expect(response.statusCode).toBe(400);
+        expect(response.body.token).toBe(null);
+        expect(response.body.error).not.toBe("");
+    });
+
+    test('Valid token / verified user / unverified token', async() => {
+
+        let token = JWT.createAccessToken("Test", "Test", false, "660a25f3527fb4d540a5f2b2").accessToken;
+
+        let validReq = {token: token};
+
+        const response = await superPost('/exchangeToken', validReq);
+
+        expect(response.statusCode).toBe(200);
+        expect(response.body.token).not.toBe(null);
+        expect(response.body.error).toBe("");
+    });
+
+    test('Valid token / unverified user', async() => {
+
+        let token = JWT.createAccessToken("Test", "Test", false, "6603323d82133af020264b04").accessToken;
+
+        let invalidReq = {token: token};
+
+        const response = await superPost('/exchangeToken', invalidReq);
+
+        expect(response.statusCode).toBe(403);
+        expect(response.body.token).toBe(null);
+        expect(response.body.error).not.toBe("");
+    });
+
+    test('Missing token', async() => {
+
+        const response = await superPost('/exchangeToken', {});
+
+        expect(response.statusCode).toBe(401);
+        expect(response.body.token).toBe(null);
+        expect(response.body.error).not.toBe("");
+    });
+
+    test('Expired token', async() => {
+
+        let expToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NjAzMzIzZDgyMTMzYWYwMjAyNjRiMDQiLCJmaXJzdE5hbWUiOiJHdWVzdCIsImxhc3ROYW1lIjoiVXNlciIsInZlcmlmaWVkIjpmYWxzZSwiaWF0IjoxNzExNTcwNDM4LCJleHAiOjE3MTE1NzA0OTh9.4NfLt10jEIv4PJMkufZUoX5-clC_Dx2GFOTYB77fchI";
+
+        let invalidReq = {token: expToken, oldPassword: "test", newPassword: "test"};
+
+        const response = await superPost('/exchangeToken', invalidReq);
+
+        expect(response.statusCode).toBe(401);
+        expect(response.body.token).toBe(null);
         expect(response.body.error).not.toBe("");
     });
 });
@@ -544,7 +738,7 @@ async function superGet(endpoint, token)
         return await supertest(Path.buildPath('api')).get(endpoint)
                                                      .set('Authorization', `Bearer ${token}`);
     else
-        return await supertest(Path.buildPath('api')).get(endpoint);
+        return await supertest(Path.buildPath('')).get(endpoint);
 }
 
 async function superPost(endpoint, body)

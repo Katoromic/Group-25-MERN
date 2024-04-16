@@ -7,7 +7,7 @@ exports.setApp = function (app, client) {
   const ObjectId = require('mongodb').ObjectId;
   const bcrypt = require("bcrypt");
   const { sendVerificationEmail, sendPassRec, sendPassConfirmation } = require('./authenticationHandler');
-  const randomstring = require('randomstring');
+  const Path = require('./frontend/src/components/Path');
   
   // Login
   //
@@ -359,171 +359,131 @@ exports.setApp = function (app, client) {
   });
   
   
+  // Reset Password
+  //
+  // Incoming: token, password
+  // Outgoing: token, error
+  //
+  app.post('/api/resetPassword', async (req, res, next) => {
+
+    const { token, password } = req.body;
+
+    let accessToken = null;
+
+    let status = 200;
+    let error = "";
+
+    try
+    {
+      if (JWT.isValidVerificationToken(token))
+      {
+        let { userId } = JWT.getPayload(token);
+
+        if (password)
+        {
+          const Users = client.db("MainDatabase").collection("Users");
+
+          if (Users)
+          {
+            const result = await Users.findOne({"_id": ObjectId.createFromHexString(userId)});
+
+            if (result)
+            {
+              // Hash the password before storing it
+              const salt = await bcrypt.genSalt();
+              const hashedPassword = await bcrypt.hash(password, salt);
+
+              Users.updateOne({"_id": ObjectId.createFromHexString(userId)}, {$set: {Password: hashedPassword}});
+
+              sendPassConfirmation(result);
+
+              // Create a token
+              accessToken = JWT.createAccessToken(result.FirstName, result.LastName, result.Verified, result._id).accessToken;
+            }
+            else
+            {
+              status = 404;
+              error = "User not found";
+            }
+          }
+          else
+          {
+            status = 500;
+            error = "Unable to connect to database";
+          }
+        }
+        else
+        {
+          status = 400;
+          error = "Password missing";
+        }
+      }
+      else
+      {
+        status = 401;
+        error = "Reset token not valid";
+      }
+    }
+    catch (e)
+    {
+      status = 500;
+      error = e.message;
+    }
+
+    res.status(status).json({token: accessToken, error: error});
+  });
+
+
   // Process email verification link
   //
   app.get('/verify/:token', async (req, res) => {
     
     const { token } = req.params;
     
-    let status;
-    let message;
+    let linkParam = '';
     
     try
     {
       if (!JWT.isValidVerificationToken(token))
       {
-        status = 400;
-        message = 'The verification link has expired ):';
+        linkParam = 'expired';
       }
       else
       {
         const { userId } = JWT.getPayload(token);
         
         let users = client.db("MainDatabase").collection("Users");
-        
         if (users != null)
         {
           const user = await users.findOne({"_id": ObjectId.createFromHexString(userId)});
           
           if (user.Verified)
           {
-            status = 400;
-            message = 'This account is already verified |:';
+            linkParam = 'late';
           }
           else
           {
             users.updateOne({"_id": ObjectId.createFromHexString(userId)}, {$set: {Verified: true}});
-            
-            status = 200;
-            message = '<h1>Yay! Your account is now verified (:</h1><br><a href="http://localhost:3000/login">Click here to login</a>';
+            linkParam = 'success';
           }
         }
         else
         {
-          status = 500;
-          message = 'There was an error connecting to our database. Please try again later... );';
+          console.error('Unable to connect to MongoDB "Users" collection');
+          linkParam = 'unavailable';
         }
       }
     }
     catch (e)
     {
-      status = 500;
-      message = e.message;
+      console.error(e.message);
+      linkParam = 'unavailable';
     }
     
-    res.status(status).send(message);
+    res.redirect(303, Path.buildPathFrontend(`verified/${linkParam}`));
   });
   
   
-  // Process password reset link
-  //
-  app.get('/reset/:token', async (req, res) => {
-    
-    const { token } = req.params;
-    
-    let status;
-    let message;
-    
-    try
-    {
-      if (!JWT.isValidVerificationToken(token))
-      {
-        status = 400;
-        message = 'The password reset link has expired';
-      }
-      else
-      {
-        const { userId } = JWT.getPayload(token);
-        
-        let Users = client.db("MainDatabase").collection("Users");
-        
-        if (Users != null) {
-          let user = await Users.findOne({ "_id": ObjectId.createFromHexString(userId) });
-          if (user) {
-            let randPassword = randomstring.generate(15);
-            const salt = await bcrypt.genSalt();
-            const hashedPassword = await bcrypt.hash(randPassword, salt);
-            await Users.updateOne({ "_id": ObjectId.createFromHexString(userId) }, { $set: { Password: hashedPassword } });
-            status = 200;
-            message = `Password successfully reset\n\nNew password: ${randPassword}`;
-            sendPassConfirmation(user);
-          } else {
-            status = 404;
-            message = 'User not found';
-          }
-        }
-        else
-        {
-          status = 500;
-          message = 'There was an error connecting to our database. Please try again later...';
-        }
-      }
-    }
-    catch (e)
-    {
-      status = 500;
-      message = e.message;
-    }
-    
-    res.status(status).send(message);
-  });
-  
-  
-  // Process password reset link
-  //
-  app.get('/reset/:token', async (req, res) => {
-    
-    const { token } = req.params;
-    
-    let status;
-    let message;
-    
-    try
-    {
-      if (!JWT.isValidVerificationToken(token))
-      {
-        status = 400;
-        message = 'The password reset link has expired';
-      }
-      else
-      {
-        const { userId } = JWT.getPayload(token);
-        
-        let Users = client.db("MainDatabase").collection("Users");
-        
-        if (Users != null) {
-          let user = await Users.findOne({ "_id": ObjectId.createFromHexString(userId) });
-          if (user) {
-            // new password 
-            let randPassword = randomstring.generate(15);
-
-            const salt = await bcrypt.genSalt();
-            const hashedPassword = await bcrypt.hash(randPassword, salt);
-            await Users.updateOne({ "_id": ObjectId.createFromHexString(userId) }, { $set: { Password: hashedPassword } });
-            status = 200;
-            message = `Password successfully reset\n\nNew password: ${randPassword}`;
-            sendPassConfirmation(user);
-          } else {
-            status = 404;
-            message = 'User not found';
-          }
-        }
-        else
-        {
-          status = 500;
-          message = 'There was an error connecting to our database. Please try again later...';
-        }
-      }
-    }
-    catch (e)
-    {
-      status = 500;
-      message = e.message;
-    }
-    
-    res.status(status).send(message);
-  });
-
 // Return User Courses
 //
 // Incoming: Authorization token
@@ -697,5 +657,77 @@ exports.setApp = function (app, client) {
 
     res.status(status).json({ courseData: courseData, error: error });
 });
+
+  // Exchange Token
+  //
+  // In: token
+  // Out: token, error
+  //
+  app.post("/api/exchangeToken", async (req, res, next) => {
+
+    const { token } = req.body;
+
+    let error = "";
+    let status = 200;
+    let newToken = null;
+
+    try
+    {
+      if (JWT.isValidAccessToken(token))
+      {
+        const { userId, firstName, lastName, verified } = JWT.getPayload(token);
+
+        if (verified)
+        {
+          status = 400;
+          error = "Token already verified";
+        }
+        else
+        {
+          const Users = client.db("MainDatabase").collection("Users");
+
+          if (Users)
+          {
+            const result = await Users.findOne({"_id": ObjectId.createFromHexString(userId)});
+
+            if (result)
+            {
+              if (result.Verified)
+              {
+                newToken = JWT.createAccessToken(firstName, lastName, result.Verified, userId).accessToken;
+              }
+              else
+              {
+                error = "User has not been verified";
+                status = 403;
+              }
+            }
+            else
+            {
+              error = "Cannot find user";
+              status = 404;
+            }
+          }
+          else
+          {
+            error = "Cannot connect to database";
+            status = 500;
+          }
+        }
+      }
+      else
+      {
+        status = 401;
+        error = "Access token not valid";
+      }
+    }
+    catch (e)
+    {
+      error = e.message;
+      status = 500;
+    }
+
+    res.status(status).json({token: newToken, error: error});
+  });
   
 };

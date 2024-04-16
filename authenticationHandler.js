@@ -59,7 +59,7 @@ function sendVerificationEmail(user) {
 
 //Password (requesting change)
 function psEmail(toEmail, token) {
-    const path = Path.buildPath(`reset/${token}`);
+    const path = Path.buildPathFrontend(`reset/${token}`);
     return {
         from: process.env.EMAIL_ADDRESS,
         to: toEmail,

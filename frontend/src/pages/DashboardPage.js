@@ -52,6 +52,20 @@ const GetUserCourseInfo = async (CourseID) => {
         // Attempt to access the api.
         const response = await axios(config);
 
+        if (response.status === 401)
+        {
+          storage.storeToken("");
+          window.location.href = "/login";
+        }
+        else if (response.status === 403)
+        {
+          window.location.href = "/CheckEmail";
+        }
+        else
+        {
+          console.error(response.data.error);
+        }
+
         // extract the data 
         var res = response.data.courses;
         
@@ -133,13 +147,27 @@ const getCourses = async (event) => {
     try {
         const response = await axios(config);
         var res = response.data;
-        if (res.error) {
-            return null;
-        } else {
-            return res.courses;
-        }
+        return res.courses;
     } catch (error) {
-        console.log(error);
+      if (error.response.status === 400)
+      {
+        window.location.href = "/login";
+      }
+      else if (error.response.status === 401)
+      {
+        storage.storeToken("");
+        window.location.href = "/login";
+      }
+      else if (error.response.status === 403)
+      {
+        window.location.href = "/CheckEmail";
+      }
+      else
+      {
+        console.error(error.response.data.error);
+      }
+
+      return null;
     }
 };
 
@@ -188,16 +216,18 @@ const DashboardPage = () => {
 
         var res = getCourses();
 
-        if (res !== null) {
+        if (res) {
             res.then((res) => {
                 if (ignore) return;
-
-                setCourses(res);
+                if (res)
+                {
+                  setCourses(res);
                 
-                getCourseInfo(res).then((courseInfoArray) => {
-                    setCourseInfo(courseInfoArray);
-                    setIsLoaded(true);
-                });
+                  getCourseInfo(res).then((courseInfoArray) => {
+                      setCourseInfo(courseInfoArray);
+                      setIsLoaded(true);
+                  });
+                }
             });
         }
 

@@ -8,11 +8,21 @@ import Sensei from '../images/sensei.GIF'
 
 const QuestionPage = () => {
 
+    // For api build path.
+    const bp = require("../components/Path.js");
+    const storage = require("../tokenStorage.js");
+
     // Contains data from the dashboard page.
     const location = useLocation(); 
 
-    // For api build path.
-    var bp = require("../components/Path.js");
+    if (location.state == null)
+    {
+      window.location.href = "/landing";
+    }
+    else if (storage.retrieveToken() == "")
+    {
+      window.location.href = "/login";
+    }
 
     // User info.
     const UserTokenRaw = location.state.UserTokenRaw;
@@ -427,11 +437,19 @@ const QuestionPage = () => {
         try {
             const response = await axios.post(bp.buildPath('api/updateProgress'), data);
         } catch (error) {
-            console.log(error);
-            console.log('broke in saveprogress.')
-            console.log(UserTokenRaw);
-            console.log(CurrentQuestion);
-            console.log(NumberCorrect);
+          if (error.response.status === 401)
+          {
+            storage.storeToken("");
+            window.location.href = "/login";
+          }
+          else if (error.response.status === 403)
+          {
+            window.location.href = "/CheckEmail";
+          }
+          else
+          {
+            console.error(error.response.data.error);
+          }
         }
 
     };
@@ -453,7 +471,9 @@ const QuestionPage = () => {
                     </div>
 
                     <div className='col-xl-8'>
-                        <div id='MessageRow'>
+
+                        <div id='MessageRow'> 
+
                             <div className='col d-flex align-items-center justify-content-center'>
                                 <span className='placeholder'></span>
                                 {Correct && <h2 className='bubble' id='ResultMessageCorrect'>Correct!</h2>}
@@ -462,13 +482,16 @@ const QuestionPage = () => {
                             </div>
                         </div>
                         <div className='sensei'>
-                   	        <img src={Sensei} />
+
+                   	       <img src={Sensei} />
+
                 	    </div>
                         <div id='QuestionRow' className='row m-0 p-3' >
                             <div className='col d-flex align-items-center justify-content-center'>
                                 <h1 id='QuestionText'>{QuestionText}</h1>
                             </div>
-                        </div>
+                        </div>                        
+
                         <div id='ButtonRow' className='row m-5 pt-2 pb-2'>
                             <div className='col d-flex align-items-center justify-content-center'>
                                 <div className='answers'>
