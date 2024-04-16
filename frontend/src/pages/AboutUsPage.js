@@ -6,6 +6,10 @@ import NavBar from '../components/NavBar';
 
 import Giullya from '../images/giullya.jpg';
 import Nicole from '../images/nicole.jpg';
+import Dennis from '../images/dennis.jpg';
+import Deanna from '../images/deanna.jpg';
+import Jithin from '../images/jithin.jpg';
+import Justin from '../images/justin.png';
 
 const AboutUsPage = () => {
     return (
@@ -51,7 +55,7 @@ const AboutUsPage = () => {
                         <p>WEB</p>
                     </div>
                     <div>
-                        <div id="circleImage"></div>
+                        <div><img src={Dennis} alt='Dennis Klingener Web Frontend' className='circleImage'/></div>
                         DENNIS KLINGENER
                         <p>FRONTEND</p>
                         <p>WEB</p>
@@ -63,12 +67,12 @@ const AboutUsPage = () => {
                         <p>BACKEND</p>
                     </div>
                     <div>
-                        <div id="circleImage"></div>
+                        <div><img src={Jithin} alt='Jithin Samuel Backend' className='circleImage'/></div>
                         JITHIN SAMUEL
                         <p>BACKEND</p>
                     </div>
                     <div>
-                        <div id="circleImage"></div>
+                        <div><img src={Justin} alt='Justin Samuel Backend' className='circleImage'/></div>
                         JUSTIN SAMUEL
                         <p>BACKEND</p>
                     </div>
