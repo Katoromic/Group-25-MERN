@@ -70,6 +70,9 @@ p {
     animation: fadeIn 2s ease;
 }
 @media screen and (min-device-width: 1024px) and (max-device-width: 1439px) { 
+    .circleImage {
+        width: 15vh;
+    }
     .intro p{
         font-size: 14px;
     }
@@ -80,9 +83,9 @@ p {
      	margin-top: 30px;
      }
 }
-@media screen and (min-device-width: 767px) and (max-device-width: 1023px) { 
-    #circleImage {
-        height: 10vh;
+@media screen and (min-device-width: 767px) and (max-device-width: 1024px) and (min-device-height: 1024px){ 
+    .circleImage {
+        width: 10vh;
     }
     .aboutUsBody p {
         font-size: 12px;
@@ -106,8 +109,8 @@ p {
      }
 }
 @media screen and (max-device-width: 767px) {
-    #circleImage {
-        height: 10vh;
+    .circleImage {
+        width: 10vh;
     }
     .aboutUsBody p {
         font-size: 10px;
