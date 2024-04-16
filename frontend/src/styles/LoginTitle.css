@@ -45,10 +45,10 @@
     	width:7vw;
     }   
 }
-@media screen and (max-device-width: 1023px) {
+@media screen and (max-device-width: 1024px) and (min-device-height: 1024px){
     #SyntaxTitleElement{
     	font-size: 12vw;
-	    letter-spacing: 4vw;
+	letter-spacing: 4vw;
         margin-right:8vw;
         margin-top: 0;
     }    
@@ -63,10 +63,17 @@
 }
 @media screen and (max-device-width: 767px) {
     #SyntaxTitleElement{
+    	font-size: 13vw;
+	letter-spacing: 5vw;
+        margin-right: 7vw;
         margin-top: 0;
-    	font-size: 15vw;
-    }
+    }  
+    #SyntaxSubTitleElement{
+    	font-size: 4vw;
+	letter-spacing: 4.2vw;
+	margin-right: 10%;
+    }  
     #ShurikenImage{
-    	width: 15vw;
+    	width: 13vw;
     }       
 }
