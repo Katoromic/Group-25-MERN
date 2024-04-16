@@ -37,7 +37,7 @@ const AboutUsPage = () => {
                 </div>
                 <div className='aboutUsBody'>
                     <div>
-                        <div id="circleImage"></div>
+                        <div><img src={Deanna} alt='Deanna Cunningham Project Manager And Mobile' className='circleImage'/></div>
                         DEANA CUNNINGHAM
                         <p>PROJECT MANAGER</p>
                         <p>MOBILE</p>
