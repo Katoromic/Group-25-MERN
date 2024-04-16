@@ -106,6 +106,9 @@ p {
      }
 }
 @media screen and (max-device-width: 767px) {
+    #circleImage {
+        height: 10vh;
+    }
     .aboutUsBody p {
         font-size: 10px;
     }
