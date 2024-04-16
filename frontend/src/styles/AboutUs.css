@@ -1,14 +1,3 @@
-@keyframes slideIn {
-    from {
-        transform: translateY(100%);  /* Start below the visible area */
-        opacity: 0;                   /* Start transparent for a smoother effect */
-    }
-    to {
-        transform: translateY(0);     /* End at the original position */
-        opacity: 1;                   /* Fully visible */
-    }
-}
-
 .aboutUsBody {
     position: flex;
     height: auto;
@@ -19,6 +8,7 @@
     overflow: hidden;
     grid-template-rows: auto auto; /* Make rows more flexible */
     grid-template-columns: repeat(4, 1fr);
+    animation: fadeIn 3s ease;
 }
 .aboutUsBody> div{
     font-family: 'Bebas', serif;
@@ -41,7 +31,6 @@
     padding: 3px;
     background-color: black;
     margin-bottom: 2vh;
-    animation: slideIn 1s ease-out;
 }
 p {
     font-family: 'sweet-sans', serif;
@@ -66,8 +55,6 @@ p {
     align-items: center;
     flex-direction: column;
     width: 60%;
-    gap: 0;
-    animation: fadeIn 2s ease;
 }
 @media screen and (min-device-width: 1024px) and (max-device-width: 1439px) { 
     .circleImage {
