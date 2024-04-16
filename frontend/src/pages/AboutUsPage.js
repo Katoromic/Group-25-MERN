@@ -10,6 +10,8 @@ import Dennis from '../images/dennis.jpg';
 import Deanna from '../images/deanna.jpg';
 import Jithin from '../images/jithin.jpg';
 import Justin from '../images/justin.png';
+import Paul from '../images/paul.jpg';
+import Williams from '../images/williams.jpg';
 
 const AboutUsPage = () => {
     return (
@@ -61,7 +63,7 @@ const AboutUsPage = () => {
                         <p>WEB</p>
                     </div>
                     <div>
-                        <div id="circleImage"></div>
+                        <div><img src={Paul} alt='Paul Puhnaty Database and Backend' className='circleImage'/></div>
                         PAUL PUHNATY
                         <p>DATABASE</p>
                         <p>BACKEND</p>
@@ -77,7 +79,7 @@ const AboutUsPage = () => {
                         <p>BACKEND</p>
                     </div>
                     <div>
-                        <div id="circleImage"></div>
+                        <div><img src={Williams} alt='Williams Orema Backend' className='circleImage'/></div>
                         WILLIAMS OREMA
                         <p>BACKEND</p>
                     </div>
